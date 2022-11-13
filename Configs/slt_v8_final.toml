@@ -1,0 +1,23 @@
+[aggregation]
+hazard_model_id = "SLT_v8_gmm_v2_FINAL_userate"
+stage = "PROD"
+vs30s = [ 400 ]
+imts = ['PGA', 'SA(0.1)', 'SA(0.2)', 'SA(0.3)', 'SA(0.4)', 'SA(0.5)', 'SA(0.7)','SA(1.0)', 'SA(1.5)', 'SA(2.0)', 'SA(3.0)', 'SA(4.0)', 'SA(5.0)', 'SA(6.0)','SA(7.5)','SA(10.0)']
+aggs = ["mean", "cov", "std", "0.005", "0.01", "0.025", "0.05", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "0.95", "0.975", "0.99", "0.995", "0.3", "0.4", "0.6", "0.7"]
+# locations = "NZ_34"
+locations = ["WLG"]
+# locations = "NZ_0_1_NB_1_1"
+logic_tree_file = "/home/chrisdc/NSHM/Source_LTs/LTs/json/SLT_v8_gmm_v2_final_400.json"
+
+# [deaggregation]
+# poes = [0.02]
+# inv_time = 50
+# gtdata_file = "/home/chrisdc/NSHM/Source_LTs/Disaggs/json/SLT_v8_disagg_AKL_02.json"
+
+
+
+[debug]
+# location_limit = 1
+# source_branches_truncate = 5
+# reuse_source_branches_id = "RmlsZToxMTc3NDU=" # small config
+# reuse_source_branches_id = "RmlsZToxMzYyNTU="
