@@ -5,7 +5,10 @@ description = "The logic tree definitions, final configurations, and versioning 
 authors = ["Your Name <you@example.com>"]
 license = "AGPL3"
 readme = "README.md"
-packages = [{include = "nzshm_model"}]
+packages = [
+	{include = "nzshm_model"},
+    {include = "tests", format = "sdist" }
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
