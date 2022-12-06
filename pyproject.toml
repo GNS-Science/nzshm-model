@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nzshm-model"
-version = "0.1.0"
+version = "1.0.0"
 description = "The logic tree definitions, final configurations, and versioning of the New Zealand | Aotearoa National Seismic Hazard Model"
 authors = ["Your Name <you@example.com>"]
 license = "AGPL3"
