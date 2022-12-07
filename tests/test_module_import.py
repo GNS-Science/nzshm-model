@@ -22,3 +22,7 @@ class TestStructure:
         assert v1_0_0['id'] == 'NSHM_1.0.0'
         assert v1_0_0['model'].slt_config is not None
         assert v1_0_0['model'].slt_config.logic_tree_permutations is not None
+
+    def test_get_model_version_unknown(self):
+        unknown = self.model.get_model_version(self.model, 'XXX')
+        assert unknown is None
