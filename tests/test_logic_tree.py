@@ -67,4 +67,3 @@ def test_fslt_example():
     assert fslt.branches[-1].values[3].value == 'Geologic'
 
     assert fslt.validate_weights()
-

@@ -5,19 +5,19 @@ Classes to define logic tree structures
 """
 
 from dataclasses import dataclass, field
-from typing import List, Tuple, Union
+from typing import Any, List
 
 
 @dataclass
 class BranchAttribute:
     name: str
     long_name: str
-    value_options: Union[List[int], List[str], List[bool], List[Tuple[float, float]]] = field(default_factory=list)
+    value_options: List[Any] = field(default_factory=list)
 
 
 @dataclass
 class BranchAttributeValue(BranchAttribute):
-    value: Union[int, str, bool, Tuple[float, float]] = None
+    value: Any = None
 
     @staticmethod
     def from_branch_attribute(ba: BranchAttribute, value):
@@ -51,5 +51,3 @@ class FaultSystemLogicTree:
         for b in self.branches:
             weight += b.weight
         return weight == 1.0
-
-
