@@ -72,10 +72,9 @@ class TestStructure:
         fslt = FaultSystemLogicTree('PUY', 'Puysegur')
 
         for member in group['members']:
-            bavs = list(decompose_subduction_tag(member['tag']))
             fslt.branches.append(
                 Branch(
-                    values=bavs,
+                    values=list(decompose_subduction_tag(member['tag'])),
                     weight=member['weight'],
                     inversion_source=member['inv_id'],
                     distributed_source=member['bg_id'],
