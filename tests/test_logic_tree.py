@@ -9,6 +9,20 @@ from nzshm_model.source_logic_tree.logic_tree import (
 import itertools
 
 
+def test_direct_bav():
+    bav = BranchAttributeValue(
+        name='dm', long_name='deformation model', value_options=['geodetic', 'Geologic'], value="geodetic"
+    )
+    print(bav)
+    assert bav.value == "geodetic"
+
+
+def test_direct_bav_no_options():
+    bav = BranchAttributeValue(name='dm', long_name='deformation model', value="geodetic")
+    print(bav)
+    assert bav.value == "geodetic"
+
+
 def test_init():
     ba = BranchAttribute(name='C', long_name='area-magnitude scaling', value_options=[4.0])
     print(ba)
@@ -47,8 +61,10 @@ def test_fslt_example():
     assert fslt.branches[-1].values[0].name == 'C'
     assert fslt.branches[-1].values[0].long_name == 'area-magnitude scaling'
     assert fslt.branches[-1].values[0].value == 4
+
     assert fslt.branches[-1].values[1].value == 1.0
     assert fslt.branches[-1].values[2].value == (0.95, 19.2)
     assert fslt.branches[-1].values[3].value == 'Geologic'
 
     assert fslt.validate_weights()
+

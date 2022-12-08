@@ -12,12 +12,12 @@ from typing import List, Tuple, Union
 class BranchAttribute:
     name: str
     long_name: str
-    value_options: Union[List[int], List[str], List[bool], List[Tuple[float, float]]]
+    value_options: Union[List[int], List[str], List[bool], List[Tuple[float, float]]] = field(default_factory=list)
 
 
 @dataclass
 class BranchAttributeValue(BranchAttribute):
-    value: Union[int, str, bool, Tuple[float, float]]
+    value: Union[int, str, bool, Tuple[float, float]] = None
 
     @staticmethod
     def from_branch_attribute(ba: BranchAttribute, value):
@@ -34,10 +34,6 @@ class BranchAttributeValue(BranchAttribute):
 
 @dataclass
 class Branch:
-    """
-    Branch is a graph 'edge` connecting two nodes)
-    """
-
     values: List[BranchAttributeValue]
     weight: float = 1.0
     inversion_source: str = ""
@@ -57,15 +53,3 @@ class FaultSystemLogicTree:
         return weight == 1.0
 
 
-class SourceLogicTreeLeaf:
-    """
-    str: fault_system hikurangi/hik, puysegur/puy, crustal/cru, itraslab/slab
-    tuple: b_n_pair
-    float: c (area-magnitude scaling)
-    float: s (moment rate scaling)
-    str deformation_model: hik locked, geodetic, geologic
-    bool: time_dependence
-    float: weight
-    str: nrml_id_inv
-    str: nrml_id_bg
-    """
