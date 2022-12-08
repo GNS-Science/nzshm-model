@@ -1,88 +1,54 @@
 #! python test_logic_tree.py
 
-from nzshm_model.source_logic_tree.logic_tree import Branch, BranchLevel  # , LogicTreeLeaf
+from nzshm_model.source_logic_tree.logic_tree_new import (
+    BranchAttribute,
+    BranchAttributeValue,
+    Branch,
+    FaultSystemLogicTree,
+)
+import itertools
 
 
-class TestBranchLevel:
-    def test_a(self):
-        bl = BranchLevel('shorty', 'longy')
-        print(bl)
-        assert bl.name == 'shorty'
-        assert bl.long_name == 'longy'
+def test_init():
+    ba = BranchAttribute(name='C', long_name='area-magnitude scaling', value_options=[4.0])
+    print(ba)
 
-    def test_connected(self):
-        bl = BranchLevel('shorty', 'longy')
-        b = Branch(value=True, weight=1.0)
+    bao = BranchAttributeValue.from_branch_attribute(ba, 4)
+    print(bao)
 
-        b.branch_level = bl
-        bl.branches.append(b)
+    b = Branch(values=[bao], weight=0.5, inversion_source='ABC')
+    print(b)
 
-        assert b.weight == 1.0
-        assert b.value is True
-        assert b in bl.branches
-        assert b.branch_level.name == "shorty"
-
-    def test_connected_better(self):
-        bl = BranchLevel('shorty', 'longy')
-        b = Branch(value=True, weight=1.0, branch_level=bl)
-        assert b in bl.branches
-        assert b.branch_level.name == "shorty"
+    f = FaultSystemLogicTree('Hik', 'Hikurangi', [b])
+    print(f)
+    assert f.branches[0].values[0].value == 4
 
 
-class TestBranch:
-    def test_boolean_value(self):
-        b = Branch(value=True, weight=1.0)
-        print(b)
-        assert b.weight == 1.0
-        assert b.value is True
+def test_fslt_example():
+    # define the branch attributes for our FaultSystemLogicTree
+    C = BranchAttributeValue.all_from_branch_attribute(
+        BranchAttribute(name='C', long_name='area-magnitude scaling', value_options=[4])
+    )
+    s = BranchAttributeValue.all_from_branch_attribute(
+        BranchAttribute(name='s', long_name='moment rate scaling', value_options=[0.5, 1.0])
+    )
+    bN = BranchAttributeValue.all_from_branch_attribute(
+        BranchAttribute(name='bN', long_name='bN pair', value_options=[(0.87, 25), (0.95, 19.2)])
+    )
+    dm = BranchAttributeValue.all_from_branch_attribute(
+        BranchAttribute(name='dm', long_name='deformation model', value_options=['Geodetic', 'Geologic'])
+    )
 
-    def test_float_value(self):
-        b = Branch(value=1.0, weight=1.0)
-        print(b)
-        assert b.weight == 1.0
-        assert b.value == 1.0
+    fslt = FaultSystemLogicTree('Cru', 'Crustal')
+    for (a, b, c, d) in itertools.product(C, s, bN, dm):
+        fslt.branches.append(Branch(values=[a, b, c, d], weight=0.125, inversion_source='ABC'))
 
-    def test_int_value(self):
-        b = Branch(value=1, weight=1.0)
-        print(b)
-        assert b.weight == 1.0
-        assert b.value == 1
+    print(fslt)
+    assert fslt.branches[-1].values[0].name == 'C'
+    assert fslt.branches[-1].values[0].long_name == 'area-magnitude scaling'
+    assert fslt.branches[-1].values[0].value == 4
+    assert fslt.branches[-1].values[1].value == 1.0
+    assert fslt.branches[-1].values[2].value == (0.95, 19.2)
+    assert fslt.branches[-1].values[3].value == 'Geologic'
 
-    def test_str_value(self):
-        b = Branch(value="1", weight=1.0)
-        print(b)
-        assert b.weight == 1.0
-        assert b.value == "1"
-
-    def test_unconnected(self):
-        b = Branch("ABC", 2.0)
-        assert b.value == "ABC"
-        assert b.branch_level is None
-
-
-# class TestLeaf:
-#     def test_init(self):
-
-#         leaf = LogicTreeLeaf(inversion_source="X")
-#         assert leaf.name == ""
-#         assert leaf.inversion_source == "X"
-#         assert leaf.distributed_source == ""
-
-#     def test_connected(self):
-#         bl = BranchLevel('shorty', 'longy')
-#         b = Branch(value=True, weight=1.0, branch_level=bl)
-#         leaf = LogicTreeLeaf(branch=b, inversion_source="X")
-
-#         # b.branch_level = bl
-#         # bl.branches.append(b)
-#         # leaf.branch = b
-#         # leaf.inversion_source = "X"
-#         leaf.distributed_source = "Y"
-
-#         assert b.weight == 1.0
-#         assert b.value is True
-#         assert b in bl.branches
-#         assert b.branch_level.name == "shorty"
-#         assert leaf.branch.branch_level.name == 'shorty'
-#         assert leaf.name == "shorty"
-#         assert leaf.inversion_source == "X"
+    assert fslt.validate_weights()

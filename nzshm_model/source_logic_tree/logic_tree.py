@@ -5,7 +5,31 @@ Classes to define logic tree structures
 """
 
 from dataclasses import dataclass, field
-from typing import List, Union
+from typing import List, Tuple, Union
+
+
+@dataclass
+class BranchAttribute:
+    name: str
+    long_name: str
+    value_options: Union[List[int], List[str], List[bool], List[Tuple[float, float]]]
+
+
+@dataclass
+class BranchAttributeValue(BranchAttribute):
+    value: Union[int, str, bool, Tuple[float, float]]
+
+    @staticmethod
+    def from_branch_attribute(ba: BranchAttribute, value):
+        return BranchAttributeValue(ba.name, ba.long_name, ba.value_options, value)
+
+    @staticmethod
+    def all_from_branch_attribute(ba: BranchAttribute):
+        for opt in ba.value_options:
+            yield BranchAttributeValue(ba.name, ba.long_name, ba.value_options, opt)
+
+    def __repr__(self):
+        return f"{self.name}{self.value}"
 
 
 @dataclass
@@ -14,42 +38,23 @@ class Branch:
     Branch is a graph 'edge` connecting two nodes)
     """
 
-    value: Union[int, float, bool, str]  # value of the Branch
-    weight: float  # weight of the branch
-    branch_level: Union[None, 'BranchLevel'] = field(default=None)
-    # leaf: Union[None, 'LogicTreeLeaf'] = field(init=False, default=None)
-
-    def __post_init__(self):
-        if self.branch_level:
-            self.branch_level.branches.append(self)
+    values: List[BranchAttributeValue]
+    weight: float = 1.0
+    inversion_source: str = ""
+    distributed_source: str = ""
 
 
 @dataclass
-class BranchLevel:
-    """
-    BranchLevel is contains common LTB attributes and a list of the Branches
-    """
-
-    name: str
+class FaultSystemLogicTree:
+    short_name: str
     long_name: str
-    branches: List['Branch'] = field(init=False, default_factory=list)
+    branches: List['Branch'] = field(default_factory=list)
 
-
-# @dataclass
-# class LogicTreeLeaf:
-#     """
-#     Leaf connects a Branch to external representations
-#     """
-
-#     branch: Union[None, 'Branch'] = None
-#     inversion_source: str = ""
-#     distributed_source: str = ""
-
-#     @property
-#     def name(self) -> str:
-#         if self.branch and self.branch.branch_level:
-#             return self.branch.branch_level.name
-#         return ""
+    def validate_weights(self) -> bool:
+        weight = 0.0
+        for b in self.branches:
+            weight += b.weight
+        return weight == 1.0
 
 
 class SourceLogicTreeLeaf:
@@ -63,24 +68,4 @@ class SourceLogicTreeLeaf:
     float: weight
     str: nrml_id_inv
     str: nrml_id_bg
-    """
-
-
-class SourceLogicTreeCorrelation:
-    """
-    List[SourceLogicTreeBranch]: branch_sets
-    """
-
-
-class FaultSystemLogicTree:
-    """
-    List[BranchLevel]: branch_levels
-    """
-
-
-class SourceLogicTree:
-    """
-    List[SourceLogicTreeCorrelation]: correlations
-    List[FaultSystemLogicTree]:
-    str: weight_master (SourceLogicTreeBranch.fault_system to use for weighting when logic trees are correlated)
     """
