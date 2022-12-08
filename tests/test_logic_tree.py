@@ -1,6 +1,6 @@
 #! python test_logic_tree.py
 
-from nzshm_model.source_logic_tree.logic_tree_new import (
+from nzshm_model.source_logic_tree.logic_tree import (
     BranchAttribute,
     BranchAttributeValue,
     Branch,
