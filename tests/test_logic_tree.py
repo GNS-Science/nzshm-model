@@ -5,6 +5,7 @@ from nzshm_model.source_logic_tree.logic_tree import (
     BranchAttributeValue,
     Branch,
     FaultSystemLogicTree,
+    SourceLogicTree,
 )
 import itertools
 
@@ -38,7 +39,7 @@ def test_init():
     assert f.branches[0].values[0].value == 4
 
 
-def test_fslt_example():
+def build_crustal_branches():
     # define the branch attributes for our FaultSystemLogicTree
     C = BranchAttributeValue.all_from_branch_attribute(
         BranchAttribute(name='C', long_name='area-magnitude scaling', value_options=[4])
@@ -53,10 +54,14 @@ def test_fslt_example():
         BranchAttribute(name='dm', long_name='deformation model', value_options=['Geodetic', 'Geologic'])
     )
 
-    fslt = FaultSystemLogicTree('Cru', 'Crustal')
+    crustal_branches = FaultSystemLogicTree('Cru', 'Crustal')
     for (a, b, c, d) in itertools.product(C, s, bN, dm):
-        fslt.branches.append(Branch(values=[a, b, c, d], weight=0.125, inversion_source='ABC'))
+        crustal_branches.branches.append(Branch(values=[a, b, c, d], weight=0.125, inversion_source='ABC'))
+    return crustal_branches
 
+
+def test_fslt_example():
+    fslt = build_crustal_branches()
     print(fslt)
     assert fslt.branches[-1].values[0].name == 'C'
     assert fslt.branches[-1].values[0].long_name == 'area-magnitude scaling'
@@ -67,3 +72,9 @@ def test_fslt_example():
     assert fslt.branches[-1].values[3].value == 'Geologic'
 
     assert fslt.validate_weights()
+
+
+def test_full_slt():
+    slt = SourceLogicTree(fault_system_branches=[build_crustal_branches()])
+    print(slt)
+    assert slt.fault_system_branches[0].branches[-1].values[0].name == 'C'

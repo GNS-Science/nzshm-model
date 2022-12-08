@@ -51,3 +51,24 @@ class FaultSystemLogicTree:
         for b in self.branches:
             weight += b.weight
         return weight == 1.0
+
+
+class SourceLogicTreeCorrelation:
+    """
+    List[SourceLogicTreeBranch]: branch_sets
+    """
+
+    pass
+
+
+@dataclass
+class SourceLogicTree:
+    """
+    List[SourceLogicTreeCorrelation]: correlations
+    List[FaultSystemLogicTree]:
+    str: weight_master (SourceLogicTreeBranch.fault_system to use for weighting when logic trees are correlated)
+    """
+
+    fault_system_branches: List[FaultSystemLogicTree] = field(default_factory=list)
+    correlations: List[SourceLogicTreeCorrelation] = field(default_factory=list)
+    version: str = ""

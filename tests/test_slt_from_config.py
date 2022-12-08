@@ -4,7 +4,7 @@ from nzshm_model.source_logic_tree.slt_config import (
     get_config_group,
     get_config_group_tag_permutations,
     decompose_subduction_tag,
-    decompose_crustal_tag
+    decompose_crustal_tag,
 )
 from nzshm_model.source_logic_tree.logic_tree import (
     Branch,
@@ -88,4 +88,3 @@ class TestStructure:
         assert fslt.branches[-1].values[1].value == (0.902, 4.6)
         assert fslt.branches[-1].values[2].value == 4.0
         assert fslt.branches[-1].values[3].value == 1.72
-        # assert 0
