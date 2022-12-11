@@ -6,11 +6,11 @@ Functions for converting SLT config .py files as used in Runzi and THP etc into 
 
 import importlib.util
 import sys
-from typing import Dict, Generator, Iterable, Union
 from pathlib import Path
+from typing import Dict, Generator, Iterable, Union
 
-from nzshm_model.source_logic_tree.logic_tree import BranchAttributeValue
-from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree, FaultSystemLogicTree, Branch
+from nzshm_model.source_logic_tree.logic_tree import Branch, BranchAttributeValue, FaultSystemLogicTree, SourceLogicTree
+
 
 def get_config_groups(logic_tree_permutations) -> Generator:
     for permutation in logic_tree_permutations[0][0]['permute']:
@@ -90,7 +90,6 @@ def decompose_crustal_tag(tag) -> Generator:
             yield other
 
 
-
 def from_config(config_path):
     """
     Build an SLT model from a config file, making some assumptions based on config conventions.
@@ -120,4 +119,6 @@ def from_config(config_path):
             )
         )
 
-    return fslt
+    slt = SourceLogicTree(fault_system_branches=[fslt])
+
+    return slt
