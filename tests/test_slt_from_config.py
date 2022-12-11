@@ -1,14 +1,11 @@
 #! test_module_import
+from nzshm_model.source_logic_tree.logic_tree import Branch, FaultSystemLogicTree
 from nzshm_model.source_logic_tree.slt_config import (
-    get_config_groups,
+    decompose_crustal_tag,
+    decompose_subduction_tag,
     get_config_group,
     get_config_group_tag_permutations,
-    decompose_subduction_tag,
-    decompose_crustal_tag,
-)
-from nzshm_model.source_logic_tree.logic_tree import (
-    Branch,
-    FaultSystemLogicTree,
+    get_config_groups,
 )
 
 
@@ -17,10 +14,10 @@ class TestStructure:
         import nzshm_model
 
         self.model = nzshm_model
-        self.model_version = self.model.get_model_version(self.model, 'NSHM_1.0.0')
+        self.model_version = self.model.get_model_version('NSHM_1.0.0')
 
     def test_slt_groups_v1_0_0(self):
-        v1_0_0 = self.model.get_model_version(self.model, 'NSHM_1.0.0')
+        v1_0_0 = self.model.get_model_version('NSHM_1.0.0')
 
         groups = list(get_config_groups(v1_0_0['model'].slt_config.logic_tree_permutations))
         for slt in groups:
