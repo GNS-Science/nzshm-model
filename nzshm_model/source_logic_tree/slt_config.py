@@ -1,9 +1,16 @@
 #! python slt_config.py
 
+"""
+Functions for converting SLT config .py files as used in Runzi and THP etc into the standardised nzshm-model form.
+"""
+
+import importlib.util
+import sys
 from typing import Dict, Generator, Iterable, Union
+from pathlib import Path
 
 from nzshm_model.source_logic_tree.logic_tree import BranchAttributeValue
-
+from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree, FaultSystemLogicTree, Branch
 
 def get_config_groups(logic_tree_permutations) -> Generator:
     for permutation in logic_tree_permutations[0][0]['permute']:
@@ -81,3 +88,36 @@ def decompose_crustal_tag(tag) -> Generator:
         other = common_tags(itm)
         if other:
             yield other
+
+
+
+def from_config(config_path):
+    """
+    Build an SLT model from a config file, making some assumptions based on config conventions.
+    """
+    file_path = Path(config_path)
+    module_name = "model"
+
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+
+    # TODO move this into core module
+    # print(module.logic_tree_permutations)
+    group_key = 'PUY'
+    group = get_config_group(module.logic_tree_permutations, group_key)
+
+    fslt = FaultSystemLogicTree('PUY', 'Puysegur')
+
+    for member in group['members']:
+        fslt.branches.append(
+            Branch(
+                values=list(decompose_subduction_tag(member['tag'])),
+                weight=member['weight'],
+                inversion_source=member['inv_id'],
+                distributed_source=member['bg_id'],
+            )
+        )
+
+    return fslt
