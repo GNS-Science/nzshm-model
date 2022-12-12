@@ -1,8 +1,11 @@
 #! test_module_import
+from pathlib import Path
+
 from nzshm_model.source_logic_tree.logic_tree import Branch, FaultSystemLogicTree
 from nzshm_model.source_logic_tree.slt_config import (
     decompose_crustal_tag,
     decompose_subduction_tag,
+    from_config,
     get_config_group,
     get_config_group_tag_permutations,
     get_config_groups,
@@ -84,3 +87,39 @@ class TestStructure:
         assert fslt.branches[-1].values[1].value == (0.902, 4.6)
         assert fslt.branches[-1].values[2].value == 4.0
         assert fslt.branches[-1].values[3].value == 1.72
+
+
+class TestFromConfig:
+    def test_slt_v8(self):
+        config = Path(__file__).parent.parent / 'nzshm_model' / 'source_logic_tree' / 'SLT_v8_gmm_v2_final.py'
+        slt = from_config(config)
+        print(slt)
+        assert slt.fault_system_branches[0].branches[-1].values[0].name == 'dm'
+
+
+class TestDecomposeTags:
+    def test_large_SLT_example_A_crustal(self):
+        decomp = list(decompose_crustal_tag("Cru_geol, b0.849, C4.1, s0.53"))
+        print(decomp[0].value)
+
+        assert decomp[0].name == 'dm'
+        assert decomp[0].value == 'geologic'
+        assert decomp[1].name == 'b'
+        assert decomp[1].value == 0.849
+        assert decomp[2].name == 'C'
+        assert decomp[2].value == 4.1
+        assert decomp[3].name == 's'
+        assert decomp[3].value == 0.53
+
+    def test_large_SLT_V8_crustal(self):
+        decomp = list(decompose_crustal_tag("geodetic, TI, N2.7, b0.823 C4.2 s0.66"))
+        assert decomp[0].name == 'dm'
+        assert decomp[0].value == 'geodetic'
+        assert decomp[1].name == 'td'
+        assert decomp[1].value is False
+        assert decomp[2].name == 'bN'
+        assert decomp[2].value == (0.823, 2.7)
+        assert decomp[3].name == 'C'
+        assert decomp[3].value == 4.2
+        assert decomp[4].name == 's'
+        assert decomp[4].value == 0.66

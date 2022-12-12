@@ -1,17 +1,17 @@
 """Script to build an SLT dict/json for K-API from a source_logic_tree model."""
 
 # import argparse
-import click
+import dataclasses
+import json
 import logging
 import sys
-import json
-import dataclasses
 from pathlib import Path
+
+import click
 
 import nzshm_model
 from nzshm_model import get_model_version
-from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree, FaultSystemLogicTree, Branch
-
+from nzshm_model.source_logic_tree.logic_tree import Branch, FaultSystemLogicTree, SourceLogicTree
 from nzshm_model.source_logic_tree.slt_config import from_config
 
 log = logging.getLogger()
@@ -35,6 +35,7 @@ log.addHandler(file_handler)
 def slt():
     pass
 
+
 @slt.command(name='ls')
 @click.option('-l', '--long', is_flag=True)
 def cli_ls(long):
@@ -45,6 +46,7 @@ def cli_ls(long):
             click.echo(version['id'])
             continue
         click.echo(f"{version['id']} `{version['title']}`")
+
 
 @slt.command(name='model')
 @click.argument('model_id')
@@ -67,11 +69,6 @@ def cli_from_config(config_path, verbose):
     fslt = from_config(config_path)
     j = json.dumps(dataclasses.asdict(fslt), indent=4)
     click.echo(j)
-
-
-def process(args):
-    """Do the work."""
-    pass
 
 
 if __name__ == '__main__':

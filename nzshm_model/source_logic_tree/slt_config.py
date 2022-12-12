@@ -5,7 +5,6 @@ Functions for converting SLT config .py files as used in Runzi and THP etc into 
 """
 
 import importlib.util
-import sys
 from pathlib import Path
 from typing import Dict, Generator, Iterable, Union
 
@@ -19,6 +18,7 @@ def get_config_groups(logic_tree_permutations) -> Generator:
 
 def get_config_group(logic_tree_permutations: Iterable, group_tag: str) -> Union[Dict, None]:
     for group in get_config_groups(logic_tree_permutations):
+        # print(group["group"], group_tag)
         if group['group'].upper() == group_tag.upper():
             return group
     return None
@@ -32,13 +32,18 @@ def get_config_group_tag_permutations(logic_tree_permutations: Iterable, group_t
 
 
 def common_tags(itm) -> Union[BranchAttributeValue, None]:
-    if itm[0] == 'N':
-        _n, _b = itm.split('^')
-        return BranchAttributeValue(name='bN', long_name='bN pair', value=(float(_b[1:]), float(_n[1:])))
-    if itm[0] == 'C':
-        return BranchAttributeValue(name='C', long_name='area-magnitude scaling', value=float(itm[1:]))
-    if itm[0] == 's':
-        return BranchAttributeValue(name='s', long_name='moment rate scaling', value=float(itm[1:]))
+    try:
+        if itm[0] == 'N':
+            _n, _b = itm.split('^')
+            return BranchAttributeValue(name='bN', long_name='bN pair', value=(float(_b[1:]), float(_n[1:])))
+        if itm[0] == 'b':  # in some configs b is stand alone
+            return BranchAttributeValue(name='b', long_name='b-value', value=float(itm[1:]))
+        if itm[0] == 'C':
+            return BranchAttributeValue(name='C', long_name='area-magnitude scaling', value=float(itm[1:]))
+        if itm[0] == 's':
+            return BranchAttributeValue(name='s', long_name='moment rate scaling', value=float(itm[1:]))
+    except ValueError as err:
+        print(err)
     return None
 
 
@@ -65,15 +70,19 @@ def decompose_subduction_tag(tag) -> Generator:
 
 def decompose_crustal_tag(tag) -> Generator:
     """
-    "tag": "geodetic, TI, N2.7, b0.823 C4.2 s0.66",
+    Examples:
+     - "geodetic, TI, N2.7, b0.823 C4.2 s0.66"
+     - "Cru_geol, b0.849, C4.1, s0.53"
     """
-    tag = tag.replace(", b", "^b")
+    tag = tag.replace("Cru_geol", "geologic")
+    if ", N" in tag and ", b" in tag:
+        tag = tag.replace(", b", "^b")
     itms = tag.split(' ')
 
     for itm in itms:
         itm = itm.replace(',', '')  # remove commas
 
-        if "geo" == itm[:3]:
+        if "geo" in itm:
             yield BranchAttributeValue(
                 name='dm', long_name='deformation model', value_options=['geodetic', 'geologic'], value=itm
             )
@@ -90,35 +99,54 @@ def decompose_crustal_tag(tag) -> Generator:
             yield other
 
 
+def decompose_slab_tag(tag) -> Generator:
+    """used for SLAB"""
+    yield tag
+
+
 def from_config(config_path):
     """
-    Build an SLT model from a config file, making some assumptions based on config conventions.
+    Build an SLT model from a config file, making some assumptions based on NSHM config conventions.
     """
     file_path = Path(config_path)
     module_name = "model"
 
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
+    # sys.modules[module_name] = module
     spec.loader.exec_module(module)
 
-    # TODO move this into core module
-    # print(module.logic_tree_permutations)
-    group_key = 'PUY'
-    group = get_config_group(module.logic_tree_permutations, group_key)
+    def build_fslt(group_key, long_name):
 
-    fslt = FaultSystemLogicTree('PUY', 'Puysegur')
+        decompose_tag = None
+        if group_key in ['PUY', 'HIK']:
+            decompose_tag = decompose_subduction_tag
+        if group_key == 'CRU':
+            decompose_tag = decompose_crustal_tag
+        if group_key == 'SLAB':
+            decompose_tag = decompose_slab_tag
 
-    for member in group['members']:
-        fslt.branches.append(
-            Branch(
-                values=list(decompose_subduction_tag(member['tag'])),
-                weight=member['weight'],
-                inversion_source=member['inv_id'],
-                distributed_source=member['bg_id'],
-            )
-        )
+        group = get_config_group(module.logic_tree_permutations, group_key)
 
-    slt = SourceLogicTree(fault_system_branches=[fslt])
+        if group:
+            fslt = FaultSystemLogicTree(group_key, long_name)
+
+            for member in group['members']:
+                fslt.branches.append(
+                    Branch(
+                        values=list(decompose_tag(member['tag'])),
+                        weight=member['weight'],
+                        inversion_source=member['inv_id'],
+                        distributed_source=member['bg_id'],
+                    )
+                )
+            return fslt
+        return
+
+    fslts = [
+        build_fslt(*group)
+        for group in [("PUY", "Puysegur"), ("HIK", "Hikurangi-Kermadec"), ("CRU", "Crustal"), ("SLAB", "Intra-slab")]
+    ]
+    slt = SourceLogicTree(fault_system_branches=fslts)
 
     return slt
