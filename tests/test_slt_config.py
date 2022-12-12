@@ -96,6 +96,13 @@ class TestFromConfig:
         print(slt)
         assert slt.fault_system_branches[0].branches[-1].values[0].name == 'dm'
 
+    def test_large_SLT_example_A_crustal(self):
+        config = Path(__file__).parent / 'fixtures' / 'large_SLT_example_A.py'
+        slt = from_config(config)
+        print(slt)
+        assert slt.fault_system_branches[1].branches[-1].values[0].name == 'dm'
+        assert slt.fault_system_branches[1].branches[-1].values[0].value == 'TC'
+
 
 class TestDecomposeTags:
     def test_large_SLT_example_A_crustal(self):

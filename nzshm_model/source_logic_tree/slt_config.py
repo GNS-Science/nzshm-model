@@ -52,14 +52,22 @@ def decompose_subduction_tag(tag) -> Generator:
     "tag": "Hik TL, N16.5, b0.95, C4, s0.42",
     "tag": "Puy 0.7, N4.6, b0.902, C4, s0.28",
     """
-    tag = tag.replace(", b", "^b")
+    if ", N" in tag and ", b" in tag:
+        tag = tag.replace(", b", "^b")
     tag = tag.replace("Hik ", "Hik")
     tag = tag.replace("Puy ", "Puy")
     itms = tag.split(' ')
 
     for itm in itms:
         itm = itm.replace(',', '')  # remove commas
-        if itm[:3] in ["Hik", "Puy"]:
+
+        if itm == 'hiktlck':
+            yield BranchAttributeValue(name='dm', long_name='deformation model', value='TL')  # Trench Locked
+            continue
+        if itm == 'hiktcrp':
+            yield BranchAttributeValue(name='dm', long_name='deformation model', value='TC')  # Trench Creeping
+            continue
+        if itm[:3].upper() in ["HIK", "PUY"]:
             yield BranchAttributeValue(name='dm', long_name='deformation model', value=itm[3:])
             continue
 
