@@ -6,8 +6,10 @@ enrich SLT from TOSHI_API.
 """
 
 import base64
+import dataclasses
 import json
 import os
+from typing import Union
 
 import boto3
 from botocore.exceptions import ClientError
@@ -15,7 +17,8 @@ from nshm_toshi_client.toshi_client_base import ToshiClientBase
 
 API_URL = os.getenv('NZSHM22_TOSHI_API_URL', "http://127.0.0.1:5000/graphql")
 
-# TODO this shojld be define in an AWS helper library  - it's used everywhere
+
+# TODO this should be define in an AWS helper library  - it's used everywhere
 def get_secret(secret_name, region_name):
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -57,6 +60,12 @@ def get_secret(secret_name, region_name):
             return base64.b64decode(get_secret_value_response['SecretBinary'])
 
 
+@dataclasses.dataclass
+class InversionInfo:
+    typename: Union[str, None] = None
+    solution_id: Union[str, None] = None
+
+
 class ToshiApi(ToshiClientBase):
     def get_source_from_nrml(self, nrml_id):
         qry = '''
@@ -76,7 +85,14 @@ class ToshiApi(ToshiClientBase):
         # print(qry)
         input_variables = dict(nrml_id=nrml_id)
         executed = self.run_query(qry, input_variables)
-        return executed['node']
+        return (
+            InversionInfo(
+                typename=executed['node']['source_solution']['__typename'],
+                solution_id=executed['node']['source_solution']['id'],
+            )
+            if executed.get('node')
+            else InversionInfo()
+        )
 
 
 if 'TEST' in API_URL.upper():
@@ -89,14 +105,9 @@ headers = {"x-api-key": API_KEY}
 toshi_api = ToshiApi(API_URL, None, with_schema_validation=False, headers=headers)
 
 
-def resolve_source_id_nrml(nrml_id: str):
-
-    source = toshi_api.get_source_from_nrml(nrml_id)
-    return source
-
-
 if __name__ == "__main__":
 
+    import dataclasses
     from pathlib import Path
 
     from nzshm_model.source_logic_tree.slt_config import from_config
@@ -105,6 +116,12 @@ if __name__ == "__main__":
     slt = from_config(config_path)
 
     for fslt in slt.fault_system_branches:
-        for branch in fslt.branches:
-            print(branch)
-            print(resolve_source_id_nrml(branch.inversion_source))
+        for branch in fslt.branches[-2:]:
+            nrml_info = toshi_api.get_source_from_nrml(branch.inversion_nrml_id)
+            print(nrml_info)
+            branch.inversion_solution_id = nrml_info.solution_id
+            branch.inversion_solution_type = nrml_info.typename
+            print('.', end='', flush=True)
+
+    j = json.dumps(dataclasses.asdict(slt), indent=4)
+    print(j)

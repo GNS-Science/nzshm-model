@@ -12,7 +12,7 @@ import click
 import nzshm_model
 from nzshm_model import get_model_version
 from nzshm_model.source_logic_tree.logic_tree import Branch, FaultSystemLogicTree, SourceLogicTree
-from nzshm_model.source_logic_tree.slt_config import from_config
+from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
@@ -41,33 +41,38 @@ def slt():
 def cli_ls(long):
     """List the available model versions."""
 
-    for version in nzshm_model.versions:
+    for version in nzshm_model.versions.keys():
         if not long:
-            click.echo(version['id'])
+            click.echo(version)
             continue
-        click.echo(f"{version['id']} `{version['title']}`")
+        model = nzshm_model.get_model_version(version)
+        click.echo(f"{model.version} `{model.title}`")
 
 
 @slt.command(name='model')
 @click.argument('model_id')
-@click.option('-v', '--verbose', is_flag=True)
-def cli_model(model_id, verbose):
+@click.option('-B', '--build', is_flag=True)
+def cli_model(model_id, build):
     """Get a model by MODEL_ID."""
-    model = get_model_version(model_id)['model']
-    slt = SourceLogicTree(fault_system_branches=[model.build_crustal_branches()])
-
+    model = get_model_version(model_id)
+    slt = SourceLogicTree(fault_system_branches=[model.build_crustal_branches()]) if build else model.source_logic_tree
     j = json.dumps(dataclasses.asdict(slt), indent=4)
     click.echo(j)
 
 
 @slt.command(name='from_config')
 @click.argument('config_path')
+@click.argument('version')
+@click.argument('title')
+@click.option('-R', '--resolve_toshi_ids', is_flag=True)
 @click.option('-v', '--verbose', is_flag=True)
-def cli_from_config(config_path, verbose):
-    """Convert a python config file at CONFIG_PATH to an SLT model."""
+def cli_from_config(config_path, version, title, resolve_toshi_ids, verbose):
+    """Convert a python config file at CONFIG_PATH to an SLT model. Both VERSION and TITLE are required."""
 
-    fslt = from_config(config_path)
-    j = json.dumps(dataclasses.asdict(fslt), indent=4)
+    slt = from_config(config_path, version, title)
+    if resolve_toshi_ids:
+        slt = resolve_toshi_source_ids(slt)  # get new slt with toshi_ids
+    j = json.dumps(dataclasses.asdict(slt), indent=4)
     click.echo(j)
 
 

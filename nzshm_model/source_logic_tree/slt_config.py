@@ -4,11 +4,14 @@
 Functions for converting SLT config .py files as used in Runzi and THP etc into the standardised nzshm-model form.
 """
 
+import copy
 import importlib.util
 from pathlib import Path
 from typing import Dict, Generator, Iterable, Union
 
 from nzshm_model.source_logic_tree.logic_tree import Branch, BranchAttributeValue, FaultSystemLogicTree, SourceLogicTree
+
+from .toshi_api import toshi_api
 
 
 def get_config_groups(logic_tree_permutations) -> Generator:
@@ -107,12 +110,15 @@ def decompose_crustal_tag(tag) -> Generator:
             yield other
 
 
-def decompose_slab_tag(tag) -> Generator:
-    """used for SLAB"""
-    yield tag
+def decompose_slab_tag(tag) -> Iterable:
+    """used for SLAB, does nothing"""
+    return []
+    # yield BranchAttributeValue(
+    #             name='dm', long_name='deformation model', value_options=['geodetic', 'geologic'], value=itm
+    #         )
 
 
-def from_config(config_path):
+def from_config(config_path: Path, version: str = "", title: str = "") -> SourceLogicTree:
     """
     Build an SLT model from a config file, making some assumptions based on NSHM config conventions.
     """
@@ -120,9 +126,9 @@ def from_config(config_path):
     module_name = "model"
 
     spec = importlib.util.spec_from_file_location(module_name, file_path)
-    module = importlib.util.module_from_spec(spec)
+    module = importlib.util.module_from_spec(spec)  # type: ignore
     # sys.modules[module_name] = module
-    spec.loader.exec_module(module)
+    spec.loader.exec_module(module)  # type: ignore
 
     def build_fslt(group_key, long_name):
 
@@ -144,8 +150,8 @@ def from_config(config_path):
                     Branch(
                         values=list(decompose_tag(member['tag'])),
                         weight=member['weight'],
-                        inversion_source=member['inv_id'],
-                        distributed_source=member['bg_id'],
+                        inversion_nrml_id=member['inv_id'],
+                        distributed_nrml_id=member['bg_id'],
                     )
                 )
             return fslt
@@ -155,6 +161,18 @@ def from_config(config_path):
         build_fslt(*group)
         for group in [("PUY", "Puysegur"), ("HIK", "Hikurangi-Kermadec"), ("CRU", "Crustal"), ("SLAB", "Intra-slab")]
     ]
-    slt = SourceLogicTree(fault_system_branches=fslts)
-
+    slt = SourceLogicTree(version=version, title=title, fault_system_branches=fslts)
     return slt
+
+
+def resolve_toshi_source_ids(slt: SourceLogicTree) -> SourceLogicTree:
+    new_slt = copy.deepcopy(slt)
+    for fslt in new_slt.fault_system_branches:
+        if fslt:  # fslt can be None
+            for branch in fslt.branches[-2:]:
+                nrml_info = toshi_api.get_source_from_nrml(branch.inversion_nrml_id)
+                # print(nrml_info)
+                branch.inversion_solution_id = nrml_info.solution_id
+                branch.inversion_solution_type = nrml_info.typename
+                # print('.', end='', flush=True)
+    return new_slt

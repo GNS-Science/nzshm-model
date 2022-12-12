@@ -33,7 +33,7 @@ def test_init():
     bao = BranchAttributeValue.from_branch_attribute(ba, 4)
     print(bao)
 
-    b = Branch(values=[bao], weight=0.5, inversion_source='ABC')
+    b = Branch(values=[bao], weight=0.5, inversion_nrml_id='ABC')
     print(b)
 
     f = FaultSystemLogicTree('Hik', 'Hikurangi', [b])
@@ -42,7 +42,7 @@ def test_init():
 
 
 def test_fslt_example():
-    model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')['model']
+    model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')
     fslt = model_v1_0_0.build_crustal_branches()
 
     print(fslt)
@@ -58,15 +58,15 @@ def test_fslt_example():
 
 
 def test_full_slt():
-    model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')['model']
-    slt = SourceLogicTree(fault_system_branches=[model_v1_0_0.build_crustal_branches()])
+    model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')
+    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_branches=[model_v1_0_0.build_crustal_branches()])
     print(slt)
     assert slt.fault_system_branches[0].branches[-1].values[0].name == 'C'
 
 
 def test_serialise_slt():
-    model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')['model']
-    slt = SourceLogicTree(fault_system_branches=[model_v1_0_0.build_crustal_branches()])
+    model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')
+    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_branches=[model_v1_0_0.build_crustal_branches()])
 
     slt_dict = dataclasses.asdict(slt)
     print(slt_dict)

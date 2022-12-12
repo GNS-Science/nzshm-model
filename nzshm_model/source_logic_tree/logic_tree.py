@@ -5,7 +5,7 @@ Classes to define logic tree structures
 """
 
 from dataclasses import dataclass, field
-from typing import Any, List
+from typing import Any, List, Union
 
 
 @dataclass
@@ -36,8 +36,10 @@ class BranchAttributeValue(BranchAttribute):
 class Branch:
     values: List[BranchAttributeValue]
     weight: float = 1.0
-    inversion_source: str = ""
-    distributed_source: str = ""
+    inversion_nrml_id: Union[str, None] = ""
+    distributed_nrml_id: Union[str, None] = ""
+    inversion_solution_id: Union[str, None] = ""
+    inversion_solution_type: Union[str, None] = ""
 
 
 @dataclass
@@ -63,12 +65,9 @@ class SourceLogicTreeCorrelation:
 
 @dataclass
 class SourceLogicTree:
-    """
-    List[SourceLogicTreeCorrelation]: correlations
-    List[FaultSystemLogicTree]:
-    str: weight_master (SourceLogicTreeBranch.fault_system to use for weighting when logic trees are correlated)
-    """
-
+    version: str
+    title: str
     fault_system_branches: List[FaultSystemLogicTree] = field(default_factory=list)
-    correlations: List[SourceLogicTreeCorrelation] = field(default_factory=list)
-    version: str = ""
+    correlations: List[SourceLogicTreeCorrelation] = field(
+        default_factory=list
+    )  # to use for weighting when logic trees are correlated
