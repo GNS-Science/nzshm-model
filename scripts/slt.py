@@ -1,6 +1,7 @@
 """Script to build an SLT dict/json for K-API from a source_logic_tree model."""
 
 # import argparse
+import asyncio
 import dataclasses
 import json
 import logging
@@ -46,7 +47,7 @@ def cli_ls(long):
             click.echo(version)
             continue
         model = nzshm_model.get_model_version(version)
-        click.echo(f"{model.version} `{model.title}`")
+        click.echo(f"{model.version} `{model.source_logic_tree().title}`")
 
 
 @slt.command(name='model')
@@ -55,7 +56,11 @@ def cli_ls(long):
 def cli_model(model_id, build):
     """Get a model by MODEL_ID."""
     model = get_model_version(model_id)
-    slt = SourceLogicTree(fault_system_branches=[model.build_crustal_branches()]) if build else model.source_logic_tree
+    slt = (
+        SourceLogicTree(version="0", title="", fault_system_branches=[model.build_crustal_branches()])
+        if build
+        else model.source_logic_tree()
+    )
     j = json.dumps(dataclasses.asdict(slt), indent=4)
     click.echo(j)
 

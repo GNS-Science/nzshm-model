@@ -94,15 +94,11 @@ def decompose_crustal_tag(tag) -> Generator:
         itm = itm.replace(',', '')  # remove commas
 
         if "geo" in itm:
-            yield BranchAttributeValue(
-                name='dm', long_name='deformation model', value_options=['geodetic', 'geologic'], value=itm
-            )
+            yield BranchAttributeValue(name='dm', long_name='deformation model', value=itm)
             continue
 
         if itm in 'TI, TD':
-            yield BranchAttributeValue(
-                name='td', long_name='time dependent', value_options=[True, False], value=(itm == "TD")
-            )
+            yield BranchAttributeValue(name='td', long_name='time dependent', value=(itm == "TD"))
             continue
 
         other = common_tags(itm)
@@ -150,7 +146,7 @@ def from_config(config_path: Path, version: str = "", title: str = "") -> Source
                     Branch(
                         values=list(decompose_tag(member['tag'])),
                         weight=member['weight'],
-                        inversion_nrml_id=member['inv_id'],
+                        onfault_nrml_id=member['inv_id'],
                         distributed_nrml_id=member['bg_id'],
                     )
                 )
@@ -169,8 +165,8 @@ def resolve_toshi_source_ids(slt: SourceLogicTree) -> SourceLogicTree:
     new_slt = copy.deepcopy(slt)
     for fslt in new_slt.fault_system_branches:
         if fslt:  # fslt can be None
-            for branch in fslt.branches[-2:]:
-                nrml_info = toshi_api.get_source_from_nrml(branch.inversion_nrml_id)
+            for branch in fslt.branches:
+                nrml_info = toshi_api.get_source_from_nrml(branch.onfault_nrml_id)
                 # print(nrml_info)
                 branch.inversion_solution_id = nrml_info.solution_id
                 branch.inversion_solution_type = nrml_info.typename

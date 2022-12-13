@@ -5,7 +5,7 @@ import dataclasses
 import nzshm_model
 from nzshm_model.source_logic_tree.logic_tree import (
     Branch,
-    BranchAttribute,
+    BranchAttributeSpec,
     BranchAttributeValue,
     FaultSystemLogicTree,
     SourceLogicTree,
@@ -13,9 +13,7 @@ from nzshm_model.source_logic_tree.logic_tree import (
 
 
 def test_direct_bav():
-    bav = BranchAttributeValue(
-        name='dm', long_name='deformation model', value_options=['geodetic', 'Geologic'], value="geodetic"
-    )
+    bav = BranchAttributeValue(name='dm', long_name='deformation model', value="geodetic")
     print(bav)
     assert bav.value == "geodetic"
 
@@ -27,13 +25,13 @@ def test_direct_bav_no_options():
 
 
 def test_init():
-    ba = BranchAttribute(name='C', long_name='area-magnitude scaling', value_options=[4.0])
+    ba = BranchAttributeSpec(name='C', long_name='area-magnitude scaling', value_options=[4.0])
     print(ba)
 
     bao = BranchAttributeValue.from_branch_attribute(ba, 4)
     print(bao)
 
-    b = Branch(values=[bao], weight=0.5, inversion_nrml_id='ABC')
+    b = Branch(values=[bao], weight=0.5, onfault_nrml_id='ABC')
     print(b)
 
     f = FaultSystemLogicTree('Hik', 'Hikurangi', [b])

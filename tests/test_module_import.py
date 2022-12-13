@@ -13,10 +13,16 @@ class TestStructure:
         v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')
 
         assert v1_0_0.version == 'NSHM_1.0.0'
-        assert v1_0_0.source_logic_tree.version == 'NSHM_1.0.0'
-        assert v1_0_0.source_logic_tree.title == 'Initial version'
+
         assert v1_0_0.slt_config is not None
         assert v1_0_0.slt_config.logic_tree_permutations is not None
+
+        slt = v1_0_0.source_logic_tree()
+        assert slt.version == 'SLT_v8'
+        assert slt.title == ''
+
+        # loop = asyncio.get_event_loop()
+        # loop.run_until_complete(lazily())
 
     def test_get_model_version_unknown(self):
         unknown = nzshm_model.get_model_version('XXX')

@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     for fslt in slt.fault_system_branches:
         for branch in fslt.branches[-2:]:
-            nrml_info = toshi_api.get_source_from_nrml(branch.inversion_nrml_id)
+            nrml_info = toshi_api.get_source_from_nrml(branch.onfault_nrml_id)
             print(nrml_info)
             branch.inversion_solution_id = nrml_info.solution_id
             branch.inversion_solution_type = nrml_info.typename

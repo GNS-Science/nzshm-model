@@ -65,7 +65,7 @@ class TestStructure:
                 Branch(
                     values=list(decompose_subduction_tag(member['tag'])),
                     weight=member['weight'],
-                    inversion_nrml_id=member['inv_id'],
+                    onfault_nrml_id=member['inv_id'],
                     distributed_nrml_id=member['bg_id'],
                 )
             )
