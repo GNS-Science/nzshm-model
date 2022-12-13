@@ -5,14 +5,19 @@ Functions for converting SLT config .py files as used in Runzi and THP etc into 
 """
 
 import copy
+import logging
 import importlib.util
 from pathlib import Path
 from typing import Dict, Generator, Iterable, Union
 
 from nzshm_model.source_logic_tree.logic_tree import Branch, BranchAttributeValue, FaultSystemLogicTree, SourceLogicTree
 
-from .toshi_api import toshi_api
+log = logging.getLogger(__name__)
 
+try:
+    from .toshi_api import toshi_api
+except ModuleNotFoundError as err:
+    log.info("warning Toshi API module not available, maybe you want to install with nzshm-model[toshi]")
 
 def get_config_groups(logic_tree_permutations) -> Generator:
     for permutation in logic_tree_permutations[0][0]['permute']:

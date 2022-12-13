@@ -16,7 +16,7 @@ from nzshm_model.source_logic_tree.logic_tree import Branch, FaultSystemLogicTre
 from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids
 
 log = logging.getLogger()
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARN)
 logging.getLogger('nshm_toshi_client.toshi_client_base').setLevel(logging.INFO)
 logging.getLogger('urllib3').setLevel(logging.INFO)
 logging.getLogger('botocore').setLevel(logging.INFO)
@@ -25,7 +25,7 @@ logging.getLogger('gql.transport.requests').setLevel(logging.WARN)
 formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 screen_handler = logging.StreamHandler(stream=sys.stdout)
 screen_handler.setFormatter(formatter)
-file_handler = logging.FileHandler('thh.log')
+file_handler = logging.FileHandler('slt.log')
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(formatter)
 log.addHandler(screen_handler)
