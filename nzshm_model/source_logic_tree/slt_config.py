@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 try:
     from .toshi_api import toshi_api
 except ModuleNotFoundError as err:
-    log.info("warning Toshi API module not available, maybe you want to install with nzshm-model[toshi]")
+    log.info("warning Toshi API module dependency not available, maybe you want to install with nzshm-model[toshi]")
 
 def get_config_groups(logic_tree_permutations) -> Generator:
     for permutation in logic_tree_permutations[0][0]['permute']:
