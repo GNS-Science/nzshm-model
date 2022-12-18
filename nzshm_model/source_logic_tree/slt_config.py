@@ -5,8 +5,8 @@ Functions for converting SLT config .py files as used in Runzi and THP etc into 
 """
 
 import copy
-import logging
 import importlib.util
+import logging
 from pathlib import Path
 from typing import Dict, Generator, Iterable, Union
 
@@ -16,8 +16,9 @@ log = logging.getLogger(__name__)
 
 try:
     from .toshi_api import toshi_api
-except ModuleNotFoundError as err:
+except ModuleNotFoundError:
     log.info("warning Toshi API module dependency not available, maybe you want to install with nzshm-model[toshi]")
+
 
 def get_config_groups(logic_tree_permutations) -> Generator:
     for permutation in logic_tree_permutations[0][0]['permute']:
@@ -162,7 +163,9 @@ def from_config(config_path: Path, version: str = "", title: str = "") -> Source
         build_fslt(*group)
         for group in [("PUY", "Puysegur"), ("HIK", "Hikurangi-Kermadec"), ("CRU", "Crustal"), ("SLAB", "Intra-slab")]
     ]
-    slt = SourceLogicTree(version=version, title=title, fault_system_branches=fslts)
+    slt = SourceLogicTree(
+        version=version, title=title, fault_system_branches=list(filter(lambda x: x is not None, fslts))
+    )
     return slt
 
 

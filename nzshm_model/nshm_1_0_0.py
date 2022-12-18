@@ -1,6 +1,5 @@
 #! v1_0_0.py
 
-import asyncio
 import itertools
 import json
 from pathlib import Path
@@ -17,15 +16,13 @@ from nzshm_model.source_logic_tree.logic_tree import (
 )
 
 version = 'NSHM_1.0.0'
-json_spec = Path(__file__).parent / "source_logic_tree" / "SLT_v8.json"
+title = "Initial version"
 
-
-async def load_source_logic_tree():
-    return dacite.from_dict(data_class=SourceLogicTree, data=json.load(open(json_spec)))
+json_slt = Path(__file__).parent / "source_logic_tree" / "SLT_v8.json"
 
 
 def source_logic_tree():
-    return asyncio.run(load_source_logic_tree())
+    return dacite.from_dict(data_class=SourceLogicTree, data=json.load(open(json_slt)))
 
 
 def build_crustal_branches():

@@ -1,18 +1,15 @@
 """Script to build an SLT dict/json for K-API from a source_logic_tree model."""
 
-# import argparse
-import asyncio
 import dataclasses
 import json
 import logging
 import sys
-from pathlib import Path
 
 import click
 
 import nzshm_model
 from nzshm_model import get_model_version
-from nzshm_model.source_logic_tree.logic_tree import Branch, FaultSystemLogicTree, SourceLogicTree
+from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree
 from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids
 
 log = logging.getLogger()
@@ -78,6 +75,21 @@ def cli_from_config(config_path, version, title, resolve_toshi_ids, verbose):
     if resolve_toshi_ids:
         slt = resolve_toshi_source_ids(slt)  # get new slt with toshi_ids
     j = json.dumps(dataclasses.asdict(slt), indent=4)
+    click.echo(j)
+
+
+@slt.command(name='spec')
+@click.argument('model_id')
+@click.option('-B', '--build', is_flag=True)
+def cli_model_spec(model_id, build):
+    """Get a model specificatio by MODEL_ID."""
+    model = get_model_version(model_id)
+    slt = (
+        SourceLogicTree(version="0", title="", fault_system_branches=[model.build_crustal_branches()])
+        if build
+        else model.source_logic_tree()
+    )
+    j = json.dumps(dataclasses.asdict(slt.derive_spec()), indent=4)
     click.echo(j)
 
 

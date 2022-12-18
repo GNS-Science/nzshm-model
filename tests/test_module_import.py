@@ -21,9 +21,6 @@ class TestStructure:
         assert slt.version == 'SLT_v8'
         assert slt.title == ''
 
-        # loop = asyncio.get_event_loop()
-        # loop.run_until_complete(lazily())
-
     def test_get_model_version_unknown(self):
         unknown = nzshm_model.get_model_version('XXX')
         assert unknown is None
