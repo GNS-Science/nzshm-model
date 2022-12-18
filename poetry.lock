@@ -930,7 +930,7 @@ toshi = ["boto3", "nshm-toshi-client"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "5f9e5372da3bda5b9ef016ca7da1dcb18819d908637031d14039a4cf6bf30281"
+content-hash = "2aeafdaced8344dd40b108ebd8aa38e9c4266f19a08293b23a932a07571860f9"
 
 [metadata.files]
 aiohttp = [
