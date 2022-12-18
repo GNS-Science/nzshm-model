@@ -1,11 +1,12 @@
 # Changelog
 
-## [0.1.0] - 2022-12-19
+## [0.1.1] - 2022-12-19
 
 ## Changed
  - refactored project structure for packaging
  - scripts moved to /scripts package
  - changelog format for bump2version
+ - remove docs build
 
 ## Added
  - poetry with: pytest, coverage, tox, flake8, mypy, black, isort, bump2version
