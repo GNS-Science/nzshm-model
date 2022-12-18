@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.0] - 2022-12-12
+## [0.1.0] - 2022-12-19
 
 ## Changed
  - refactored project structure for packaging
@@ -12,5 +12,5 @@
  - github actions for CI/CD
  - source_logic_tree feature
 
-## [0.0.0] - 2022-10-04
+## [0.0.1] - 2022-10-04
 Initial release of the NZ NSHM 2022 revision
