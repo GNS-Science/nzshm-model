@@ -54,7 +54,7 @@ def cli_model(model_id, build):
     """Get a model by MODEL_ID."""
     model = get_model_version(model_id)
     slt = (
-        SourceLogicTree(version="0", title="", fault_system_branches=[model.build_crustal_branches()])
+        SourceLogicTree(version="0", title="", fault_system_lts=[model.build_crustal_branches()])
         if build
         else model.source_logic_tree()
     )
@@ -85,7 +85,7 @@ def cli_model_spec(model_id, build):
     """Get a model specificatio by MODEL_ID."""
     model = get_model_version(model_id)
     slt = (
-        SourceLogicTree(version="0", title="", fault_system_branches=[model.build_crustal_branches()])
+        SourceLogicTree(version="0", title="", fault_system_lts=[model.build_crustal_branches()])
         if build
         else model.source_logic_tree()
     )

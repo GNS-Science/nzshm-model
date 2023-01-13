@@ -164,14 +164,14 @@ def from_config(config_path: Path, version: str = "", title: str = "") -> Source
         for group in [("PUY", "Puysegur"), ("HIK", "Hikurangi-Kermadec"), ("CRU", "Crustal"), ("SLAB", "Intra-slab")]
     ]
     slt = SourceLogicTree(
-        version=version, title=title, fault_system_branches=list(filter(lambda x: x is not None, fslts))
+        version=version, title=title, fault_system_lts=list(filter(lambda x: x is not None, fslts))
     )
     return slt
 
 
 def resolve_toshi_source_ids(slt: SourceLogicTree) -> SourceLogicTree:
     new_slt = copy.deepcopy(slt)
-    for fslt in new_slt.fault_system_branches:
+    for fslt in new_slt.fault_system_lts:
         if fslt:  # fslt can be None
             for branch in fslt.branches:
                 nrml_info = toshi_api.get_source_from_nrml(branch.onfault_nrml_id)

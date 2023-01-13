@@ -4,9 +4,12 @@
 Classes to define logic tree structures
 """
 
+from math import isclose
+from operator import mul, add
+from functools import reduce
 from dataclasses import dataclass, field
 from typing import Any, Dict, Generator, List, Union
-
+from itertools import product
 
 @dataclass
 class BranchAttributeSpec:
@@ -120,20 +123,51 @@ class SourceLogicTreeCorrelation:
 
 @dataclass
 class SourceLogicTreeSpec:
-    fault_system_branches: List[FaultSystemLogicTreeSpec] = field(default_factory=list)
+    fault_system_lts: List[FaultSystemLogicTreeSpec] = field(default_factory=list)
 
 
 @dataclass
 class SourceLogicTree:
     version: str
     title: str
-    fault_system_branches: List[FaultSystemLogicTree] = field(default_factory=list)
+    fault_system_lts: List[FaultSystemLogicTree] = field(default_factory=list)
     correlations: List[SourceLogicTreeCorrelation] = field(
         default_factory=list
-    )  # to use for weighting when logic trees are correlated
+    )  # to use for selecting branches and re-weighting when logic trees are correlated
 
     def derive_spec(self) -> SourceLogicTreeSpec:
         slt_spec = SourceLogicTreeSpec()
-        for fslt in self.fault_system_branches:
-            slt_spec.fault_system_branches.append(FaultSystemLogicTree.derive_spec(fslt))
+        for fslt in self.fault_system_lts:
+            slt_spec.fault_system_lts.append(FaultSystemLogicTree.derive_spec(fslt))
         return slt_spec
+
+
+@dataclass
+class CompositeBranch:
+    branches: List[Branch]
+    weight: float = 1.0
+
+    def __post_init__(self):
+        self.weight = reduce(mul, [branch.weight for branch in self.branches])
+
+@dataclass
+class CompositeSourceLogicTree:
+    source_logic_tree: SourceLogicTree
+    branches: List[CompositeBranch]
+
+    def __post_init__(self):
+        total_weight = reduce(add, [branch.weight for branch in self.branches])
+        if not isclose(total_weight, 1.0):
+            raise Exception('logic tree weights do not add to 1.0 (sum is %s)' % total_weight)
+
+    @classmethod
+    def from_source_logic_tree(cls, slt: SourceLogicTree):
+
+        branches = [fslt.branches for fslt in slt.fault_system_lts]
+        
+        def yield_cbs(branches):
+            for cb in product(*branches):
+                yield CompositeBranch(cb)
+        # return CompositeSourceLogicTree(slt, list(yield_cbs(branches)))
+        return cls(slt, list(yield_cbs(branches)))
+

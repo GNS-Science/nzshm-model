@@ -1,7 +1,7 @@
 {
     "version": "SLT_v8",
     "title": "",
-    "fault_system_branches": [
+    "fault_system_lts": [
         {
             "short_name": "PUY",
             "long_name": "Puysegur",

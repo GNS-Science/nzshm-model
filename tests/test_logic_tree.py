@@ -59,20 +59,20 @@ def test_fslt_example():
 
 def test_full_slt():
     model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')
-    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_branches=[model_v1_0_0.build_crustal_branches()])
+    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_lts=[model_v1_0_0.build_crustal_branches()])
     print(slt)
-    assert slt.fault_system_branches[0].branches[-1].values[0].name == 'C'
+    assert slt.fault_system_lts[0].branches[-1].values[0].name == 'C'
 
 
 def test_serialise_slt():
     model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')
-    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_branches=[model_v1_0_0.build_crustal_branches()])
+    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_lts=[model_v1_0_0.build_crustal_branches()])
 
     slt_dict = dataclasses.asdict(slt)
     print(slt_dict)
     assert (
-        slt.fault_system_branches[0].branches[-1].values[0].name
-        == slt_dict['fault_system_branches'][0]['branches'][-1]['values'][0]['name']
+        slt.fault_system_lts[0].branches[-1].values[0].name
+        == slt_dict['fault_system_lts'][0]['branches'][-1]['values'][0]['name']
     )
 
 
@@ -84,13 +84,13 @@ class TestSourceLogicTreeSpecification:
         slt_spec = slt.derive_spec()
 
         print(slt_spec)
-        assert slt_spec.fault_system_branches[0].branches[0].name == 'dm'
-        assert slt_spec.fault_system_branches[0].branches[0].long_name == 'deformation model'
-        assert slt_spec.fault_system_branches[0].branches[0].value_options == ['0.7']
+        assert slt_spec.fault_system_lts[0].branches[0].name == 'dm'
+        assert slt_spec.fault_system_lts[0].branches[0].long_name == 'deformation model'
+        assert slt_spec.fault_system_lts[0].branches[0].value_options == ['0.7']
 
-        assert slt_spec.fault_system_branches[2].branches[0].name == 'dm'
-        assert slt_spec.fault_system_branches[2].branches[0].long_name == 'deformation model'
-        assert slt_spec.fault_system_branches[2].branches[0].value_options == ['geodetic', 'geologic']
+        assert slt_spec.fault_system_lts[2].branches[0].name == 'dm'
+        assert slt_spec.fault_system_lts[2].branches[0].long_name == 'deformation model'
+        assert slt_spec.fault_system_lts[2].branches[0].value_options == ['geodetic', 'geologic']
 
     def test_large_SLT_example_A_crustal(self):
         config = Path(__file__).parent / 'fixtures' / 'large_SLT_example_A.py'
@@ -100,12 +100,12 @@ class TestSourceLogicTreeSpecification:
         slt_spec = slt.derive_spec()
 
         print(slt_spec)
-        assert slt_spec.fault_system_branches[0].short_name == "PUY"
-        assert slt_spec.fault_system_branches[0].branches[0].name == 'dm'
-        assert slt_spec.fault_system_branches[0].branches[0].long_name == 'deformation model'
-        assert slt_spec.fault_system_branches[0].branches[0].value_options == ['']
+        assert slt_spec.fault_system_lts[0].short_name == "PUY"
+        assert slt_spec.fault_system_lts[0].branches[0].name == 'dm'
+        assert slt_spec.fault_system_lts[0].branches[0].long_name == 'deformation model'
+        assert slt_spec.fault_system_lts[0].branches[0].value_options == ['']
 
-        assert slt_spec.fault_system_branches[2].short_name == "CRU"
-        assert slt_spec.fault_system_branches[2].branches[0].name == 'dm'
-        assert slt_spec.fault_system_branches[2].branches[0].long_name == 'deformation model'
-        assert slt_spec.fault_system_branches[2].branches[0].value_options == ['geologic']
+        assert slt_spec.fault_system_lts[2].short_name == "CRU"
+        assert slt_spec.fault_system_lts[2].branches[0].name == 'dm'
+        assert slt_spec.fault_system_lts[2].branches[0].long_name == 'deformation model'
+        assert slt_spec.fault_system_lts[2].branches[0].value_options == ['geologic']

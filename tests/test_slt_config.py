@@ -83,14 +83,14 @@ class TestFromConfig:
         config = Path(__file__).parent.parent / 'nzshm_model' / 'source_logic_tree' / 'SLT_v8_gmm_v2_final.py'
         slt = from_config(config)
         print(slt)
-        assert slt.fault_system_branches[0].branches[-1].values[0].name == 'dm'
+        assert slt.fault_system_lts[0].branches[-1].values[0].name == 'dm'
 
     def test_large_SLT_example_A_crustal(self):
         config = Path(__file__).parent / 'fixtures' / 'large_SLT_example_A.py'
         slt = from_config(config)
         print(slt)
-        assert slt.fault_system_branches[1].branches[-1].values[0].name == 'dm'
-        assert slt.fault_system_branches[1].branches[-1].values[0].value == 'TC'
+        assert slt.fault_system_lts[1].branches[-1].values[0].name == 'dm'
+        assert slt.fault_system_lts[1].branches[-1].values[0].value == 'TC'
 
 
 class TestDecomposeTags:
