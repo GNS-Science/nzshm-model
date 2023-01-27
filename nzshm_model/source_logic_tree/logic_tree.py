@@ -4,12 +4,14 @@
 Classes to define logic tree structures
 """
 
-from math import isclose
-from operator import mul, add
-from functools import reduce
+from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import Any, Dict, Generator, List, Union
+from functools import reduce
 from itertools import product
+from math import isclose
+from operator import add, mul
+from typing import Any, Dict, Generator, Iterable, List, Set, Union
+
 
 @dataclass
 class BranchAttributeSpec:
@@ -19,13 +21,6 @@ class BranchAttributeSpec:
 
 
 @dataclass(frozen=True)
-class BranchAttributeOption:
-    name: str
-    long_name: str
-    value: Any
-
-
-@dataclass
 class BranchAttributeValue:
     name: str
     long_name: str
@@ -88,7 +83,7 @@ class FaultSystemLogicTree:
                 val = value.value
                 if isinstance(val, list):  # make it hashable
                     val = tuple(val)
-                bao = BranchAttributeOption(value.name, value.long_name, val)
+                bao = BranchAttributeValue(value.name, value.long_name, val)
                 options[value.name].add(bao)
 
         # print(options)
@@ -113,12 +108,19 @@ class FaultSystemLogicTree:
         return fslt_spec
 
 
+@dataclass
 class SourceLogicTreeCorrelation:
-    """
-    List[SourceLogicTreeBranch]: branch_sets
-    """
+    primary_short_name: str
+    secondary_short_name: str
+    primary_values: Set[BranchAttributeValue]
+    secondary_values: Set[BranchAttributeValue]
 
-    pass
+    # these methods enforce set compairson
+    def is_primary(self, bavs: Iterable[BranchAttributeValue]) -> bool:
+        return set(self.primary_values) == set(bavs)
+
+    def is_secondary(self, bavs: Iterable[BranchAttributeValue]) -> bool:
+        return set(self.secondary_values) == set(bavs)
 
 
 @dataclass
@@ -144,18 +146,24 @@ class SourceLogicTree:
 
 @dataclass
 class CompositeBranch:
+    """Combination of all fault type branches"""
+
     branches: List[Branch]
     weight: float = 1.0
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.weight = reduce(mul, [branch.weight for branch in self.branches])
 
+
 @dataclass
-class CompositeSourceLogicTree:
-    source_logic_tree: SourceLogicTree
+class FlattenedSourceLogicTree:
+    """Flattened source logic tree containing all CompositeBranch combinations"""
+
+    version: str
+    title: str
     branches: List[CompositeBranch]
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         total_weight = reduce(add, [branch.weight for branch in self.branches])
         if not isclose(total_weight, 1.0):
             raise Exception('logic tree weights do not add to 1.0 (sum is %s)' % total_weight)
@@ -163,11 +171,28 @@ class CompositeSourceLogicTree:
     @classmethod
     def from_source_logic_tree(cls, slt: SourceLogicTree):
 
-        branches = [fslt.branches for fslt in slt.fault_system_lts]
-        
-        def yield_cbs(branches):
-            for cb in product(*branches):
-                yield CompositeBranch(cb)
-        # return CompositeSourceLogicTree(slt, list(yield_cbs(branches)))
-        return cls(slt, list(yield_cbs(branches)))
+        slt_copy = deepcopy(slt)  # don't want to change weights of origional logic tree object
+        branches = [fslt.branches for fslt in slt_copy.fault_system_lts]
 
+        def yield_cor(branches, slt_copy):
+            nnames = [[faultsys_lt.short_name] * len(faultsys_lt.branches) for faultsys_lt in slt_copy.fault_system_lts]
+            for cb, names in zip(product(*branches), product(*nnames)):
+                has_correlation = False
+                for cor in slt_copy.correlations:
+                    sindex = names.index(cor.secondary_short_name)
+                    if cor.is_secondary(cb[sindex].values):
+                        has_correlation = True
+                        pindex = names.index(cor.primary_short_name)
+                        if cor.is_primary(cb[pindex].values):
+                            cb[sindex].weight = 1.0
+                            yield CompositeBranch(list(cb))
+                if not has_correlation:
+                    yield CompositeBranch(list(cb))
+
+        if slt.correlations:
+            return cls(slt.version, slt.title, list(yield_cor(branches, slt_copy)))
+        else:
+            return cls(slt.version, slt.title, [CompositeBranch(list(cb)) for cb in product(*branches)])
+
+    def __repr__(self):
+        return f'{self.__class__} title {self.source_logic_tree.title} number of branches: {len(self.branches)}'

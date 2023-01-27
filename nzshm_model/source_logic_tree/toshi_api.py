@@ -9,7 +9,7 @@ import base64
 import dataclasses
 import json
 import os
-from typing import Union, Dict, Any, List
+from typing import Dict, List, Optional, Union
 
 import boto3
 from botocore.exceptions import ClientError
@@ -65,8 +65,10 @@ class InversionInfo:
     typename: Union[str, None] = None
     solution_id: Union[str, None] = None
 
+
 class SourceSolutionMap:
     """A mapping between nrml ids and hazard solution ids"""
+
     def __init__(self, hazard_jobs: List[dict] = []) -> None:
         self._dict: Dict[str, str] = {}
         if hazard_jobs:
@@ -79,19 +81,15 @@ class SourceSolutionMap:
                 hazard_solution = job['node']['child']['hazard_solution']
                 self._dict[self.__key(onfault_nrml_id, distributed_nrml_id)] = hazard_solution['id']
 
-    def append(self, other):
+    def append(self, other: 'SourceSolutionMap'):
         self._dict.update(other._dict)
 
-    def get_solution_id(self, *, onfault_nrml_id: str, distributed_nrml_id: str) -> str:
+    def get_solution_id(self, *, onfault_nrml_id: str, distributed_nrml_id: str) -> Optional[str]:
         return self._dict.get(self.__key(onfault_nrml_id, distributed_nrml_id))
 
-    @staticmethod 
+    @staticmethod
     def __key(onfault_nrml_id: str, distributed_nrml_id: str) -> str:
-        onfault_nrml_id = onfault_nrml_id if onfault_nrml_id else 'None'
-        distributed_nrml_id = distributed_nrml_id if distributed_nrml_id else 'None'
-        return ':'.join((onfault_nrml_id, distributed_nrml_id))
-
-
+        return ':'.join((str(onfault_nrml_id), str(distributed_nrml_id)))
 
 
 class ToshiApi(ToshiClientBase):
@@ -121,42 +119,6 @@ class ToshiApi(ToshiClientBase):
             if executed.get('node')
             else InversionInfo()
         )
-    
-    def get_hazard_gt(self, id: str) -> Dict[Any, Any]:
-        qry = ''' 
-        query hazard_gt ($general_task_id:ID!) {
-            node1: node(id: $general_task_id) {
-                id
-                ... on GeneralTask {
-                    children {
-                        total_count
-                        edges {
-                            node {
-                                child {
-                                    ... on OpenquakeHazardTask {
-                                        arguments {
-                                            k v
-                                        }
-                                        result
-                                        hazard_solution {
-                                            id
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        '''
-
-        input_variables = dict(general_task_id=id)
-        executed = self.run_query(qry, input_variables)
-        if executed.get('node1'):
-            return SourceSolutionMap(executed['node1']['children']['edges'])
-        else:
-            return SourceSolutionMap()
 
 
 if 'TEST' in API_URL.upper():
