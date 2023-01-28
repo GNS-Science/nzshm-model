@@ -195,4 +195,4 @@ class FlattenedSourceLogicTree:
             return cls(slt.version, slt.title, [CompositeBranch(list(cb)) for cb in product(*branches)])
 
     def __repr__(self):
-        return f'{self.__class__} title {self.source_logic_tree.title} number of branches: {len(self.branches)}'
+        return f'{self.__class__} title {self.title} number of branches: {len(self.branches)}'
