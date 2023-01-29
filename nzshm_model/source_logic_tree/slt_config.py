@@ -170,7 +170,9 @@ def from_config(config_path: Path, version: str = "", title: str = "") -> Source
         for group in [("PUY", "Puysegur"), ("HIK", "Hikurangi-Kermadec"), ("CRU", "Crustal"), ("SLAB", "Intra-slab")]
     ]
 
-    correlations = build_correlations(module.src_correlations) if 'src_correlations' in dir(module) else []  # type: ignore
+    correlations = (
+        build_correlations(module.src_correlations) if 'src_correlations' in dir(module) else []  # type: ignore
+    )
     slt = SourceLogicTree(
         version=version,
         title=title,
