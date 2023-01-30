@@ -8,9 +8,15 @@ import copy
 import importlib.util
 import logging
 from pathlib import Path
-from typing import Dict, Generator, Iterable, Union
+from typing import Any, Dict, Generator, Iterable, List, Union
 
-from nzshm_model.source_logic_tree.logic_tree import Branch, BranchAttributeValue, FaultSystemLogicTree, SourceLogicTree
+from nzshm_model.source_logic_tree.logic_tree import (
+    Branch,
+    BranchAttributeValue,
+    FaultSystemLogicTree,
+    SourceLogicTree,
+    SourceLogicTreeCorrelation,
+)
 
 log = logging.getLogger(__name__)
 
@@ -113,11 +119,11 @@ def decompose_crustal_tag(tag) -> Generator:
 
 
 def decompose_slab_tag(tag) -> Iterable:
-    """used for SLAB, does nothing"""
-    return []
-    # yield BranchAttributeValue(
-    #             name='dm', long_name='deformation model', value_options=['geodetic', 'geologic'], value=itm
-    #         )
+    """used for SLAB. There is only one slab model in our logic tree"""
+    return [
+        BranchAttributeValue(name='r', long_name='earthquake rates', value='uniform'),
+        BranchAttributeValue(name='d', long_name='hypocentral depths', value=1),
+    ]
 
 
 def from_config(config_path: Path, version: str = "", title: str = "") -> SourceLogicTree:
@@ -163,15 +169,53 @@ def from_config(config_path: Path, version: str = "", title: str = "") -> Source
         build_fslt(*group)
         for group in [("PUY", "Puysegur"), ("HIK", "Hikurangi-Kermadec"), ("CRU", "Crustal"), ("SLAB", "Intra-slab")]
     ]
+
+    correlations = (
+        build_correlations(module.src_correlations) if 'src_correlations' in dir(module) else []  # type: ignore
+    )
     slt = SourceLogicTree(
-        version=version, title=title, fault_system_branches=list(filter(lambda x: x is not None, fslts))
+        version=version,
+        title=title,
+        fault_system_lts=list(filter(lambda x: x is not None, fslts)),
+        correlations=correlations,
     )
     return slt
 
 
+def build_correlations(src_correlations: Dict[str, Any]) -> List[SourceLogicTreeCorrelation]:
+    def select_decompose(group_name):
+        if group_name.upper() in ['PUY', 'HIK']:
+            return decompose_subduction_tag
+        elif group_name.upper() == 'CRU':
+            return decompose_crustal_tag
+        elif group_name.upper() == 'SLAB':
+            return decompose_slab_tag
+        else:
+            return None
+
+    secondary_group = src_correlations['dropped_group']
+    decompose_tag_sec = select_decompose(secondary_group)
+
+    correlations = []
+    for cor in src_correlations['correlations']:
+        secondary_ind = [c['group'] for c in cor].index(secondary_group)
+        primary_ind = int(not secondary_ind)
+        decompose_tag_pri = select_decompose(cor[primary_ind]['group'])
+        correlations.append(
+            SourceLogicTreeCorrelation(
+                primary_short_name=cor[primary_ind]['group'].upper(),
+                secondary_short_name=secondary_group.upper(),
+                primary_values=set(decompose_tag_pri(cor[primary_ind]['tag'])),
+                secondary_values=set(decompose_tag_sec(cor[secondary_ind]['tag'])),
+            )
+        )
+
+    return correlations
+
+
 def resolve_toshi_source_ids(slt: SourceLogicTree) -> SourceLogicTree:
     new_slt = copy.deepcopy(slt)
-    for fslt in new_slt.fault_system_branches:
+    for fslt in new_slt.fault_system_lts:
         if fslt:  # fslt can be None
             for branch in fslt.branches:
                 nrml_info = toshi_api.get_source_from_nrml(branch.onfault_nrml_id)

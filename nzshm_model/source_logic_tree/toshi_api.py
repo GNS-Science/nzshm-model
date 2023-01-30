@@ -9,7 +9,7 @@ import base64
 import dataclasses
 import json
 import os
-from typing import Union
+from typing import Dict, List, Optional, Union
 
 import boto3
 from botocore.exceptions import ClientError
@@ -66,6 +66,32 @@ class InversionInfo:
     solution_id: Union[str, None] = None
 
 
+class SourceSolutionMap:
+    """A mapping between nrml ids and hazard solution ids"""
+
+    def __init__(self, hazard_jobs: List[dict] = []) -> None:
+        self._dict: Dict[str, str] = {}
+        if hazard_jobs:
+            for job in hazard_jobs:
+                for arg in job['node']['child']['arguments']:
+                    if arg['k'] == 'logic_tree_permutations':
+                        branch_info = json.loads(arg['v'].replace("'", '"'))[0]['permute'][0]['members'][0]
+                        onfault_nrml_id = branch_info['inv_id']
+                        distributed_nrml_id = branch_info['bg_id']
+                hazard_solution = job['node']['child']['hazard_solution']
+                self._dict[self.__key(onfault_nrml_id, distributed_nrml_id)] = hazard_solution['id']
+
+    def append(self, other: 'SourceSolutionMap'):
+        self._dict.update(other._dict)
+
+    def get_solution_id(self, *, onfault_nrml_id: str, distributed_nrml_id: str) -> Optional[str]:
+        return self._dict.get(self.__key(onfault_nrml_id, distributed_nrml_id))
+
+    @staticmethod
+    def __key(onfault_nrml_id: str, distributed_nrml_id: str) -> str:
+        return ':'.join((str(onfault_nrml_id), str(distributed_nrml_id)))
+
+
 class ToshiApi(ToshiClientBase):
     def get_source_from_nrml(self, nrml_id):
         qry = '''
@@ -115,7 +141,7 @@ if __name__ == "__main__":
     config_path = Path(__file__).parent / 'SLT_v8_gmm_v2_final.py'
     slt = from_config(config_path)
 
-    for fslt in slt.fault_system_branches:
+    for fslt in slt.fault_system_lts:
         for branch in fslt.branches[-2:]:
             nrml_info = toshi_api.get_source_from_nrml(branch.onfault_nrml_id)
             print(nrml_info)
