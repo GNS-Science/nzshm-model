@@ -1,8 +1,13 @@
 #! test_module_import
+import dataclasses
+import json
 from pathlib import Path
 
+import dacite
+import pytest
+
 import nzshm_model
-from nzshm_model.source_logic_tree.logic_tree import Branch, FaultSystemLogicTree
+from nzshm_model.source_logic_tree.logic_tree import Branch, FaultSystemLogicTree, SourceLogicTree
 from nzshm_model.source_logic_tree.slt_config import (
     decompose_crustal_tag,
     decompose_subduction_tag,
@@ -73,9 +78,42 @@ class TestStructure:
         print(fslt)
 
         assert fslt.branches[-1].values[0].value == "0.7"
-        assert fslt.branches[-1].values[1].value == (0.902, 4.6)
+        assert fslt.branches[-1].values[1].value == [0.902, 4.6]
         assert fslt.branches[-1].values[2].value == 4.0
         assert fslt.branches[-1].values[3].value == 1.72
+
+
+class TestConfigSerialisation:
+    @pytest.mark.parametrize("python_module", ['SLT_v9p0p0.py', 'SLT_v8_gmm_v2_final.py'])
+    def test_slt_dict_to_json(self, python_module):
+        config = Path(__file__).parent.parent / 'nzshm_model' / 'source_logic_tree' / python_module
+        slt = from_config(config)
+        obj = dataclasses.asdict(slt)
+        jsonish = json.dumps(obj, indent=2)
+        assert obj
+        assert jsonish
+
+    @pytest.mark.parametrize("python_module", ['SLT_v9p0p0.py', 'SLT_v8_gmm_v2_final.py'])
+    def test_slt_v8_round_trip(self, python_module):
+
+        config = Path(__file__).parent.parent / 'nzshm_model' / 'source_logic_tree' / python_module
+        slt = from_config(config)
+        obj = dataclasses.asdict(slt)
+        jsonish = json.dumps(obj, indent=2)
+
+        new_slt_0 = dacite.from_dict(data_class=SourceLogicTree, data=obj)
+        assert slt == new_slt_0
+
+        new_slt_1 = dacite.from_dict(data_class=SourceLogicTree, data=json.loads(jsonish))
+        print("SLT")
+        print(slt.fault_system_lts[0])
+        print("SLT from dict")
+        print(new_slt_0.fault_system_lts[0])
+
+        print("SLT from json")
+        print(new_slt_1.fault_system_lts[0])
+
+        assert slt == new_slt_1
 
 
 class TestFromConfig:
@@ -114,7 +152,7 @@ class TestDecomposeTags:
         assert decomp[1].name == 'td'
         assert decomp[1].value is False
         assert decomp[2].name == 'bN'
-        assert decomp[2].value == (0.823, 2.7)
+        assert decomp[2].value == [0.823, 2.7]
         assert decomp[3].name == 'C'
         assert decomp[3].value == 4.2
         assert decomp[4].name == 's'
