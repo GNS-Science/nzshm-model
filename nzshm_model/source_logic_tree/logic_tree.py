@@ -10,7 +10,7 @@ from functools import reduce
 from itertools import product
 from math import isclose
 from operator import add, mul
-from typing import Any, Dict, Generator, Iterable, List, Set, Union
+from typing import Any, Dict, Generator, Iterable, List, Union
 
 
 @dataclass
@@ -112,8 +112,8 @@ class FaultSystemLogicTree:
 class SourceLogicTreeCorrelation:
     primary_short_name: str
     secondary_short_name: str
-    primary_values: Set[BranchAttributeValue]
-    secondary_values: Set[BranchAttributeValue]
+    primary_values: List[BranchAttributeValue]
+    secondary_values: List[BranchAttributeValue]
 
     # these methods enforce set compairson
     def is_primary(self, bavs: Iterable[BranchAttributeValue]) -> bool:
