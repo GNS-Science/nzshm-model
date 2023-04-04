@@ -1,5 +1,15 @@
 # Changelog
 
+
+## [0.2.0] - 2023-04-03
+## Added
+  - new NSHM_1.0.4 model
+  - correlations between fault systems
+## Changed
+  - flattened logic trees using combinations of fault system logic tree branches
+  - renamed field on SourceLogicTree `fault_system_branches` to `fault_system_lts`
+  - ensure logic tree classes are JSON serialisable
+
 ## [0.1.1] - 2022-12-19
 
 ## Changed
