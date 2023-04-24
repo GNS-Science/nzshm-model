@@ -120,6 +120,35 @@ class ToshiApi(ToshiClientBase):
             else InversionInfo()
         )
 
+    def get_rupture_set_id(self, solution_id):
+        qry = '''
+        query file0 ($id: ID!) {
+          node(id: $id) {
+            __typename
+            ... on PredecessorsInterface {
+              predecessors {
+                id
+                typename
+                relationship
+                depth
+                file_node: node {
+                  __typename
+                  ... on Node {id}
+                  ... on File {
+                    file_name
+                  }
+                }
+              }
+            }
+          }
+        }
+        '''
+        # print(qry)
+        input_variables = dict(id=solution_id)
+        # print(input_variables)
+        executed = self.run_query(qry, input_variables)
+        return executed['node']
+
 
 if 'TEST' in API_URL.upper():
     API_KEY = get_secret("NZSHM22_TOSHI_API_SECRET_TEST", "us-east-1").get("NZSHM22_TOSHI_API_KEY_TEST")
@@ -131,23 +160,36 @@ headers = {"x-api-key": API_KEY}
 toshi_api = ToshiApi(API_URL, None, with_schema_validation=False, headers=headers)
 
 
-if __name__ == "__main__":
+def solution_rupt_set_id(solution_id) -> str:
+    data = toshi_api.get_rupture_set_id(solution_id)
+    for itm in data['predecessors']:
+        if itm["typename"] == "File":
+            return itm['file_node']['id']
+    return ""
 
+
+if __name__ == "__main__":
+    """This should be a test!"""
     import dataclasses
     from pathlib import Path
 
     from nzshm_model.source_logic_tree.slt_config import from_config
 
+    SKIP_FS_NAMES = ['SLAB', 'HIK']  # , 'CRU'
+
     config_path = Path(__file__).parent / 'SLT_v8_gmm_v2_final.py'
     slt = from_config(config_path)
 
     for fslt in slt.fault_system_lts:
+        if fslt.short_name in SKIP_FS_NAMES:  # CRU
+            continue
         for branch in fslt.branches[-2:]:
             nrml_info = toshi_api.get_source_from_nrml(branch.onfault_nrml_id)
             print(nrml_info)
             branch.inversion_solution_id = nrml_info.solution_id
             branch.inversion_solution_type = nrml_info.typename
-            print('.', end='', flush=True)
+            branch.rupture_set_id = solution_rupt_set_id(nrml_info.solution_id)
+            print(branch)  # , end='', flush=True)
 
     j = json.dumps(dataclasses.asdict(slt), indent=4)
-    print(j)
+    # print(j)

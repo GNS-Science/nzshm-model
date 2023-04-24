@@ -47,6 +47,7 @@ class Branch:
     distributed_nrml_id: Union[str, None] = ""
     inversion_solution_id: Union[str, None] = ""
     inversion_solution_type: Union[str, None] = ""
+    rupture_set_id: Union[str, None] = ""
 
 
 @dataclass

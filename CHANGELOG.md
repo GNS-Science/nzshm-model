@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0] - 2023-04-03
+## Added
+  - rupture_set_id to branch
+## Changed
+  - renamed `nshm_1.0.0` to `nshm_v1.0.0`
+  - renamed `nshm_1.0.4` to `nshm_v1.0.4`
 
 ## [0.2.0] - 2023-04-03
 ## Added

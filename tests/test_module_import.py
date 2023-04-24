@@ -6,12 +6,12 @@ import nzshm_model
 
 class TestStructure:
     def test_current_version(self):
-        assert nzshm_model.CURRENT_VERSION == "NSHM_1.0.0"
+        assert nzshm_model.CURRENT_VERSION == "NSHM_v1.0.0"
 
     def test_available_versions(self):
         assert len(nzshm_model.versions) == 2
 
-    @pytest.mark.parametrize("model, model_version", [('NSHM_1.0.0', 'NSHM_1.0.0'), ('NSHM_1.0.4', 'NSHM_1.0.4')])
+    @pytest.mark.parametrize("model, model_version", [('NSHM_v1.0.0', 'NSHM_v1.0.0'), ('NSHM_v1.0.4', 'NSHM_v1.0.4')])
     def test_version_config(self, model, model_version):
         mod = nzshm_model.get_model_version(model)
 

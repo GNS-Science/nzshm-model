@@ -21,7 +21,7 @@ from nzshm_model.source_logic_tree.logic_tree import (
 log = logging.getLogger(__name__)
 
 try:
-    from .toshi_api import toshi_api
+    from .toshi_api import solution_rupt_set_id, toshi_api
 except ModuleNotFoundError:
     log.warning("warning Toshi API module dependency not available, maybe you want to install with nzshm-model[toshi]")
 
@@ -215,12 +215,20 @@ def build_correlations(src_correlations: Dict[str, Any]) -> List[SourceLogicTree
 
 def resolve_toshi_source_ids(slt: SourceLogicTree) -> SourceLogicTree:
     new_slt = copy.deepcopy(slt)
+
+    # SKIP_FS_NAMES =['HIK', 'CRU'] #, 'CRU'
+
     for fslt in new_slt.fault_system_lts:
+        # if fslt.short_name in SKIP_FS_NAMES: #CRU
+        #     continue
         if fslt:  # fslt can be None
             for branch in fslt.branches:
                 nrml_info = toshi_api.get_source_from_nrml(branch.onfault_nrml_id)
                 # print(nrml_info)
                 branch.inversion_solution_id = nrml_info.solution_id
                 branch.inversion_solution_type = nrml_info.typename
+                if nrml_info.solution_id is not None:
+                    branch.rupture_set_id = solution_rupt_set_id(nrml_info.solution_id)
+                # print(branch) #, end='', flush=True)
                 # print('.', end='', flush=True)
     return new_slt
