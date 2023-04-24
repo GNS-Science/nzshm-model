@@ -8,10 +8,10 @@ import dacite  # for dataclass reconstitution
 import nzshm_model.source_logic_tree.SLT_v9p0p0 as slt_config  # NOQA F401
 from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree
 
-version = 'NSHM_1.0.4'
+version = 'NSHM_v1.0.4'
 title = "NSHM version 1.0.4, corrected fault geometry"
 
-json_slt = Path(__file__).parent / "source_logic_tree" / "SLT_v9p0p0.json"
+json_slt = Path(__file__).parent / "source_logic_tree" / "nshm_v1.0.4.json"
 
 
 def source_logic_tree():

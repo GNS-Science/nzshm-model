@@ -1,4 +1,4 @@
-#! v1_0_0.py
+#! nshm_v1_0_0.py
 
 import itertools
 import json
@@ -15,10 +15,10 @@ from nzshm_model.source_logic_tree.logic_tree import (
     SourceLogicTree,
 )
 
-version = 'NSHM_1.0.0'
+version = 'NSHM_v1.0.0'
 title = "Initial version"
 
-json_slt = Path(__file__).parent / "source_logic_tree" / "SLT_v8.json"
+json_slt = Path(__file__).parent / "source_logic_tree" / "nshm_v1.0.0.json"
 
 
 def source_logic_tree():

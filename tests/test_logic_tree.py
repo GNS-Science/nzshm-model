@@ -64,7 +64,7 @@ def test_init():
 
 
 def test_fslt_example():
-    model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')
+    model_v1_0_0 = nzshm_model.get_model_version('NSHM_v1.0.0')
     fslt = model_v1_0_0.build_crustal_branches()
 
     print(fslt)
@@ -80,14 +80,14 @@ def test_fslt_example():
 
 
 def test_full_slt():
-    model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')
+    model_v1_0_0 = nzshm_model.get_model_version('NSHM_v1.0.0')
     slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_lts=[model_v1_0_0.build_crustal_branches()])
     print(slt)
     assert slt.fault_system_lts[0].branches[-1].values[0].name == 'C'
 
 
 def test_serialise_slt():
-    model_v1_0_0 = nzshm_model.get_model_version('NSHM_1.0.0')
+    model_v1_0_0 = nzshm_model.get_model_version('NSHM_v1.0.0')
     slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_lts=[model_v1_0_0.build_crustal_branches()])
 
     slt_dict = dataclasses.asdict(slt)

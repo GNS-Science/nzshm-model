@@ -1,6 +1,6 @@
 {
-    "version": "NSHM_1.0.0",
-    "title": "",
+    "version": "NSHM_v1.0.4",
+    "title": "NSHM version 1.0.4, corrected fault geometry",
     "fault_system_lts": [
         {
             "short_name": "PUY",
@@ -33,10 +33,11 @@
                         }
                     ],
                     "weight": 0.21,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcxNw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2NTc=",
                     "distributed_nrml_id": "RmlsZToxMzA3NTM=",
-                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE4NTQ2",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTI5MTM3OA==",
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMjkwOTg0"
                 },
                 {
                     "values": [
@@ -65,10 +66,11 @@
                         }
                     ],
                     "weight": 0.52,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcyMw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2NjE=",
                     "distributed_nrml_id": "RmlsZToxMzA3NTQ=",
-                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE4NTQz",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTI5MTM4Mg==",
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMjkwOTg0"
                 },
                 {
                     "values": [
@@ -97,10 +99,11 @@
                         }
                     ],
                     "weight": 0.27,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcyOQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2NjY=",
                     "distributed_nrml_id": "RmlsZToxMzA3NTU=",
-                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE4NTQ1",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTI5MTM4Ng==",
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMjkwOTg0"
                 }
             ]
         },
@@ -135,10 +138,11 @@
                         }
                     ],
                     "weight": 0.147216637218474,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQyOA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MTE=",
                     "distributed_nrml_id": "RmlsZToxMzA3MzI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MjAw",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZTo3MTQ3LjVramh3Rg=="
                 },
                 {
                     "values": [
@@ -167,10 +171,11 @@
                         }
                     ],
                     "weight": 0.281154911079988,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQxNw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MDU=",
                     "distributed_nrml_id": "RmlsZToxMzA3MzQ=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MjAy",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZTo3MTQ3LjVramh3Rg=="
                 },
                 {
                     "values": [
@@ -199,10 +204,11 @@
                         }
                     ],
                     "weight": 0.148371277510384,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQyOQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MDM=",
                     "distributed_nrml_id": "RmlsZToxMzA3MzY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MjA0",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZTo3MTQ3LjVramh3Rg=="
                 },
                 {
                     "values": [
@@ -231,10 +237,11 @@
                         }
                     ],
                     "weight": 0.0887399956599006,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQyNA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1OTk=",
                     "distributed_nrml_id": "RmlsZToxMzA3Mzg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTk0",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZTo3MTQ3LjVramh3Rg=="
                 },
                 {
                     "values": [
@@ -263,10 +270,11 @@
                         }
                     ],
                     "weight": 0.169475991711261,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQxMw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MDg=",
                     "distributed_nrml_id": "RmlsZToxMzA3NDA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTk2",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZTo3MTQ3LjVramh3Rg=="
                 },
                 {
                     "values": [
@@ -295,10 +303,11 @@
                         }
                     ],
                     "weight": 0.0894359956258606,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQxNg==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MTM=",
                     "distributed_nrml_id": "RmlsZToxMzA3NDI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTk4",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZTo3MTQ3LjVramh3Rg=="
                 },
                 {
                     "values": [
@@ -327,10 +336,11 @@
                         }
                     ],
                     "weight": 0.0192986223768806,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQxNA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1OTg=",
                     "distributed_nrml_id": "RmlsZToxMzA3NDQ=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTY0",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZTo3MTQ3LjVramh3Rg=="
                 },
                 {
                     "values": [
@@ -359,10 +369,11 @@
                         }
                     ],
                     "weight": 0.0368565846962387,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQwNg==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1OTA=",
                     "distributed_nrml_id": "RmlsZToxMzA3NDY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTY2",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZTo3MTQ3LjVramh3Rg=="
                 },
                 {
                     "values": [
@@ -391,10 +402,11 @@
                         }
                     ],
                     "weight": 0.019449984121013,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQwOQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1OTE=",
                     "distributed_nrml_id": "RmlsZToxMzA3NDg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTY4",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZTo3MTQ3LjVramh3Rg=="
                 }
             ]
         },
@@ -434,10 +446,11 @@
                         }
                     ],
                     "weight": 0.0168335471189857,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg5OA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MDE=",
                     "distributed_nrml_id": "RmlsZToxMzA3MDc=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzIy",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -471,10 +484,11 @@
                         }
                     ],
                     "weight": 0.0408928149352719,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkxMQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0ODY=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzE3",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -508,10 +522,11 @@
                         }
                     ],
                     "weight": 0.0216771620919014,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkwNA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MDI=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTM=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzQx",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -545,10 +560,11 @@
                         }
                     ],
                     "weight": 0.0282427120823285,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkxNw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0ODI=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzYx",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -582,10 +598,11 @@
                         }
                     ],
                     "weight": 0.0686084751056566,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkwNg==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0ODM=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTk=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzUz",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -619,10 +636,11 @@
                         }
                     ],
                     "weight": 0.0363691528229985,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkwOA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0OTA=",
                     "distributed_nrml_id": "RmlsZToxMzA3MjI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzU3",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -656,10 +674,11 @@
                         }
                     ],
                     "weight": 0.00792374079868575,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkxMw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0OTE=",
                     "distributed_nrml_id": "RmlsZToxMzA3MjU=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzM0",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -693,10 +712,11 @@
                         }
                     ],
                     "weight": 0.0192487099590715,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkxMg==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0OTY=",
                     "distributed_nrml_id": "RmlsZToxMzA3Mjg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzI4",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -730,10 +750,11 @@
                         }
                     ],
                     "weight": 0.0102036850851,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkyNA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0OTQ=",
                     "distributed_nrml_id": "RmlsZToxMzA3MzE=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzMw",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -767,10 +788,11 @@
                         }
                     ],
                     "weight": 0.0236560148670262,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg4Ng==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NzM=",
                     "distributed_nrml_id": "RmlsZToxMzA3MDc=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzA4",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -804,10 +826,11 @@
                         }
                     ],
                     "weight": 0.0574662625307477,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg5Nw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0ODE=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzA3",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -841,10 +864,11 @@
                         }
                     ],
                     "weight": 0.0304626983900857,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg3NA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0Njg=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTM=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzA1",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -878,10 +902,11 @@
                         }
                     ],
                     "weight": 0.0271169544446554,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg5Mw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NjQ=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzAy",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -915,10 +940,11 @@
                         }
                     ],
                     "weight": 0.0658737336745166,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg4OQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NzY=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTk=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjk4",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -952,10 +978,11 @@
                         }
                     ],
                     "weight": 0.0349194743556176,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg3MQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0Njc=",
                     "distributed_nrml_id": "RmlsZToxMzA3MjI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjk2",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -989,10 +1016,11 @@
                         }
                     ],
                     "weight": 0.00222703068831837,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg4MQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NjA=",
                     "distributed_nrml_id": "RmlsZToxMzA3MjU=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjcy",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1026,10 +1054,11 @@
                         }
                     ],
                     "weight": 0.00541000379473566,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg5Mg==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NzU=",
                     "distributed_nrml_id": "RmlsZToxMzA3Mjg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjc2",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1063,10 +1092,11 @@
                         }
                     ],
                     "weight": 0.00286782725429677,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg4Mg==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NjM=",
                     "distributed_nrml_id": "RmlsZToxMzA3MzE=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjc1",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1100,10 +1130,11 @@
                         }
                     ],
                     "weight": 0.0168335471189857,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk2NQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1Mzk=",
                     "distributed_nrml_id": "RmlsZToxMzA3MDc=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODI2",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1137,10 +1168,11 @@
                         }
                     ],
                     "weight": 0.0408928149352719,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk2Mw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1Mzc=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODQ2",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1174,10 +1206,11 @@
                         }
                     ],
                     "weight": 0.0216771620919014,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1Ng==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NTM=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTM=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODI0",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1211,10 +1244,11 @@
                         }
                     ],
                     "weight": 0.0282427120823285,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1Mw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NDQ=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODY1",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1248,10 +1282,11 @@
                         }
                     ],
                     "weight": 0.0686084751056566,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk2Nw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NTk=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTk=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODYz",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1285,10 +1320,11 @@
                         }
                     ],
                     "weight": 0.0363691528229985,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1NA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NTE=",
                     "distributed_nrml_id": "RmlsZToxMzA3MjI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODY5",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1322,10 +1358,11 @@
                         }
                     ],
                     "weight": 0.00792374079868575,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk3Mw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NTg=",
                     "distributed_nrml_id": "RmlsZToxMzA3MjU=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODQ3",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1359,10 +1396,11 @@
                         }
                     ],
                     "weight": 0.0192487099590715,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1NQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NDE=",
                     "distributed_nrml_id": "RmlsZToxMzA3Mjg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODE4",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1396,10 +1434,11 @@
                         }
                     ],
                     "weight": 0.0102036850851,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk3NA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NjI=",
                     "distributed_nrml_id": "RmlsZToxMzA3MzE=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODM3",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1433,10 +1472,11 @@
                         }
                     ],
                     "weight": 0.0236560148670263,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkzNg==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MjI=",
                     "distributed_nrml_id": "RmlsZToxMzA3MDc=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODE1",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1470,10 +1510,11 @@
                         }
                     ],
                     "weight": 0.0574662625307477,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkyNw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MjM=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODEx",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1507,10 +1548,11 @@
                         }
                     ],
                     "weight": 0.0304626983900857,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkzMg==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MjA=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTM=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODE2",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1544,10 +1586,11 @@
                         }
                     ],
                     "weight": 0.0271169544446554,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1MQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MTY=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODA3",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1581,10 +1624,11 @@
                         }
                     ],
                     "weight": 0.0658737336745166,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk0NA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1Mjk=",
                     "distributed_nrml_id": "RmlsZToxMzA3MTk=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzk2",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1618,10 +1662,11 @@
                         }
                     ],
                     "weight": 0.0349194743556176,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk0OA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MTU=",
                     "distributed_nrml_id": "RmlsZToxMzA3MjI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODA5",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1655,10 +1700,11 @@
                         }
                     ],
                     "weight": 0.00222703068831837,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkzNA==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MzM=",
                     "distributed_nrml_id": "RmlsZToxMzA3MjU=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzg4",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1692,10 +1738,11 @@
                         }
                     ],
                     "weight": 0.00541000379473566,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkzMQ==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MjY=",
                     "distributed_nrml_id": "RmlsZToxMzA3Mjg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzg3",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 },
                 {
                     "values": [
@@ -1729,10 +1776,11 @@
                         }
                     ],
                     "weight": 0.00286782725429677,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk0Mw==",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MzE=",
                     "distributed_nrml_id": "RmlsZToxMzA3MzE=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzc4",
-                    "inversion_solution_type": "ScaledInversionSolution"
+                    "inversion_solution_type": "ScaledInversionSolution",
+                    "rupture_set_id": "RmlsZToxMDAwODc="
                 }
             ]
         },
@@ -1741,15 +1789,514 @@
             "long_name": "Intra-slab",
             "branches": [
                 {
-                    "values": [],
+                    "values": [
+                        {
+                            "name": "r",
+                            "long_name": "earthquake rates",
+                            "value": "uniform"
+                        },
+                        {
+                            "name": "d",
+                            "long_name": "hypocentral depths",
+                            "value": 1
+                        }
+                    ],
                     "weight": 1.0,
                     "onfault_nrml_id": "",
                     "distributed_nrml_id": "RmlsZToxMjEwMzM=",
                     "inversion_solution_id": null,
-                    "inversion_solution_type": null
+                    "inversion_solution_type": null,
+                    "rupture_set_id": ""
                 }
             ]
         }
     ],
-    "correlations": []
+    "correlations": [
+        {
+            "primary_short_name": "HIK",
+            "secondary_short_name": "PUY",
+            "primary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "TL"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.95,
+                        16.5
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 0.42
+                }
+            ],
+            "secondary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "0.7"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.902,
+                        4.6
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 0.28
+                }
+            ]
+        },
+        {
+            "primary_short_name": "HIK",
+            "secondary_short_name": "PUY",
+            "primary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "TL"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.95,
+                        16.5
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.0
+                }
+            ],
+            "secondary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "0.7"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.902,
+                        4.6
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.0
+                }
+            ]
+        },
+        {
+            "primary_short_name": "HIK",
+            "secondary_short_name": "PUY",
+            "primary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "TL"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.95,
+                        16.5
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.58
+                }
+            ],
+            "secondary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "0.7"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.902,
+                        4.6
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.72
+                }
+            ]
+        },
+        {
+            "primary_short_name": "HIK",
+            "secondary_short_name": "PUY",
+            "primary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "TL"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        1.097,
+                        21.5
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 0.42
+                }
+            ],
+            "secondary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "0.7"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.902,
+                        4.6
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 0.28
+                }
+            ]
+        },
+        {
+            "primary_short_name": "HIK",
+            "secondary_short_name": "PUY",
+            "primary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "TL"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        1.097,
+                        21.5
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.0
+                }
+            ],
+            "secondary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "0.7"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.902,
+                        4.6
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.0
+                }
+            ]
+        },
+        {
+            "primary_short_name": "HIK",
+            "secondary_short_name": "PUY",
+            "primary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "TL"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        1.097,
+                        21.5
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.58
+                }
+            ],
+            "secondary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "0.7"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.902,
+                        4.6
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.72
+                }
+            ]
+        },
+        {
+            "primary_short_name": "HIK",
+            "secondary_short_name": "PUY",
+            "primary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "TL"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        1.241,
+                        27.9
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 0.42
+                }
+            ],
+            "secondary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "0.7"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.902,
+                        4.6
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 0.28
+                }
+            ]
+        },
+        {
+            "primary_short_name": "HIK",
+            "secondary_short_name": "PUY",
+            "primary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "TL"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        1.241,
+                        27.9
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.0
+                }
+            ],
+            "secondary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "0.7"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.902,
+                        4.6
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.0
+                }
+            ]
+        },
+        {
+            "primary_short_name": "HIK",
+            "secondary_short_name": "PUY",
+            "primary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "TL"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        1.241,
+                        27.9
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.58
+                }
+            ],
+            "secondary_values": [
+                {
+                    "name": "dm",
+                    "long_name": "deformation model",
+                    "value": "0.7"
+                },
+                {
+                    "name": "bN",
+                    "long_name": "bN pair",
+                    "value": [
+                        0.902,
+                        4.6
+                    ]
+                },
+                {
+                    "name": "C",
+                    "long_name": "area-magnitude scaling",
+                    "value": 4.0
+                },
+                {
+                    "name": "s",
+                    "long_name": "moment rate scaling",
+                    "value": 1.72
+                }
+            ]
+        }
+    ]
 }

@@ -20,7 +20,7 @@ from nzshm_model.source_logic_tree.slt_config import (
 
 class TestStructure:
     def setup(self):
-        self.model = nzshm_model.get_model_version('NSHM_1.0.0')
+        self.model = nzshm_model.get_model_version('NSHM_v1.0.0')
 
     def test_slt_groups_v1_0_0(self):
         v1_0_0 = self.model
