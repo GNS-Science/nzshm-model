@@ -50,7 +50,7 @@ def common_tags(itm) -> Union[BranchAttributeValue, None]:
     try:
         if itm[0] == 'N':
             _n, _b = itm.split('^')
-            return BranchAttributeValue(name='bN', long_name='bN pair', value=(float(_b[1:]), float(_n[1:])))
+            return BranchAttributeValue(name='bN', long_name='bN pair', value=[float(_b[1:]), float(_n[1:])])
         if itm[0] == 'b':  # in some configs b is stand alone
             return BranchAttributeValue(name='b', long_name='b-value', value=float(itm[1:]))
         if itm[0] == 'C':
@@ -205,8 +205,8 @@ def build_correlations(src_correlations: Dict[str, Any]) -> List[SourceLogicTree
             SourceLogicTreeCorrelation(
                 primary_short_name=cor[primary_ind]['group'].upper(),
                 secondary_short_name=secondary_group.upper(),
-                primary_values=set(decompose_tag_pri(cor[primary_ind]['tag'])),
-                secondary_values=set(decompose_tag_sec(cor[secondary_ind]['tag'])),
+                primary_values=list(decompose_tag_pri(cor[primary_ind]['tag'])),
+                secondary_values=list(decompose_tag_sec(cor[secondary_ind]['tag'])),
             )
         )
 
