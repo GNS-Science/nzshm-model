@@ -156,7 +156,7 @@ class TestFlattenedSourceLogicTree:
     def test_correlated_flattened_slt(self):
 
         correlations = [
-            SourceLogicTreeCorrelation('A', 'B', {bav0}, {bav1}) for bav0, bav1 in zip(self.bavs0, self.bavs1)
+            SourceLogicTreeCorrelation('A', 'B', [bav0], [bav1]) for bav0, bav1 in zip(self.bavs0, self.bavs1)
         ]
 
         slt = SourceLogicTree('v1', 'correlated slt', [self.fault_system0, self.fault_system1])

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.1] - 2023-11-14
+## Fixed
+ - correlations use list comparison rather than cast to set to avoid unhashable type TypeError
+
 ## [0.3.0] - 2023-04-03
 ## Added
   - rupture_set_id to branch

@@ -118,10 +118,10 @@ class SourceLogicTreeCorrelation:
 
     # these methods enforce set compairson
     def is_primary(self, bavs: Iterable[BranchAttributeValue]) -> bool:
-        return set(self.primary_values) == set(bavs)
+        return all([item in self.primary_values for item in bavs])
 
     def is_secondary(self, bavs: Iterable[BranchAttributeValue]) -> bool:
-        return set(self.secondary_values) == set(bavs)
+        return all([item in self.secondary_values for item in bavs])
 
 
 @dataclass
