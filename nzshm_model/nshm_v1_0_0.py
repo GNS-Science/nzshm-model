@@ -20,6 +20,7 @@ title = "Initial version"
 
 json_slt = Path(__file__).parent / "source_logic_tree" / "nshm_v1.0.0.json"
 
+
 def source_logic_tree():
     return dacite.from_dict(data_class=SourceLogicTree, data=json.load(open(json_slt)))
 

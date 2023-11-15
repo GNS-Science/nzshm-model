@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-#import nzshm_model
+# import nzshm_model
 # from nzshm_model.ground_motion_model.logic_tree import (
 #     from_xml
 # )
@@ -48,18 +48,21 @@ TypeError: xpath() takes exactly 1 positional argument (2 given)
 
 from lxml import objectify
 
-NS = {'nrml':'http://openquake.org/xmlns/nrml/0.4'}
+NS = {'nrml': 'http://openquake.org/xmlns/nrml/0.4'}
+
 
 def from_xml(filepath: Path):
     gmm_tree = objectify.parse(filepath)
     root = gmm_tree.getroot()
-    
+
     for lt in root.xpath('/nrml:nrml/nrml:logicTree', namespaces=NS):
         yield lt
+
 
 @pytest.fixture
 def gmm_logic_tree_path():
     yield Path(__file__).parent.parent / "GMM_LTs" / "NZ_NSHM_GMM_LT_final_EE.xml"
+
 
 def test_load_xml(gmm_logic_tree_path):
 
@@ -72,11 +75,11 @@ def test_load_xml(gmm_logic_tree_path):
 
     """
     for logic_tree in from_xml(gmm_logic_tree_path):
-        
+
         # usually we expect just one....
         print(logic_tree, logic_tree.tag)
         print(logic_tree.get('logicTreeID') == 'lt1')
-              
+
         for ltbs in logic_tree.iterchildren():
             print(ltbs.tag, ltbs.get('uncertaintyType'), ltbs.get('uncertaintyType'))
 
@@ -85,7 +88,7 @@ def test_load_xml(gmm_logic_tree_path):
             # assert ltbs.get('uncertaintyType') == "gmpeModel"
             # assert ltbs.get('branchSetID') == "bs_crust"
             # assert ltbs.get('applyToTectonicRegionType') == "Active Shallow Crust"
-        
+
             for ltb in ltbs.iterchildren():
                 print(ltb.tag, ltb.get('branchID'))
 
@@ -96,8 +99,8 @@ def test_load_xml(gmm_logic_tree_path):
                     print(wm.text)
 
 
-
 from nzshm_model.nrml.logic_tree import NrmlDocument
+
 
 def test_build_nrml_tree(gmm_logic_tree_path):
 
@@ -117,4 +120,3 @@ def test_build_nrml_tree(gmm_logic_tree_path):
                 print(branch.uncertainty_weight)
 
     # assert 0
-
