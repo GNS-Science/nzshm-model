@@ -5,11 +5,10 @@ Should work for both GMM models and for Source models
 
 """
 
-from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterable, List, Union
+from typing import List, Union
 
 from lxml import objectify
 

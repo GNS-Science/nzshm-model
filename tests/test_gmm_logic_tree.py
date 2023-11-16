@@ -1,9 +1,10 @@
 #! python test_logic_tree.py
 
-import dataclasses
 from pathlib import Path
 
 import pytest
+
+from nzshm_model.nrml.logic_tree import NrmlDocument
 
 # import nzshm_model
 # from nzshm_model.ground_motion_model.logic_tree import (
@@ -12,7 +13,7 @@ import pytest
 
 
 """
->> logic_tree = gmm_tree.xpath('/nrml/logicTree')                                                                                                                                                 [53/14644]
+>> logic_tree = gmm_tree.xpath('/nrml/logicTree')
 >>> len(logic_tree)
 0
 >>> root = gmm_tree.getroot()
@@ -97,9 +98,6 @@ def test_load_xml(gmm_logic_tree_path):
 
                 for wm in ltb.findall('nrml:uncertaintyWeight', namespaces=NS):
                     print(wm.text)
-
-
-from nzshm_model.nrml.logic_tree import NrmlDocument
 
 
 def test_build_nrml_tree(gmm_logic_tree_path):
