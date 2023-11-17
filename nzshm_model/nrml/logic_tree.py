@@ -18,6 +18,7 @@ from lxml import objectify
 NRML_NS = None
 VALID_NRML_NS = ["http://openquake.org/xmlns/nrml/0.4", "http://openquake.org/xmlns/nrml/0.5"]
 
+UNCERTAINTY_MODEL_CLASSNAME = 'GenericUncertaintyModel'
 
 def get_nrml_namespace(element):
     namespaces = element.nsmap
@@ -31,11 +32,6 @@ class GenericUncertaintyModel:
     text: str
 
 
-# @dataclass
-# class UncertaintyWeight:
-#     value: float
-
-
 @dataclass
 class LogicTreeBranch:
     branchID: str
@@ -47,7 +43,8 @@ class LogicTreeBranch:
         def uncertainty_models(ltb) -> Iterator[GenericUncertaintyModel]:
             for um in ltb.findall('nrml:uncertaintyModel', namespaces=NRML_NS):
                 print(um)
-                yield GenericUncertaintyModel(text=um.text)
+                clazz = globals[UNCERTAINTY_MODEL_CLASSNAME]
+                yield clazz(text=um.text)
 
         def uncertainty_weight(ltb) -> float:
             uws = list(ltb.findall('nrml:uncertaintyWeight', namespaces=NRML_NS))
