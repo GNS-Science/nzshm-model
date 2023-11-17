@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from nzshm_model.nrml.logic_tree import NrmlDocument
+from nzshm_model.nrml.logic_tree import GroundMotionUncertaintyModel, NrmlDocument, SourcesUncertaintyModel
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
 
@@ -13,7 +13,7 @@ def test_nrml_gmm_logic_tree():
 
     gmm_logic_tree_path = FIXTURE_PATH / "TEST_GMM_LT.xml"
 
-    doc = NrmlDocument.from_xml_file(gmm_logic_tree_path)
+    doc = NrmlDocument.from_xml_file(gmm_logic_tree_path, GroundMotionUncertaintyModel)
 
     logic_trees = list(doc.logic_trees)
     assert len(logic_trees) == 1
@@ -24,13 +24,13 @@ def test_nrml_gmm_logic_tree():
 
     assert len(crustal_branch.branches) == 1
 
-    # assert crustal_branch.branches[0].uncertainty_weight == 1.0
+    # branch uncertainty weight
+    assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_weight == pytest.approx(0.117000)
 
-    #         for branch in ltbs.branches:
-    #             print(branch.uncertainty_models)
-    #             print(branch.uncertainty_weight)
-
-    # assert 0
+    # branch uncertainty models
+    assert "Stafford2022" in doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].text
+    assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].gmpe_name == "[Stafford2022]"
+    assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].arguments[0] == "mu_branch = \"Upper\""
 
 
 @pytest.mark.parametrize(
@@ -59,7 +59,7 @@ def test_nrml_gmm_logic_tree():
 def test_nrml_srm_logic_tree_1(fixture_file, branch_set_id, branch_id, uncertainty_weight, uncertainty_model):
 
     srm_logic_tree_path = FIXTURE_PATH / fixture_file
-    doc = NrmlDocument.from_xml_file(srm_logic_tree_path)
+    doc = NrmlDocument.from_xml_file(srm_logic_tree_path, SourcesUncertaintyModel)
 
     # logic tree 0
     assert len(doc.logic_trees) == 1

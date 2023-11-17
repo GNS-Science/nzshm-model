@@ -18,7 +18,8 @@ from lxml import objectify
 NRML_NS = None
 VALID_NRML_NS = ["http://openquake.org/xmlns/nrml/0.4", "http://openquake.org/xmlns/nrml/0.5"]
 
-UNCERTAINTY_MODEL_CLASSNAME = 'GenericUncertaintyModel'
+# UNCERTAINTY_MODEL_CLASSNAME = 'GenericUncertaintyModel'
+
 
 def get_nrml_namespace(element):
     namespaces = element.nsmap
@@ -31,6 +32,35 @@ def get_nrml_namespace(element):
 class GenericUncertaintyModel:
     text: str
 
+    @classmethod
+    def from_node(cls, node):
+        return GenericUncertaintyModel(text=node.text)
+
+
+@dataclass
+class GroundMotionUncertaintyModel:
+    text: str
+    gmpe_name: str
+    arguments: List[str]
+
+    @classmethod
+    def from_node(cls, node):
+        lines = node.text.split("\n")
+        return GroundMotionUncertaintyModel(
+            text=node.text, gmpe_name=lines[0].strip(), arguments=[arg.strip() for arg in lines[1:]]
+        )
+
+
+@dataclass
+class SourcesUncertaintyModel:
+    text: str
+    source_files: List[str]
+
+    @classmethod
+    def from_node(cls, node):
+        lines = node.text.split()  # splitting on whitespace
+        return SourcesUncertaintyModel(text=node.text, source_files=[arg.strip() for arg in lines])
+
 
 @dataclass
 class LogicTreeBranch:
@@ -39,12 +69,11 @@ class LogicTreeBranch:
     uncertainty_weight: float = 1.0
 
     @classmethod
-    def from_parent(cls, ltbs):
-        def uncertainty_models(ltb) -> Iterator[GenericUncertaintyModel]:
+    def from_parent(cls, ctx, ltbs):
+        def uncertainty_models(ctx, ltb) -> Iterator[GenericUncertaintyModel]:
             for um in ltb.findall('nrml:uncertaintyModel', namespaces=NRML_NS):
-                print(um)
-                clazz = globals[UNCERTAINTY_MODEL_CLASSNAME]
-                yield clazz(text=um.text)
+                # here we allow client to override the class for different uncertainty model types,
+                yield ctx['uncertainty_class'].from_node(um)
 
         def uncertainty_weight(ltb) -> float:
             uws = list(ltb.findall('nrml:uncertaintyWeight', namespaces=NRML_NS))
@@ -56,7 +85,7 @@ class LogicTreeBranch:
 
             yield LogicTreeBranch(
                 branchID=ltb.get('branchID'),
-                uncertainty_models=list(uncertainty_models(ltb)),
+                uncertainty_models=list(uncertainty_models(ctx, ltb)),
                 uncertainty_weight=uncertainty_weight(ltb),
             )
 
@@ -70,14 +99,14 @@ class LogicTreeBranchSet:
     branches: List['LogicTreeBranch'] = field(default_factory=list)
 
     @classmethod
-    def from_parent(cls, logic_tree):
+    def from_parent(cls, ctx, logic_tree):
         # use of xpath here let's us ignore internediate elements such as logicTreeBranchingLevel in nrml/0.5
         for ltbs in logic_tree.xpath('//nrml:logicTreeBranchSet', namespaces=NRML_NS):
             yield LogicTreeBranchSet(
                 branchSetID=ltbs.get('branchSetID'),
                 uncertaintyType=ltbs.get('uncertaintyType'),
                 applyToTectonicRegionType=ltbs.get('applyToTectonicRegionType'),
-                branches=list(LogicTreeBranch.from_parent(ltbs)),
+                branches=list(LogicTreeBranch.from_parent(ctx, ltbs)),
             )
             # print(ltbs.tag, ltbs.get('uncertaintyType'), ltbs.get('uncertaintyType'))
 
@@ -88,9 +117,11 @@ class LogicTree:
     branch_sets: List['LogicTreeBranchSet'] = field(default_factory=list)
 
     @classmethod
-    def from_parent(cls, root):
+    def from_parent(cls, ctx, root):
         for lt in root.xpath('/nrml:nrml/nrml:logicTree', namespaces=NRML_NS):
-            yield LogicTree(logicTreeID=lt.get('logicTreeID'), branch_sets=list(LogicTreeBranchSet.from_parent(lt)))
+            yield LogicTree(
+                logicTreeID=lt.get('logicTreeID'), branch_sets=list(LogicTreeBranchSet.from_parent(ctx, lt))
+            )
 
 
 @dataclass
@@ -99,10 +130,11 @@ class NrmlDocument:
 
     @classmethod
     @lru_cache
-    def from_xml_file(cls, filepath: Union[Path, str]):
+    def from_xml_file(cls, filepath: Union[Path, str], uncertainy_model_class=GenericUncertaintyModel):
         gmm_tree = objectify.parse(filepath)
         root = gmm_tree.getroot()
 
         global NRML_NS
         NRML_NS = {'nrml': get_nrml_namespace(root)}
-        return NrmlDocument(logic_trees=list(LogicTree.from_parent(root)))
+        ctx = {'uncertainty_class': uncertainy_model_class}
+        return NrmlDocument(logic_trees=list(LogicTree.from_parent(ctx, root)))
