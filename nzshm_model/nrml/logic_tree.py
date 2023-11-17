@@ -3,7 +3,7 @@ Classes for deserialising NRML XML into python dataclasses.
 
 Should work for both GMM models and for Source Rate models.
 
-NB: runzi.execute.openquake.util.oq_build_sources.py module contains code that 
+NB: runzi.execute.openquake.util.oq_build_sources.py module contains code that
 write source XML on the fly, using SLT python modules as inputs.
 
 """
@@ -11,13 +11,13 @@ write source XML on the fly, using SLT python modules as inputs.
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import List, Union
+from typing import Iterator, List, Union
 
 from lxml import objectify
 
 NRML_NS = None
-VALID_NRML_NS = ["http://openquake.org/xmlns/nrml/0.4", 
-             "http://openquake.org/xmlns/nrml/0.5"]
+VALID_NRML_NS = ["http://openquake.org/xmlns/nrml/0.4", "http://openquake.org/xmlns/nrml/0.5"]
+
 
 def get_nrml_namespace(element):
     namespaces = element.nsmap
@@ -25,13 +25,16 @@ def get_nrml_namespace(element):
         return namespaces[None]
     raise ValueError(f"the element {element} does not use a supported NRML namespace.")
 
+
 @dataclass
 class GenericUncertaintyModel:
     text: str
 
+
 # @dataclass
 # class UncertaintyWeight:
 #     value: float
+
 
 @dataclass
 class LogicTreeBranch:
@@ -41,8 +44,7 @@ class LogicTreeBranch:
 
     @classmethod
     def from_parent(cls, ltbs):
-
-        def uncertainty_models(ltb) -> List[GenericUncertaintyModel]:
+        def uncertainty_models(ltb) -> Iterator[GenericUncertaintyModel]:
             for um in ltb.findall('nrml:uncertaintyModel', namespaces=NRML_NS):
                 print(um)
                 yield GenericUncertaintyModel(text=um.text)
@@ -56,9 +58,9 @@ class LogicTreeBranch:
         for ltb in ltbs.iterchildren():
 
             yield LogicTreeBranch(
-                branchID = ltb.get('branchID'),
-                uncertainty_models = list(uncertainty_models(ltb)),
-                uncertainty_weight = uncertainty_weight(ltb)
+                branchID=ltb.get('branchID'),
+                uncertainty_models=list(uncertainty_models(ltb)),
+                uncertainty_weight=uncertainty_weight(ltb),
             )
 
 
@@ -66,7 +68,7 @@ class LogicTreeBranch:
 class LogicTreeBranchSet:
     branchSetID: str  # assert ltbs.get('branchSetID') == "bs_crust"
     uncertaintyType: str  # assert ltbs.get('uncertaintyType') == "gmpeModel"
-    applyToTectonicRegionType: str # assert ltbs.get('applyToTectonicRegionType') == "Active Shallow Crust"
+    applyToTectonicRegionType: str  # assert ltbs.get('applyToTectonicRegionType') == "Active Shallow Crust"
 
     branches: List['LogicTreeBranch'] = field(default_factory=list)
 
@@ -91,15 +93,12 @@ class LogicTree:
     @classmethod
     def from_parent(cls, root):
         for lt in root.xpath('/nrml:nrml/nrml:logicTree', namespaces=NRML_NS):
-            yield LogicTree(
-                logicTreeID=lt.get('logicTreeID'), branch_sets=list(LogicTreeBranchSet.from_parent(lt))
-            )
+            yield LogicTree(logicTreeID=lt.get('logicTreeID'), branch_sets=list(LogicTreeBranchSet.from_parent(lt)))
 
 
 @dataclass
 class NrmlDocument:
     logic_trees: List['LogicTree'] = field(default_factory=list)
-
 
     @classmethod
     @lru_cache
@@ -107,6 +106,6 @@ class NrmlDocument:
         gmm_tree = objectify.parse(filepath)
         root = gmm_tree.getroot()
 
-        global NRML_NS 
-        NRML_NS = {'nrml': get_nrml_namespace(root) }
+        global NRML_NS
+        NRML_NS = {'nrml': get_nrml_namespace(root)}
         return NrmlDocument(logic_trees=list(LogicTree.from_parent(root)))
