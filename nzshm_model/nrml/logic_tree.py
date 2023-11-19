@@ -44,11 +44,9 @@ class GenericUncertaintyModel:
 
 
 @dataclass
-class GroundMotionUncertaintyModel:
-    text: str
+class GroundMotionUncertaintyModel(GenericUncertaintyModel):
     gmpe_name: str
     arguments: List[str]
-    parent: "LogicTreeBranch"
 
     @classmethod
     def from_node(cls, node, parent):
@@ -60,15 +58,10 @@ class GroundMotionUncertaintyModel:
             arguments=[arg.strip() for arg in lines[1:]],
         )
 
-    def path(self) -> PurePath:
-        return PurePath(self.text, self.parent.branchID)
-
 
 @dataclass
-class SourcesUncertaintyModel:
-    text: str
+class SourcesUncertaintyModel(GenericUncertaintyModel):
     source_files: List[str]
-    parent: "LogicTreeBranch"
 
     @classmethod
     def from_node(cls, node, parent):
@@ -76,9 +69,6 @@ class SourcesUncertaintyModel:
         return SourcesUncertaintyModel(
             parent=parent, text=node.text.strip(), source_files=[arg.strip() for arg in lines]
         )
-
-    def path(self) -> PurePath:
-        return PurePath(self.text, self.parent.branchID)
 
 
 @dataclass
