@@ -40,7 +40,7 @@ class GenericUncertaintyModel:
         return GenericUncertaintyModel(parent=node, text=node.text.strip())
 
     def path(self) -> PurePath:
-        return PurePath(self.text, self.parent.branchID)
+        return PurePath(self.text, self.parent.path())
 
 
 @dataclass
@@ -98,9 +98,13 @@ class LogicTreeBranch:
             _instance.uncertainty_models = list(uncertainty_models(ltb, _instance, parent.uncertainty_class()))
             yield _instance
 
+    def path(self) -> PurePath:
+        return PurePath(self.branchID, self.parent.path())
+
 
 @dataclass
 class LogicTreeBranchSet:
+    parent: "LogicTreeBranch"
     branchSetID: str  # assert ltbs.get('branchSetID') == "bs_crust"
     uncertaintyType: str  # assert ltbs.get('uncertaintyType') == "gmpeModel"
     applyToTectonicRegionType: str  # assert ltbs.get('applyToTectonicRegionType') == "Active Shallow Crust"
@@ -108,10 +112,11 @@ class LogicTreeBranchSet:
     branches: List['LogicTreeBranch'] = field(default_factory=list)
 
     @classmethod
-    def from_parent(cls, logic_tree):
+    def from_parent(cls, logic_tree, parent):
         # use of xpath here let's us ignore internediate elements such as logicTreeBranchingLevel in nrml/0.5
         for ltbs in logic_tree.xpath('//nrml:logicTreeBranchSet', namespaces=NRML_NS):
             _instance = LogicTreeBranchSet(
+                parent=parent,
                 branchSetID=ltbs.get('branchSetID'),
                 uncertaintyType=ltbs.get('uncertaintyType'),
                 applyToTectonicRegionType=ltbs.get('applyToTectonicRegionType'),
@@ -126,6 +131,9 @@ class LogicTreeBranchSet:
             return SourcesUncertaintyModel
         return GenericUncertaintyModel
 
+    def path(self) -> PurePath:
+        return PurePath(self.branchSetID, self.parent.path())
+
 
 @dataclass
 class LogicTree:
@@ -135,7 +143,12 @@ class LogicTree:
     @classmethod
     def from_parent(cls, root):
         for lt in root.xpath('/nrml:nrml/nrml:logicTree', namespaces=NRML_NS):
-            yield LogicTree(logicTreeID=lt.get('logicTreeID'), branch_sets=list(LogicTreeBranchSet.from_parent(lt)))
+            _instance = LogicTree(logicTreeID=lt.get('logicTreeID'))
+            _instance.branch_sets = list(LogicTreeBranchSet.from_parent(lt, _instance))
+            yield _instance
+
+    def path(self) -> PurePath:
+        return PurePath(self.logicTreeID)
 
 
 @dataclass
@@ -144,7 +157,7 @@ class NrmlDocument:
 
     @classmethod
     @lru_cache
-    def from_xml_file(cls, filepath: Union[Path, str], uncertainy_model_class=GenericUncertaintyModel):
+    def from_xml_file(cls, filepath: Union[Path, str]):
         gmm_tree = objectify.parse(filepath)
         root = gmm_tree.getroot()
 

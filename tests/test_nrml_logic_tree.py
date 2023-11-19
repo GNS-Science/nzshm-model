@@ -4,7 +4,7 @@ from pathlib import Path, PurePath
 
 import pytest
 
-from nzshm_model.nrml.logic_tree import GroundMotionUncertaintyModel, NrmlDocument, SourcesUncertaintyModel
+from nzshm_model.nrml.logic_tree import NrmlDocument
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
 
@@ -13,7 +13,7 @@ def test_nrml_gmm_logic_tree():
 
     gmm_logic_tree_path = FIXTURE_PATH / "TEST_GMM_LT.xml"
 
-    doc = NrmlDocument.from_xml_file(gmm_logic_tree_path, GroundMotionUncertaintyModel)
+    doc = NrmlDocument.from_xml_file(gmm_logic_tree_path)
 
     logic_trees = list(doc.logic_trees)
     assert len(logic_trees) == 1
@@ -37,7 +37,7 @@ def test_nrml_gmm_logic_tree_reverse_tree():
 
     gmm_logic_tree_path = FIXTURE_PATH / "TEST_GMM_LT.xml"
 
-    doc = NrmlDocument.from_xml_file(gmm_logic_tree_path, GroundMotionUncertaintyModel)
+    doc = NrmlDocument.from_xml_file(gmm_logic_tree_path)
 
     assert (
         doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].parent
@@ -46,42 +46,78 @@ def test_nrml_gmm_logic_tree_reverse_tree():
 
     assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].parent.branchID == "STF22_upper"
 
+
+def test_nrml_gmm_logic_tree_paths():
+
+    gmm_logic_tree_path = FIXTURE_PATH / "TEST_GMM_LT.xml"
+
+    doc = NrmlDocument.from_xml_file(gmm_logic_tree_path)
+
+    # LogicTreeBranch path
+
+    assert doc.logic_trees[0].branch_sets[0].branches[0].path() == PurePath("STF22_upper", "bs_crust", "lt1")
+
+    assert doc.logic_trees[0].branch_sets[1].branches[0].path() == PurePath("Kuehn2020SS_GLO_lower", "bs_slab", "lt1")
+
+    # uncertainty model path
     assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].path() == PurePath(
-        '[Stafford2022]\n                  mu_branch = "Upper"', "STF22_upper"
+        '[Stafford2022]\n                  mu_branch = "Upper"', "STF22_upper", "bs_crust", "lt1"
+    )
+
+    assert doc.logic_trees[0].branch_sets[1].branches[0].uncertainty_models[0].path() == PurePath(
+        '[KuehnEtAl2020SSlab]\n                        region = "GLO"'
+        '\n                        sigma_mu_epsilon = -1.28155',
+        "Kuehn2020SS_GLO_lower",
+        "bs_slab",
+        "lt1",
     )
 
 
+SRC_TEST_DATA = [
+    pytest.param(
+        "TEST_SRC_LT_example_1.xml",
+        "Combined",
+        "BS-NONCE1",
+        "CR_3km",
+        1.0,
+        "SW52ZXJzaW9uU29sdXRpb246MTAwMTkx-ruptures.xml\t\n"
+        "            SW52ZXJzaW9uU29sdXRpb246MTAwMTkx-ruptures_sections.xml",
+        id='example_1',
+    ),
+    pytest.param(
+        "TEST_SRC_LT_example_2.xml",
+        "Combined",
+        "BS-NONCE1",
+        "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEwNjQ2NA==|RmlsZToxMDY1MzM=|"
+        "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEwNjQ5Mg==|RmlsZToxMDY1NTQ=|SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEwNjUwNg==|"
+        "RmlsZToxMDY1NTM=",
+        0.0833333,
+        "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2MzYw-ruptures.xml\t"
+        "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2MzYw-ruptures_sections.xml\t"
+        "Floor_AddoptiEEPAScomb-INT_hiktcrp_b1.10_N17.18.xml\t"
+        "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2NDEw-ruptures.xml\t"
+        "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2NDEw-ruptures_sections.xml\t"
+        "Floor_AddoptiEEPAScomb-INT_puy_b0.85_N4.36.xml\t"
+        "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2NDE4-ruptures_sections.xml\t"
+        "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2NDE4-ruptures.xml\tFloor_AddoptiEEPAScomb-CRU_plyadj_b0.85_N4.36.xml",
+        id='example_2',
+    ),
+]
+
+
 @pytest.mark.parametrize(
-    "fixture_file, branch_set_id, branch_id, uncertainty_weight, uncertainty_model",
-    [
-        pytest.param(
-            "TEST_SRC_LT_example_1.xml",
-            "BS-NONCE1",
-            "CR_3km",
-            1.0,
-            "SW52ZXJzaW9uU29sdXRpb246MTAwMTkx-ruptures.xml",
-            id='example_1',
-        ),
-        pytest.param(
-            "TEST_SRC_LT_example_2.xml",
-            "BS-NONCE1",
-            "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEwNjQ2NA==|RmlsZToxMDY1MzM=|"
-            "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEwNjQ5Mg==|RmlsZToxMDY1NTQ=|SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEwNjUwNg==|"
-            "RmlsZToxMDY1NTM=",
-            0.0833333,
-            "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2MzYw-ruptures.xml",
-            id='example_2',
-        ),
-    ],
+    "fixture_file, logic_tree_id, branch_set_id, branch_id, uncertainty_weight, uncertainty_model", SRC_TEST_DATA
 )
-def test_nrml_srm_logic_tree(fixture_file, branch_set_id, branch_id, uncertainty_weight, uncertainty_model):
+def test_nrml_srm_logic_tree(
+    fixture_file, logic_tree_id, branch_set_id, branch_id, uncertainty_weight, uncertainty_model
+):
 
     srm_logic_tree_path = FIXTURE_PATH / fixture_file
-    doc = NrmlDocument.from_xml_file(srm_logic_tree_path, SourcesUncertaintyModel)
+    doc = NrmlDocument.from_xml_file(srm_logic_tree_path)
 
     # logic tree 0
     assert len(doc.logic_trees) == 1
-    assert doc.logic_trees[0].logicTreeID == "Combined"
+    assert doc.logic_trees[0].logicTreeID == logic_tree_id
 
     # branch_set 0
     assert len(doc.logic_trees[0].branch_sets) == 1
@@ -97,6 +133,17 @@ def test_nrml_srm_logic_tree(fixture_file, branch_set_id, branch_id, uncertainty
     # branch 0 uncertainty models
     assert uncertainty_model in doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].text
 
+
+@pytest.mark.parametrize(
+    "fixture_file, logic_tree_id, branch_set_id, branch_id, uncertainty_weight, uncertainty_model", SRC_TEST_DATA
+)
+def test_nrml_srm_logic_tree_parents(
+    fixture_file, logic_tree_id, branch_set_id, branch_id, uncertainty_weight, uncertainty_model
+):
+
+    srm_logic_tree_path = FIXTURE_PATH / fixture_file
+    doc = NrmlDocument.from_xml_file(srm_logic_tree_path)
+
     # parental reference
     assert (
         doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].parent
@@ -104,3 +151,20 @@ def test_nrml_srm_logic_tree(fixture_file, branch_set_id, branch_id, uncertainty
     )
 
     assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].parent.branchID == branch_id
+
+
+@pytest.mark.parametrize(
+    "fixture_file, logic_tree_id, branch_set_id, branch_id, uncertainty_weight, uncertainty_model", SRC_TEST_DATA
+)
+def test_nrml_srm_logic_tree_path(
+    fixture_file, logic_tree_id, branch_set_id, branch_id, uncertainty_weight, uncertainty_model
+):
+
+    srm_logic_tree_path = FIXTURE_PATH / fixture_file
+    doc = NrmlDocument.from_xml_file(srm_logic_tree_path)
+
+    assert doc.logic_trees[0].branch_sets[0].branches[0].path() == PurePath(branch_id, branch_set_id, logic_tree_id)
+
+    assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].path() == PurePath(
+        uncertainty_model, branch_id, branch_set_id, logic_tree_id
+    )
