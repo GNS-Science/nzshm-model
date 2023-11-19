@@ -1,7 +1,9 @@
 """
-Classes for deserialising NRML XML into python dataclasses.
+Classes for deserialising NRML XML hazard into python dataclasses.
 
 Should work for both GMM models and for Source Rate models.
+
+ref https://github.com/gem/oq-nrmllib/blob/master/openquake/nrmllib/schema/hazard/logic_tree.xsd
 
 NB: runzi.execute.openquake.util.oq_build_sources.py module contains code that
 write source XML on the fly, using SLT python modules as inputs.
@@ -11,7 +13,7 @@ write source XML on the fly, using SLT python modules as inputs.
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import Iterator, List, Union
+from typing import Any, Callable, Iterator, List, Union
 
 from lxml import objectify
 
@@ -31,10 +33,11 @@ def get_nrml_namespace(element):
 @dataclass
 class GenericUncertaintyModel:
     text: str
+    parent: Callable[..., Any]
 
     @classmethod
     def from_node(cls, node):
-        return GenericUncertaintyModel(text=node.text)
+        return GenericUncertaintyModel(parent=node, text=node.text)
 
 
 @dataclass
@@ -42,12 +45,13 @@ class GroundMotionUncertaintyModel:
     text: str
     gmpe_name: str
     arguments: List[str]
+    parent: Callable[..., Any]
 
     @classmethod
-    def from_node(cls, node):
+    def from_node(cls, node, parent):
         lines = node.text.split("\n")
         return GroundMotionUncertaintyModel(
-            text=node.text, gmpe_name=lines[0].strip(), arguments=[arg.strip() for arg in lines[1:]]
+            parent=parent, text=node.text, gmpe_name=lines[0].strip(), arguments=[arg.strip() for arg in lines[1:]]
         )
 
 
@@ -55,25 +59,26 @@ class GroundMotionUncertaintyModel:
 class SourcesUncertaintyModel:
     text: str
     source_files: List[str]
+    parent: Callable[..., Any]
 
     @classmethod
-    def from_node(cls, node):
+    def from_node(cls, node, parent):
         lines = node.text.split()  # splitting on whitespace
-        return SourcesUncertaintyModel(text=node.text, source_files=[arg.strip() for arg in lines])
+        return SourcesUncertaintyModel(parent=parent, text=node.text, source_files=[arg.strip() for arg in lines])
 
 
 @dataclass
 class LogicTreeBranch:
     branchID: str
-    uncertainty_models: List[str]
+    uncertainty_models: List[Any] = field(default_factory=list)
     uncertainty_weight: float = 1.0
 
     @classmethod
     def from_parent(cls, ctx, ltbs):
-        def uncertainty_models(ctx, ltb) -> Iterator[GenericUncertaintyModel]:
+        def uncertainty_models(ctx, ltb, parent) -> Iterator[GenericUncertaintyModel]:
             for um in ltb.findall('nrml:uncertaintyModel', namespaces=NRML_NS):
                 # here we allow client to override the class for different uncertainty model types,
-                yield ctx['uncertainty_class'].from_node(um)
+                yield ctx['uncertainty_class'].from_node(um, parent)
 
         def uncertainty_weight(ltb) -> float:
             uws = list(ltb.findall('nrml:uncertaintyWeight', namespaces=NRML_NS))
@@ -83,11 +88,15 @@ class LogicTreeBranch:
 
         for ltb in ltbs.iterchildren():
 
-            yield LogicTreeBranch(
-                branchID=ltb.get('branchID'),
-                uncertainty_models=list(uncertainty_models(ctx, ltb)),
-                uncertainty_weight=uncertainty_weight(ltb),
-            )
+            ltb_instance = LogicTreeBranch(branchID=ltb.get('branchID'), uncertainty_weight=uncertainty_weight(ltb))
+            ltb_instance.uncertainty_models = list(uncertainty_models(ctx, ltb, ltb_instance))
+
+            yield ltb_instance
+            # yield LogicTreeBranch(
+            #     branchID=ltb.get('branchID'),
+            #     uncertainty_models=list(uncertainty_models(ctx, ltb)),
+            #     uncertainty_weight=uncertainty_weight(ltb),
+            # )
 
 
 @dataclass

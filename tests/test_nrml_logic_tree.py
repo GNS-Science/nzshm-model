@@ -33,6 +33,20 @@ def test_nrml_gmm_logic_tree():
     assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].arguments[0] == "mu_branch = \"Upper\""
 
 
+def test_nrml_gmm_logic_tree_reverse_tree():
+
+    gmm_logic_tree_path = FIXTURE_PATH / "TEST_GMM_LT.xml"
+
+    doc = NrmlDocument.from_xml_file(gmm_logic_tree_path, GroundMotionUncertaintyModel)
+
+    assert (
+        doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].parent
+        is doc.logic_trees[0].branch_sets[0].branches[0]
+    )
+
+    assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].parent.branchID == "STF22_upper"
+
+
 @pytest.mark.parametrize(
     "fixture_file, branch_set_id, branch_id, uncertainty_weight, uncertainty_model",
     [
@@ -56,7 +70,7 @@ def test_nrml_gmm_logic_tree():
         ),
     ],
 )
-def test_nrml_srm_logic_tree_1(fixture_file, branch_set_id, branch_id, uncertainty_weight, uncertainty_model):
+def test_nrml_srm_logic_tree(fixture_file, branch_set_id, branch_id, uncertainty_weight, uncertainty_model):
 
     srm_logic_tree_path = FIXTURE_PATH / fixture_file
     doc = NrmlDocument.from_xml_file(srm_logic_tree_path, SourcesUncertaintyModel)
@@ -73,8 +87,16 @@ def test_nrml_srm_logic_tree_1(fixture_file, branch_set_id, branch_id, uncertain
     assert len(doc.logic_trees[0].branch_sets[0].branches) == 1
     assert doc.logic_trees[0].branch_sets[0].branches[0].branchID == branch_id
 
-    # branch uncertainty weight
+    # branch 0 uncertainty weight
     assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_weight == pytest.approx(uncertainty_weight)
 
-    # branch uncertainty models
+    # branch 0 uncertainty models
     assert uncertainty_model in doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].text
+
+    # parental reference
+    assert (
+        doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].parent
+        is doc.logic_trees[0].branch_sets[0].branches[0]
+    )
+
+    assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].parent.branchID == branch_id
