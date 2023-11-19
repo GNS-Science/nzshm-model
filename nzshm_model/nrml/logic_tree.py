@@ -73,16 +73,17 @@ class SourcesUncertaintyModel(GenericUncertaintyModel):
 
 @dataclass
 class LogicTreeBranch:
+    parent: "LogicTreeBranchSet"
     branchID: str
     uncertainty_models: List[Any] = field(default_factory=list)
     uncertainty_weight: float = 1.0
 
     @classmethod
-    def from_parent(cls, ctx, ltbs):
-        def uncertainty_models(ctx, ltb, parent) -> Iterator[GenericUncertaintyModel]:
+    def from_parent(cls, ltbs, parent):
+        def uncertainty_models(ltb, parent, uncertainty_type) -> Iterator[GenericUncertaintyModel]:
             for um in ltb.findall('nrml:uncertaintyModel', namespaces=NRML_NS):
                 # here we allow client to override the class for different uncertainty model types,
-                yield ctx['uncertainty_class'].from_node(um, parent)
+                yield uncertainty_type.from_node(um, parent)
 
         def uncertainty_weight(ltb) -> float:
             uws = list(ltb.findall('nrml:uncertaintyWeight', namespaces=NRML_NS))
@@ -91,16 +92,11 @@ class LogicTreeBranch:
             raise ValueError("expecting exactly one uncertaintyWeight child, got {len(uws)}")
 
         for ltb in ltbs.iterchildren():
-
-            ltb_instance = LogicTreeBranch(branchID=ltb.get('branchID'), uncertainty_weight=uncertainty_weight(ltb))
-            ltb_instance.uncertainty_models = list(uncertainty_models(ctx, ltb, ltb_instance))
-
-            yield ltb_instance
-            # yield LogicTreeBranch(
-            #     branchID=ltb.get('branchID'),
-            #     uncertainty_models=list(uncertainty_models(ctx, ltb)),
-            #     uncertainty_weight=uncertainty_weight(ltb),
-            # )
+            _instance = LogicTreeBranch(
+                parent=parent, branchID=ltb.get('branchID'), uncertainty_weight=uncertainty_weight(ltb)
+            )
+            _instance.uncertainty_models = list(uncertainty_models(ltb, _instance, parent.uncertainty_class()))
+            yield _instance
 
 
 @dataclass
@@ -112,16 +108,23 @@ class LogicTreeBranchSet:
     branches: List['LogicTreeBranch'] = field(default_factory=list)
 
     @classmethod
-    def from_parent(cls, ctx, logic_tree):
+    def from_parent(cls, logic_tree):
         # use of xpath here let's us ignore internediate elements such as logicTreeBranchingLevel in nrml/0.5
         for ltbs in logic_tree.xpath('//nrml:logicTreeBranchSet', namespaces=NRML_NS):
-            yield LogicTreeBranchSet(
+            _instance = LogicTreeBranchSet(
                 branchSetID=ltbs.get('branchSetID'),
                 uncertaintyType=ltbs.get('uncertaintyType'),
                 applyToTectonicRegionType=ltbs.get('applyToTectonicRegionType'),
-                branches=list(LogicTreeBranch.from_parent(ctx, ltbs)),
             )
-            # print(ltbs.tag, ltbs.get('uncertaintyType'), ltbs.get('uncertaintyType'))
+            _instance.branches = list(LogicTreeBranch.from_parent(ltbs, _instance))
+            yield (_instance)
+
+    def uncertainty_class(self):
+        if self.uncertaintyType == "gmpeModel":
+            return GroundMotionUncertaintyModel
+        if self.uncertaintyType == "sourceModel":
+            return SourcesUncertaintyModel
+        return GenericUncertaintyModel
 
 
 @dataclass
@@ -130,11 +133,9 @@ class LogicTree:
     branch_sets: List['LogicTreeBranchSet'] = field(default_factory=list)
 
     @classmethod
-    def from_parent(cls, ctx, root):
+    def from_parent(cls, root):
         for lt in root.xpath('/nrml:nrml/nrml:logicTree', namespaces=NRML_NS):
-            yield LogicTree(
-                logicTreeID=lt.get('logicTreeID'), branch_sets=list(LogicTreeBranchSet.from_parent(ctx, lt))
-            )
+            yield LogicTree(logicTreeID=lt.get('logicTreeID'), branch_sets=list(LogicTreeBranchSet.from_parent(lt)))
 
 
 @dataclass
@@ -149,5 +150,4 @@ class NrmlDocument:
 
         global NRML_NS
         NRML_NS = {'nrml': get_nrml_namespace(root)}
-        ctx = {'uncertainty_class': uncertainy_model_class}
-        return NrmlDocument(logic_trees=list(LogicTree.from_parent(ctx, root)))
+        return NrmlDocument(logic_trees=list(LogicTree.from_parent(root)))
