@@ -1,6 +1,6 @@
 #! python test_logic_tree.py
 
-from pathlib import Path
+from pathlib import Path, PurePath
 
 import pytest
 
@@ -45,6 +45,10 @@ def test_nrml_gmm_logic_tree_reverse_tree():
     )
 
     assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].parent.branchID == "STF22_upper"
+
+    assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].path() == PurePath(
+        '[Stafford2022]\n                  mu_branch = "Upper"', "STF22_upper"
+    )
 
 
 @pytest.mark.parametrize(

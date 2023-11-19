@@ -12,8 +12,8 @@ write source XML on the fly, using SLT python modules as inputs.
 
 from dataclasses import dataclass, field
 from functools import lru_cache
-from pathlib import Path
-from typing import Any, Callable, Iterator, List, Union
+from pathlib import Path, PurePath
+from typing import Any, Iterator, List, Union
 
 from lxml import objectify
 
@@ -33,11 +33,14 @@ def get_nrml_namespace(element):
 @dataclass
 class GenericUncertaintyModel:
     text: str
-    parent: Callable[..., Any]
+    parent: "LogicTreeBranch"
 
     @classmethod
     def from_node(cls, node):
-        return GenericUncertaintyModel(parent=node, text=node.text)
+        return GenericUncertaintyModel(parent=node, text=node.text.strip())
+
+    def path(self) -> PurePath:
+        return PurePath(self.text, self.parent.branchID)
 
 
 @dataclass
@@ -45,26 +48,37 @@ class GroundMotionUncertaintyModel:
     text: str
     gmpe_name: str
     arguments: List[str]
-    parent: Callable[..., Any]
+    parent: "LogicTreeBranch"
 
     @classmethod
     def from_node(cls, node, parent):
         lines = node.text.split("\n")
         return GroundMotionUncertaintyModel(
-            parent=parent, text=node.text, gmpe_name=lines[0].strip(), arguments=[arg.strip() for arg in lines[1:]]
+            parent=parent,
+            text=node.text.strip(),
+            gmpe_name=lines[0].strip(),
+            arguments=[arg.strip() for arg in lines[1:]],
         )
+
+    def path(self) -> PurePath:
+        return PurePath(self.text, self.parent.branchID)
 
 
 @dataclass
 class SourcesUncertaintyModel:
     text: str
     source_files: List[str]
-    parent: Callable[..., Any]
+    parent: "LogicTreeBranch"
 
     @classmethod
     def from_node(cls, node, parent):
         lines = node.text.split()  # splitting on whitespace
-        return SourcesUncertaintyModel(parent=parent, text=node.text, source_files=[arg.strip() for arg in lines])
+        return SourcesUncertaintyModel(
+            parent=parent, text=node.text.strip(), source_files=[arg.strip() for arg in lines]
+        )
+
+    def path(self) -> PurePath:
+        return PurePath(self.text, self.parent.branchID)
 
 
 @dataclass
