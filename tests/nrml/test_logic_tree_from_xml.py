@@ -10,9 +10,7 @@ FIXTURE_PATH = Path(__file__).parent / "fixtures"
 
 
 def test_nrml_gmm_logic_tree():
-
     gmm_logic_tree_path = FIXTURE_PATH / "TEST_GMM_LT.xml"
-
     doc = NrmlDocument.from_xml_file(gmm_logic_tree_path)
 
     logic_trees = list(doc.logic_trees)
@@ -34,9 +32,7 @@ def test_nrml_gmm_logic_tree():
 
 
 def test_nrml_gmm_logic_tree_reverse_tree():
-
     gmm_logic_tree_path = FIXTURE_PATH / "TEST_GMM_LT.xml"
-
     doc = NrmlDocument.from_xml_file(gmm_logic_tree_path)
 
     assert (
@@ -48,15 +44,11 @@ def test_nrml_gmm_logic_tree_reverse_tree():
 
 
 def test_nrml_gmm_logic_tree_paths():
-
     gmm_logic_tree_path = FIXTURE_PATH / "TEST_GMM_LT.xml"
-
     doc = NrmlDocument.from_xml_file(gmm_logic_tree_path)
 
     # LogicTreeBranch path
-
     assert doc.logic_trees[0].branch_sets[0].branches[0].path() == PurePath("STF22_upper", "bs_crust", "lt1")
-
     assert doc.logic_trees[0].branch_sets[1].branches[0].path() == PurePath("Kuehn2020SS_GLO_lower", "bs_slab", "lt1")
 
     # uncertainty model path
