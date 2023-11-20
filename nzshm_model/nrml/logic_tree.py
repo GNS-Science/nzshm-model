@@ -20,8 +20,6 @@ from lxml import objectify
 NRML_NS = None
 VALID_NRML_NS = ["http://openquake.org/xmlns/nrml/0.4", "http://openquake.org/xmlns/nrml/0.5"]
 
-# UNCERTAINTY_MODEL_CLASSNAME = 'GenericUncertaintyModel'
-
 
 def get_nrml_namespace(element):
     namespaces = element.nsmap
@@ -70,6 +68,15 @@ class SourcesUncertaintyModel(GenericUncertaintyModel):
             parent=parent, text=node.text.strip(), source_files=[arg.strip() for arg in lines]
         )
 
+    @classmethod
+    def from_parent_slt(csl, ltb, parent):
+        """resolve to filenames of NRML sources"""
+        if ltb.onfault_nrml_id:
+            yield ltb.onfault_nrml_id
+        if ltb.distributed_nrml_id:
+            yield ltb.distributed_nrml_id
+        # yield ltb.nrml_id  # "Huh, where am I?"
+
 
 @dataclass
 class LogicTreeBranch:
@@ -98,6 +105,17 @@ class LogicTreeBranch:
             _instance.uncertainty_models = list(uncertainty_models(ltb, _instance, parent.uncertainty_class()))
             yield _instance
 
+    @classmethod
+    def from_parent_slt(cls, slt_ltbs, parent):
+        for ltb in slt_ltbs.branches:
+            _instance = LogicTreeBranch(
+                parent=parent,
+                branchID=str(ltb.values),  # ltb.get('branchID'),
+                uncertainty_weight=ltb.weight,  # LogicTreeBranch.uncertainty_weight(ltb)
+            )
+            _instance.uncertainty_models = list(SourcesUncertaintyModel.from_parent_slt(ltb, _instance))
+            yield _instance
+
     def path(self) -> PurePath:
         return PurePath(self.branchID, self.parent.path())
 
@@ -124,6 +142,19 @@ class LogicTreeBranchSet:
             _instance.branches = list(LogicTreeBranch.from_parent(ltbs, _instance))
             yield (_instance)
 
+    @classmethod
+    def from_parent_slt(cls, slt, parent):
+        # assert slt_spec.fault_system_lts[0].short_name == "PUY"
+        for ltbs in slt.fault_system_lts:
+            _instance = LogicTreeBranchSet(
+                parent=parent,
+                branchSetID=ltbs.short_name,
+                uncertaintyType=SourcesUncertaintyModel,
+                applyToTectonicRegionType="",
+            )
+            _instance.branches = list(LogicTreeBranch.from_parent_slt(ltbs, _instance))
+            yield _instance
+
     def uncertainty_class(self):
         if self.uncertaintyType == "gmpeModel":
             return GroundMotionUncertaintyModel
@@ -141,7 +172,7 @@ class LogicTree:
     branch_sets: List['LogicTreeBranchSet'] = field(default_factory=list)
 
     @classmethod
-    def from_parent(cls, root):
+    def from_parent(cls, root: objectify.Element) -> Iterator["LogicTree"]:
         for lt in root.xpath('/nrml:nrml/nrml:logicTree', namespaces=NRML_NS):
             _instance = LogicTree(logicTreeID=lt.get('logicTreeID'))
             _instance.branch_sets = list(LogicTreeBranchSet.from_parent(lt, _instance))
@@ -150,10 +181,19 @@ class LogicTree:
     def path(self) -> PurePath:
         return PurePath(self.logicTreeID)
 
+    @classmethod
+    def from_parent_slt(cls, slt: Any) -> "LogicTree":
+        """
+        build nrml instance from old-skool dataclasses instance.
+        """
+        _instance = LogicTree(logicTreeID=slt.version)
+        _instance.branch_sets = list(LogicTreeBranchSet.from_parent_slt(slt, _instance))
+        return _instance
+
 
 @dataclass
 class NrmlDocument:
-    logic_trees: List['LogicTree'] = field(default_factory=list)
+    logic_trees: List[LogicTree] = field(default_factory=list)
 
     @classmethod
     @lru_cache
@@ -164,3 +204,24 @@ class NrmlDocument:
         global NRML_NS
         NRML_NS = {'nrml': get_nrml_namespace(root)}
         return NrmlDocument(logic_trees=list(LogicTree.from_parent(root)))
+
+    @classmethod
+    def from_model_slt(cls, slt) -> "NrmlDocument":
+
+        # print(slt)
+        assert slt.version == 'NSHM_v1.0.4'
+        assert slt.title == 'NSHM version 1.0.4, corrected fault geometry'
+        assert slt.fault_system_lts[0].short_name == 'PUY'  # fault_system_lts <=> LogicTreeBranchSet
+
+        return NrmlDocument(logic_trees=[LogicTree.from_parent_slt(slt)])
+
+        #         FaultSystemLogicTree(short_name='PUY', long_name='Puysegur', branches=[Branch(values=[dm0.7, b
+        # N[0.902, 4.6], C4.0, s0.28], weight=0.21,
+
+        # slt_spec = slt.derive_spec()
+
+        # print(slt_spec)
+        # assert slt_spec.fault_system_lts[0].short_name == "PUY"
+        # assert slt_spec.fault_system_lts[0].branches[0].name == 'dm'
+        # assert slt_spec.fault_system_lts[0].branches[0].long_name == 'deformation model'
+        # assert slt_spec.fault_system_lts[0].branches[0].value_options == ['']
