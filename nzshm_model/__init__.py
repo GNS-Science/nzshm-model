@@ -6,8 +6,8 @@ __version__ = '0.3.1'
 CURRENT_VERSION = "NSHM_v1.0.0"
 
 versions = {
-    "NSHM_v1.0.0": nshm_v1_0_0,
-    "NSHM_v1.0.4": nshm_v1_0_4,
+    "NSHM_v1.0.0": nshm_v1_0_0.model,
+    "NSHM_v1.0.4": nshm_v1_0_4.model,
 }
 
 
