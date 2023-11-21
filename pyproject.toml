@@ -7,6 +7,7 @@ license = "AGPL3"
 readme = "README.md"
 packages = [
 	{include = "nzshm_model"},
+	{include = "resources"},
 	{include = "scripts"},
     {include = "tests", format = "sdist" }
 ]
@@ -23,15 +24,6 @@ dacite = "^1.6.0"
 lxml = "^4.9.3"
 
 [tool.poetry.extras]
-test = [
-    "pytest",
-    "black",
-    "isort",
-    "mypy",
-    "flake8",
-    "flake8-docstrings",
-    "pytest-cov"
-    ]
 toshi = [
     "boto3",
     "nshm-toshi-client"
@@ -39,8 +31,6 @@ toshi = [
 scripts = [
     "click"
 ]
-
-dev = ["tox", "pre-commit", "virtualenv", "pip", "twine", "toml", "bump2version"]
 
 [tool.poetry.group.dev.dependencies]
 black  = { version = "^22.3"}

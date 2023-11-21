@@ -6,7 +6,6 @@ import dacite
 from nzshm_model.nrml.logic_tree import LogicTree, NrmlDocument
 from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree
 
-
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
 GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
