@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0] - 2023-11-22
+## Changed
+ - refactor into resources package
+ - fix incorrect version info on v1.0.0 and v1.0.4 SLT json
+ - remove twine from project
+ - Revert "correlation values stored as sets"
+
+## Added
+ - new model class to make model definitions DRY;
+ - new nrml package to make classnames more compatible with GEM conventions
+ - gmm_logic_tree added to models
+-  SRM logic trees for various model hazard aggregations (in resources/SRM_LTs)
+
 ## [0.3.1] - 2023-11-14
 ## Fixed
  - correlations use list comparison rather than cast to set to avoid unhashable type TypeError
