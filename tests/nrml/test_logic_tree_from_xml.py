@@ -48,20 +48,23 @@ def test_nrml_gmm_logic_tree_paths():
     doc = NrmlDocument.from_xml_file(gmm_logic_tree_path)
 
     # LogicTreeBranch path
-    assert doc.logic_trees[0].branch_sets[0].branches[0].path() == PurePath("STF22_upper", "bs_crust", "lt1")
-    assert doc.logic_trees[0].branch_sets[1].branches[0].path() == PurePath("Kuehn2020SS_GLO_lower", "bs_slab", "lt1")
+    assert doc.logic_trees[0].branch_sets[0].branches[0].path() == PurePath("lt1", "bs_crust", "STF22_upper")
+    assert doc.logic_trees[0].branch_sets[1].branches[0].path() == PurePath("lt1", "bs_slab", "Kuehn2020SS_GLO_lower")
 
     # uncertainty model path
     assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].path() == PurePath(
-        '[Stafford2022]\n                  mu_branch = "Upper"', "STF22_upper", "bs_crust", "lt1"
+        "lt1",
+        "bs_crust",
+        "STF22_upper",
+        '[Stafford2022]\n                  mu_branch = "Upper"',
     )
 
     assert doc.logic_trees[0].branch_sets[1].branches[0].uncertainty_models[0].path() == PurePath(
+        "lt1",
+        "bs_slab",
+        "Kuehn2020SS_GLO_lower",
         '[KuehnEtAl2020SSlab]\n                        region = "GLO"'
         '\n                        sigma_mu_epsilon = -1.28155',
-        "Kuehn2020SS_GLO_lower",
-        "bs_slab",
-        "lt1",
     )
 
 
@@ -155,8 +158,8 @@ def test_nrml_srm_logic_tree_path(
     srm_logic_tree_path = FIXTURE_PATH / fixture_file
     doc = NrmlDocument.from_xml_file(srm_logic_tree_path)
 
-    assert doc.logic_trees[0].branch_sets[0].branches[0].path() == PurePath(branch_id, branch_set_id, logic_tree_id)
+    assert doc.logic_trees[0].branch_sets[0].branches[0].path() == PurePath(logic_tree_id, branch_set_id, branch_id)
 
     assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].path() == PurePath(
-        uncertainty_model, branch_id, branch_set_id, logic_tree_id
+        logic_tree_id, branch_set_id, branch_id, uncertainty_model
     )

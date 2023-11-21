@@ -1,6 +1,6 @@
 {
-    "version": "NSHM_v1.0.0",
-    "title": "aka SLT_v8_gmm_v2_final",
+    "version": "SLT_v8_gmm_v2_final",
+    "title": "as used in NSHM_v1.0.0",
     "fault_system_lts": [
         {
             "short_name": "PUY",

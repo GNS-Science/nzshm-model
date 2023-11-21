@@ -1,6 +1,6 @@
 {
-    "version": "NSHM_v1.0.4",
-    "title": "NSHM version 1.0.4, corrected fault geometry",
+    "version": "SLT_v9p0p0",
+    "title": "For NSHM version 1.0.4, corrected fault geometry",
     "fault_system_lts": [
         {
             "short_name": "PUY",

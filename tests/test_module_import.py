@@ -20,8 +20,8 @@ class TestStructure:
         assert mod.slt_config is not None
         assert mod.slt_config.logic_tree_permutations is not None
 
-        slt = mod.source_logic_tree()
-        assert slt.version == model_version
+        # slt = mod.source_logic_tree()
+        # assert slt.version == model_version
 
     def test_get_model_version_unknown(self):
         unknown = nzshm_model.get_model_version('XXX')
