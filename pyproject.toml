@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nzshm-model"
-version = "0.3.1"
+version = "0.4.0"
 description = "The logic tree definitions, final configurations, and versioning of the New Zealand | Aotearoa National Seismic Hazard Model"
 authors = ["Chris DiCaprio <c.dicaprio@gns.cri.nz>", "Chris Chamberlain <chrisbc@artisan.co.nz>"]
 license = "AGPL3"
