@@ -1,6 +1,6 @@
 {
-    "version": "NSHM_v1.0.4",
-    "title": "NSHM version 1.0.4, corrected fault geometry",
+    "version": "SLT_v8_gmm_v2_final",
+    "title": "as used in NSHM_v1.0.0",
     "fault_system_lts": [
         {
             "short_name": "PUY",
@@ -33,11 +33,11 @@
                         }
                     ],
                     "weight": 0.21,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2NTc=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcxNw==",
                     "distributed_nrml_id": "RmlsZToxMzA3NTM=",
-                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTI5MTM3OA==",
+                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE4NTQ2",
                     "inversion_solution_type": "ScaledInversionSolution",
-                    "rupture_set_id": "RmlsZToxMjkwOTg0"
+                    "rupture_set_id": "RmlsZToxNzU3My4wQUYzU1o="
                 },
                 {
                     "values": [
@@ -66,11 +66,11 @@
                         }
                     ],
                     "weight": 0.52,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2NjE=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcyMw==",
                     "distributed_nrml_id": "RmlsZToxMzA3NTQ=",
-                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTI5MTM4Mg==",
+                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE4NTQz",
                     "inversion_solution_type": "ScaledInversionSolution",
-                    "rupture_set_id": "RmlsZToxMjkwOTg0"
+                    "rupture_set_id": "RmlsZToxNzU3My4wQUYzU1o="
                 },
                 {
                     "values": [
@@ -99,11 +99,11 @@
                         }
                     ],
                     "weight": 0.27,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2NjY=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcyOQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3NTU=",
-                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTI5MTM4Ng==",
+                    "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE4NTQ1",
                     "inversion_solution_type": "ScaledInversionSolution",
-                    "rupture_set_id": "RmlsZToxMjkwOTg0"
+                    "rupture_set_id": "RmlsZToxNzU3My4wQUYzU1o="
                 }
             ]
         },
@@ -138,7 +138,7 @@
                         }
                     ],
                     "weight": 0.147216637218474,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MTE=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQyOA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MzI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MjAw",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -171,7 +171,7 @@
                         }
                     ],
                     "weight": 0.281154911079988,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MDU=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQxNw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MzQ=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MjAy",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -204,7 +204,7 @@
                         }
                     ],
                     "weight": 0.148371277510384,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MDM=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQyOQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3MzY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MjA0",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -237,7 +237,7 @@
                         }
                     ],
                     "weight": 0.0887399956599006,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1OTk=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQyNA==",
                     "distributed_nrml_id": "RmlsZToxMzA3Mzg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTk0",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -270,7 +270,7 @@
                         }
                     ],
                     "weight": 0.169475991711261,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MDg=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQxMw==",
                     "distributed_nrml_id": "RmlsZToxMzA3NDA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTk2",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -303,7 +303,7 @@
                         }
                     ],
                     "weight": 0.0894359956258606,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2MTM=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQxNg==",
                     "distributed_nrml_id": "RmlsZToxMzA3NDI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTk4",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -336,7 +336,7 @@
                         }
                     ],
                     "weight": 0.0192986223768806,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1OTg=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQxNA==",
                     "distributed_nrml_id": "RmlsZToxMzA3NDQ=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTY0",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -369,7 +369,7 @@
                         }
                     ],
                     "weight": 0.0368565846962387,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1OTA=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQwNg==",
                     "distributed_nrml_id": "RmlsZToxMzA3NDY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTY2",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -402,7 +402,7 @@
                         }
                     ],
                     "weight": 0.019449984121013,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1OTE=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQwOQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3NDg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTE0MTY4",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -446,7 +446,7 @@
                         }
                     ],
                     "weight": 0.0168335471189857,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MDE=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg5OA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MDc=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzIy",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -484,7 +484,7 @@
                         }
                     ],
                     "weight": 0.0408928149352719,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0ODY=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkxMQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzE3",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -522,7 +522,7 @@
                         }
                     ],
                     "weight": 0.0216771620919014,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MDI=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkwNA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTM=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzQx",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -560,7 +560,7 @@
                         }
                     ],
                     "weight": 0.0282427120823285,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0ODI=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkxNw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzYx",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -598,7 +598,7 @@
                         }
                     ],
                     "weight": 0.0686084751056566,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0ODM=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkwNg==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTk=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzUz",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -636,7 +636,7 @@
                         }
                     ],
                     "weight": 0.0363691528229985,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0OTA=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkwOA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MjI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzU3",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -674,7 +674,7 @@
                         }
                     ],
                     "weight": 0.00792374079868575,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0OTE=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkxMw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MjU=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzM0",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -712,7 +712,7 @@
                         }
                     ],
                     "weight": 0.0192487099590715,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0OTY=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkxMg==",
                     "distributed_nrml_id": "RmlsZToxMzA3Mjg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzI4",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -750,7 +750,7 @@
                         }
                     ],
                     "weight": 0.0102036850851,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0OTQ=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkyNA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MzE=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzMw",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -788,7 +788,7 @@
                         }
                     ],
                     "weight": 0.0236560148670262,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NzM=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg4Ng==",
                     "distributed_nrml_id": "RmlsZToxMzA3MDc=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzA4",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -826,7 +826,7 @@
                         }
                     ],
                     "weight": 0.0574662625307477,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0ODE=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg5Nw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzA3",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -864,7 +864,7 @@
                         }
                     ],
                     "weight": 0.0304626983900857,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0Njg=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg3NA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTM=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzA1",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -902,7 +902,7 @@
                         }
                     ],
                     "weight": 0.0271169544446554,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NjQ=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg5Mw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzAy",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -940,7 +940,7 @@
                         }
                     ],
                     "weight": 0.0658737336745166,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NzY=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg4OQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTk=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjk4",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -978,7 +978,7 @@
                         }
                     ],
                     "weight": 0.0349194743556176,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0Njc=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg3MQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3MjI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjk2",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1016,7 +1016,7 @@
                         }
                     ],
                     "weight": 0.00222703068831837,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NjA=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg4MQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3MjU=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjcy",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1054,7 +1054,7 @@
                         }
                     ],
                     "weight": 0.00541000379473566,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NzU=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg5Mg==",
                     "distributed_nrml_id": "RmlsZToxMzA3Mjg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjc2",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1092,7 +1092,7 @@
                         }
                     ],
                     "weight": 0.00286782725429677,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE0NjM=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDg4Mg==",
                     "distributed_nrml_id": "RmlsZToxMzA3MzE=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNjc1",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1130,7 +1130,7 @@
                         }
                     ],
                     "weight": 0.0168335471189857,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1Mzk=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk2NQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3MDc=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODI2",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1168,7 +1168,7 @@
                         }
                     ],
                     "weight": 0.0408928149352719,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1Mzc=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk2Mw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODQ2",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1206,7 +1206,7 @@
                         }
                     ],
                     "weight": 0.0216771620919014,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NTM=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1Ng==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTM=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODI0",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1244,7 +1244,7 @@
                         }
                     ],
                     "weight": 0.0282427120823285,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NDQ=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1Mw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODY1",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1282,7 +1282,7 @@
                         }
                     ],
                     "weight": 0.0686084751056566,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NTk=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk2Nw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTk=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODYz",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1320,7 +1320,7 @@
                         }
                     ],
                     "weight": 0.0363691528229985,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NTE=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1NA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MjI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODY5",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1358,7 +1358,7 @@
                         }
                     ],
                     "weight": 0.00792374079868575,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NTg=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk3Mw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MjU=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODQ3",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1396,7 +1396,7 @@
                         }
                     ],
                     "weight": 0.0192487099590715,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NDE=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1NQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3Mjg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODE4",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1434,7 +1434,7 @@
                         }
                     ],
                     "weight": 0.0102036850851,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1NjI=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk3NA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MzE=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODM3",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1472,7 +1472,7 @@
                         }
                     ],
                     "weight": 0.0236560148670263,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MjI=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkzNg==",
                     "distributed_nrml_id": "RmlsZToxMzA3MDc=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODE1",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1510,7 +1510,7 @@
                         }
                     ],
                     "weight": 0.0574662625307477,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MjM=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkyNw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTA=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODEx",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1548,7 +1548,7 @@
                         }
                     ],
                     "weight": 0.0304626983900857,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MjA=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkzMg==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTM=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODE2",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1586,7 +1586,7 @@
                         }
                     ],
                     "weight": 0.0271169544446554,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MTY=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk1MQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTY=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODA3",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1624,7 +1624,7 @@
                         }
                     ],
                     "weight": 0.0658737336745166,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1Mjk=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk0NA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MTk=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzk2",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1662,7 +1662,7 @@
                         }
                     ],
                     "weight": 0.0349194743556176,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MTU=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk0OA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MjI=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwODA5",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1700,7 +1700,7 @@
                         }
                     ],
                     "weight": 0.00222703068831837,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MzM=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkzNA==",
                     "distributed_nrml_id": "RmlsZToxMzA3MjU=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzg4",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1738,7 +1738,7 @@
                         }
                     ],
                     "weight": 0.00541000379473566,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MjY=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDkzMQ==",
                     "distributed_nrml_id": "RmlsZToxMzA3Mjg=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzg3",
                     "inversion_solution_type": "ScaledInversionSolution",
@@ -1776,7 +1776,7 @@
                         }
                     ],
                     "weight": 0.00286782725429677,
-                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MzE=",
+                    "onfault_nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyMDk0Mw==",
                     "distributed_nrml_id": "RmlsZToxMzA3MzE=",
                     "inversion_solution_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTIwNzc4",
                     "inversion_solution_type": "ScaledInversionSolution",

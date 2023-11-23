@@ -1,11 +1,11 @@
 #! python test_logic_tree.py
 
 import dataclasses
+import itertools
 from pathlib import Path
 
 import pytest
 
-import nzshm_model
 from nzshm_model.source_logic_tree.logic_tree import (
     Branch,
     BranchAttributeSpec,
@@ -63,9 +63,29 @@ def test_init():
     assert f.branches[0].values[0].value == 4
 
 
+def build_crustal_branches():
+    # define the branch attributes for our FaultSystemLogicTree
+    C = BranchAttributeValue.all_from_branch_attribute(
+        BranchAttributeSpec(name='C', long_name='area-magnitude scaling', value_options=[4])
+    )
+    s = BranchAttributeValue.all_from_branch_attribute(
+        BranchAttributeSpec(name='s', long_name='moment rate scaling', value_options=[0.5, 1.0])
+    )
+    bN = BranchAttributeValue.all_from_branch_attribute(
+        BranchAttributeSpec(name='bN', long_name='bN pair', value_options=[(0.87, 25), (0.95, 19.2)])
+    )
+    dm = BranchAttributeValue.all_from_branch_attribute(
+        BranchAttributeSpec(name='dm', long_name='deformation model', value_options=['Geodetic', 'Geologic'])
+    )
+
+    crustal_branches = FaultSystemLogicTree('Cru', 'Crustal')
+    for (a, b, c, d) in itertools.product(C, s, bN, dm):
+        crustal_branches.branches.append(Branch(values=[a, b, c, d], weight=0.125, onfault_nrml_id='ABC'))
+    return crustal_branches
+
+
 def test_fslt_example():
-    model_v1_0_0 = nzshm_model.get_model_version('NSHM_v1.0.0')
-    fslt = model_v1_0_0.build_crustal_branches()
+    fslt = build_crustal_branches()
 
     print(fslt)
     assert fslt.branches[-1].values[0].name == 'C'
@@ -80,15 +100,15 @@ def test_fslt_example():
 
 
 def test_full_slt():
-    model_v1_0_0 = nzshm_model.get_model_version('NSHM_v1.0.0')
-    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_lts=[model_v1_0_0.build_crustal_branches()])
+
+    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_lts=[build_crustal_branches()])
     print(slt)
     assert slt.fault_system_lts[0].branches[-1].values[0].name == 'C'
 
 
 def test_serialise_slt():
-    model_v1_0_0 = nzshm_model.get_model_version('NSHM_v1.0.0')
-    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_lts=[model_v1_0_0.build_crustal_branches()])
+
+    slt = SourceLogicTree('NSHM_1.0.0', 'initial', fault_system_lts=[build_crustal_branches()])
 
     slt_dict = dataclasses.asdict(slt)
     print(slt_dict)

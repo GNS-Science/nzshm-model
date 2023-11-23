@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<nrml xmlns:gml="http://www.opengis.net/gml" xmlns="http://openquake.org/xmlns/nrml/0.5">
+  <logicTree logicTreeID="Combined">
+    <logicTreeBranchingLevel branchingLevelID="1">
+      <logicTreeBranchSet uncertaintyType="sourceModel" branchSetID="BS-NONCE1">
+        <logicTreeBranch branchID="SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEwNjQ2NA==|RmlsZToxMDY1MzM=|SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEwNjQ5Mg==|RmlsZToxMDY1NTQ=|SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEwNjUwNg==|RmlsZToxMDY1NTM=">
+          <uncertaintyModel>U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2MzYw-ruptures.xml	U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2MzYw-ruptures_sections.xml	Floor_AddoptiEEPAScomb-INT_hiktcrp_b1.10_N17.18.xml	U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2NDEw-ruptures.xml	U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2NDEw-ruptures_sections.xml	Floor_AddoptiEEPAScomb-INT_puy_b0.85_N4.36.xml	U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2NDE4-ruptures_sections.xml	U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTA2NDE4-ruptures.xml	Floor_AddoptiEEPAScomb-CRU_plyadj_b0.85_N4.36.xml	</uncertaintyModel>
+          <uncertaintyWeight>0.08333333333333333</uncertaintyWeight>
+        </logicTreeBranch>
+      </logicTreeBranchSet>
+    </logicTreeBranchingLevel>
+  </logicTree>
+</nrml>
