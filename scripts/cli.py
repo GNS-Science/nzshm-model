@@ -67,7 +67,7 @@ class SourceSolution(ToshiFile):
             }
         }
         '''
-        print(qry)
+        # print(qry)
         input_variables = dict(id=fid)
         executed = self.run_query(qry, input_variables)
         return executed['node']
@@ -79,13 +79,15 @@ def rupt_set_from_meta(meta):
             return itm['v']
 
 
-def fetch_toshi_source(destination, file_id):
+def fetch_toshi_source(destination, file_id, file_prefix):
     headers = {"x-api-key": API_KEY}
     api = SourceSolution(API_URL, S3_URL, None, with_schema_validation=False, headers=headers)
 
     click.echo(f'checking {file_id}')
     file_detail = api.get_source(file_id)
-    click.echo(file_detail)
+    # click.echo(file_detail)
+
+    destination.mkdir(parents=True, exist_ok=True)
 
     fname = pathlib.Path(destination) / file_detail['file_name']
     # if not fname.exists():
@@ -93,47 +95,39 @@ def fetch_toshi_source(destination, file_id):
     api.download_file(file_id, destination)
 
     ## unpack zipfiles
-    click.echo(file_detail.get('__typename'))
+    # click.echo(file_detail.get('__typename'))
 
     zf = zipfile.ZipFile(fname)
     # click.echo(zf.namelist())
     for name in zf.namelist():
         zf.extract(name, destination)
 
+    # rename the extracted files
+    for name in zf.namelist():
+        # rename
+        extracted = pathlib.Path(destination, name)
+        assert extracted.exists()
+        prefixed = pathlib.Path(destination, f"{file_prefix}_{name}")
+        extracted.rename(prefixed)
+
+    # delete the zipfiles
     fname.unlink()
 
-    # if file_detail.get('__typename') == "File":
 
-    # if file_detail.get('__typename') == "InversionSolutionNrml":
-    #     zf = zipfile.ZipFile(fname)
-    #     click.echo(zf.namelist())
-
-
-def build_fault_system_solution(work_folder, current_model):
-
-    slt = current_model.source_logic_tree()
-    branch = None
-    click.echo("Old ...")
-    for fslt in slt.fault_system_lts:
-        branch = fslt
-        click.echo(f"branch {branch.short_name} {branch.long_name}")
-        # file_ids = [b.inversion_solution_id for b in branch.branches]
-
-    click.echo()
-    click.echo("New ...")
+def fetch_and_unpack_sources(work_folder, current_model):
 
     logic_tree = current_model.source_logic_tree_nrml()
     for branch_set in logic_tree.branch_sets:
         click.echo(f"branch set {branch_set.branchSetID}")
         for branch in branch_set.branches:
-            #  click.echo(f"branch: {branch.branchID}")
+            click.echo(f"branch: {branch.branchID}")
             for um in branch.uncertainty_models:
-                destination = pathlib.Path(work_folder) / current_model.version / branch.path()
-                click.echo(destination)
-                destination.mkdir(parents=True, exist_ok=True)
-                fetch_toshi_source(destination, um.path().name)
-            return
-    return
+                # flatten the paths
+
+                file_prefix = str(um.path().parent).replace('/', "_")
+                destination = pathlib.Path(work_folder) / current_model.version
+                # fetch em
+                fetch_toshi_source(destination, file_id=um.path().name, file_prefix=file_prefix)
 
 
 #  _ __ ___   __ _(_)_ __
@@ -155,7 +149,7 @@ def fetch(work_folder, model_id):
 
     model = nzshm_model.get_model_version(model_id)
 
-    solution = build_fault_system_solution(work_folder, model)  # noqa
+    solution = fetch_and_unpack_sources(work_folder, model)  # noqa
 
 
 if __name__ == "__main__":

@@ -84,11 +84,10 @@ def cli_from_config(config_path, version, title, resolve_toshi_ids):
 def cli_model_spec(model_id, build):
     """Get a model specification by MODEL_ID."""
     model = get_model_version(model_id)
-    slt = (
-        SourceLogicTree(version="0", title="", fault_system_lts=[model.build_crustal_branches()])
-        if build
-        else model.source_logic_tree()
-    )
+    if not model:
+        click.echo(f'Oops, the model "{model_id}" was not found', err=True)
+        return False
+    slt = model.source_logic_tree()
     j = json.dumps(dataclasses.asdict(slt.derive_spec()), indent=4)
     click.echo(j)
 
