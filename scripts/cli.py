@@ -79,7 +79,7 @@ def rupt_set_from_meta(meta):
             return itm['v']
 
 
-def fetch_toshi_source(destination, file_id, file_prefix):
+def fetch_toshi_source(destination, file_id, file_prefix=""):
     headers = {"x-api-key": API_KEY}
     api = SourceSolution(API_URL, S3_URL, None, with_schema_validation=False, headers=headers)
 
@@ -107,14 +107,15 @@ def fetch_toshi_source(destination, file_id, file_prefix):
         # rename
         extracted = pathlib.Path(destination, name)
         assert extracted.exists()
-        prefixed = pathlib.Path(destination, f"{file_prefix}_{name}")
-        extracted.rename(prefixed)
+        if file_prefix:
+            prefixed = pathlib.Path(destination, f"{file_prefix}_{name}")
+            extracted.rename(prefixed)
 
     # delete the zipfiles
     fname.unlink()
 
 
-def fetch_and_unpack_sources(work_folder, current_model):
+def fetch_and_unpack_sources(work_folder, current_model, long_filenames):
 
     logic_tree = current_model.source_logic_tree_nrml()
     for branch_set in logic_tree.branch_sets:
@@ -122,12 +123,17 @@ def fetch_and_unpack_sources(work_folder, current_model):
         for branch in branch_set.branches:
             click.echo(f"branch: {branch.branchID}")
             for um in branch.uncertainty_models:
-                # flatten the paths
+                if long_filenames:
+                    # flatten the paths
+                    file_prefix = str(um.path().parent).replace('/', "_")
+                    destination = pathlib.Path(work_folder) / current_model.version
+                    # fetch em
+                    fetch_toshi_source(destination, file_id=um.path().name, file_prefix=file_prefix)
+                else:
+                    #otherwise use folders
+                    destination = pathlib.Path(work_folder) / current_model.version / um.path().parent
+                    fetch_toshi_source(destination, file_id=um.path().name)
 
-                file_prefix = str(um.path().parent).replace('/', "_")
-                destination = pathlib.Path(work_folder) / current_model.version
-                # fetch em
-                fetch_toshi_source(destination, file_id=um.path().name, file_prefix=file_prefix)
 
 
 #  _ __ ___   __ _(_)_ __
@@ -142,15 +148,15 @@ def cli():
 @cli.command()
 @click.option('--work_folder', '-w', default=lambda: os.getcwd())
 @click.option('--model_id', '-m', default="NSHM_v1.0.4")
-def fetch(work_folder, model_id):
+@click.option('--long_filenames', '-lf', is_flag=True, help="use long filenames, instead of folders")
+def fetch(work_folder, model_id, long_filenames):
     """Fetch SLT sources from toshi"""
     click.echo(f"work folder: {work_folder}")
     click.echo(f"model_id: {model_id}")
 
     model = nzshm_model.get_model_version(model_id)
 
-    solution = fetch_and_unpack_sources(work_folder, model)  # noqa
-
+    solution = fetch_and_unpack_sources(work_folder, model, long_filenames )  # noqa
 
 if __name__ == "__main__":
     cli()  # pragma: no cover
