@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING, Iterator, List
 
 from lxml import objectify
 
-from nzshm_model.source_logic_tree import logic_tree as slt
-
 if TYPE_CHECKING:
+    from nzshm_model.source_logic_tree import logic_tree as slt
+
     from .logic_tree import LogicTreeBranch
 
 
@@ -75,7 +75,7 @@ class NshmSourceUncertaintyModel:
     model_type: str = ""
 
     @classmethod
-    def from_parent_slt(csl, ltb: slt.Branch, parent: "LogicTreeBranch") -> Iterator["NshmSourceUncertaintyModel"]:
+    def from_parent_slt(cls, ltb: "slt.Branch", parent: "LogicTreeBranch") -> Iterator["NshmSourceUncertaintyModel"]:
         """resolve to filenames of NRML sources"""
         if ltb.onfault_nrml_id:
             yield NshmSourceUncertaintyModel(parent=parent, toshi_nrml_id=ltb.onfault_nrml_id, model_type="FaultSource")

@@ -25,11 +25,11 @@ class NshmModel:
     def source_logic_tree(self) -> SourceLogicTree:
         return dacite.from_dict(data_class=SourceLogicTree, data=json.load(open(self._slt_json)))
 
-    def source_logic_tree_nrml(self) -> LogicTree:
+    # DEPRECATED. use model.source_logic_tree().psha_adapter().config() instead
+    def source_logic_tree_nrml(self) -> "LogicTree":
         slt = self.source_logic_tree()
-        doc = NrmlDocument.from_model_slt(slt)
-        return doc.logic_trees[0]
+        return slt.psha_adapter().config()
 
-    def gmm_logic_tree(self) -> LogicTree:
+    def gmm_logic_tree(self) -> "LogicTree":
         doc = NrmlDocument.from_xml_file(self._gmm_xml)
         return doc.logic_trees[0]

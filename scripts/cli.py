@@ -130,10 +130,9 @@ def fetch_and_unpack_sources(work_folder, current_model, long_filenames):
                     # fetch em
                     fetch_toshi_source(destination, file_id=um.path().name, file_prefix=file_prefix)
                 else:
-                    #otherwise use folders
+                    # otherwise use folders
                     destination = pathlib.Path(work_folder) / current_model.version / um.path().parent
                     fetch_toshi_source(destination, file_id=um.path().name)
-
 
 
 #  _ __ ___   __ _(_)_ __
@@ -156,7 +155,28 @@ def fetch(work_folder, model_id, long_filenames):
 
     model = nzshm_model.get_model_version(model_id)
 
-    solution = fetch_and_unpack_sources(work_folder, model, long_filenames )  # noqa
+    solution = fetch_and_unpack_sources(work_folder, model, long_filenames)  # noqa
+
+
+@cli.command()
+@click.option('--work_folder', '-w', default=lambda: os.getcwd())
+@click.option('--model_id', '-m', default="NSHM_v1.0.4")
+@click.option('--long_filenames', '-lf', is_flag=True, help="use long filenames, instead of folders")
+def psha_config(work_folder, model_id, long_filenames):
+    """write a psha config"""
+    click.echo(f"work folder: {work_folder}")
+    click.echo(f"model_id: {model_id}")
+
+    model = nzshm_model.get_model_version(model_id)
+
+    destination = pathlib.Path(work_folder)
+    assert destination.exists()
+    assert destination.is_dir()
+    destination.mkdir(parents=True, exist_ok=True)
+
+    model.source_logic_tree().psha_adapter(help="future there may be multiple adapters").write_config(destination)
+    click.echo('DONE')
+
 
 if __name__ == "__main__":
     cli()  # pragma: no cover

@@ -1,16 +1,64 @@
 #! logic_tree.py
 
 """
-Classes to define logic tree structures
+Define source logic tree structures used in NSHM.
 """
 
+import pathlib
+from abc import ABC, abstractmethod
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
 from itertools import product
 from math import isclose
 from operator import add, mul
-from typing import Any, Dict, Generator, Iterable, List, Union
+from typing import Any, Dict, Generator, Iterable, List, Type, Union
+
+from nzshm_model.nrml.logic_tree import NrmlDocument
+
+
+class PshaAdapterInterface(ABC):
+    """
+    Defines methods to be provided by a PSHA adapter class implementation.
+    """
+
+    def __init__(self, source_logic_tree):
+        self._source_logic_tree = source_logic_tree
+
+    @abstractmethod
+    def fetch_resources(self, target_folder):
+        pass  # raise NotImplementedError()
+
+    @abstractmethod
+    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+        pass  # raise NotImplementedError()
+
+
+class OpenquakeSimpleSourceNrml(PshaAdapterInterface):
+    """
+    Openquake simple NRML represention
+    """
+
+    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+        destination = pathlib.Path(target_folder)
+        assert destination.exists()
+        assert destination.is_dir()
+
+        ## TODO implement XML writer
+        print(dir(self.config()))
+        assert 0
+
+        target_file = pathlib.Path(destination, 'sources.xml')
+        with open(target_file, 'w') as fout:
+            fout.write(self.config())
+        return target_file
+
+    def fetch_resources(self, target_folder):
+        raise NotImplementedError()
+        # return super().fetch_resources(target_folder)
+
+    def config(self):
+        return NrmlDocument.from_model_slt(self._source_logic_tree).logic_trees[0]
 
 
 @dataclass
@@ -143,6 +191,9 @@ class SourceLogicTree:
         for fslt in self.fault_system_lts:
             slt_spec.fault_system_lts.append(FaultSystemLogicTree.derive_spec(fslt))
         return slt_spec
+
+    def psha_adapter(self, provider: Type[PshaAdapterInterface] = OpenquakeSimpleSourceNrml, **kwargs):
+        return provider(self)
 
 
 @dataclass
