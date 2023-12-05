@@ -1,4 +1,4 @@
-import os
+
 import pathlib
 import zipfile
 from typing import Union
@@ -7,28 +7,9 @@ from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
 
 try:
-    from nzshm_model.source_logic_tree.toshi_api import get_secret
-    from nshm_toshi_client.toshi_file import ToshiFile
-except (ModuleNotFoundError, ImportError):
-    print("WARNING: optional `toshi` dependencies are not installed.")
-
-
-# Get API key from AWS secrets manager
-API_URL = os.getenv('NZSHM22_TOSHI_API_URL', "http://127.0.0.1:5000/graphql")
-try:
-    if 'TEST' in API_URL.upper():
-        API_KEY = get_secret("NZSHM22_TOSHI_API_SECRET_TEST", "us-east-1").get("NZSHM22_TOSHI_API_KEY_TEST")
-    elif 'PROD' in API_URL.upper():
-        API_KEY = get_secret("NZSHM22_TOSHI_API_SECRET_PROD", "us-east-1").get("NZSHM22_TOSHI_API_KEY_PROD")
-    else:
-        API_KEY = os.getenv('NZSHM22_TOSHI_API_KEY', "")
-except AttributeError as err:
-    print(f"unable to get secret from secretmanager: {err}")
-    API_KEY = os.getenv('NZSHM22_TOSHI_API_KEY', "")
-S3_URL = None
-DEPLOYMENT_STAGE = os.getenv('DEPLOYMENT_STAGE', 'LOCAL').upper()
-REGION = os.getenv('REGION', 'ap-southeast-2')  # SYDNEY
-
+    from .toshi import SourceSolution, API_URL, API_KEY
+except:
+    print('Running without `toshi` options')
 
 class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     """
@@ -74,33 +55,6 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         return NrmlDocument.from_model_slt(self._source_logic_tree).logic_trees[0]
 
 
-class SourceSolution(ToshiFile):
-    def get_source(self, fid):
-
-        qry = '''
-        query file ($id:ID!) {
-            node(id: $id) {
-                __typename
-                ... on FileInterface {
-                  file_name
-                  file_size
-                  meta {k v}
-                }
-                ... on ScaledInversionSolution {
-                  meta{ k k}
-                  source_solution {
-                    meta {k v}
-                  }
-                }
-            }
-        }
-        '''
-        # print(qry)
-        input_variables = dict(id=fid)
-        executed = self.run_query(qry, input_variables)
-        return executed['node']
-
-
 def rupt_set_from_meta(meta):
     for itm in meta:
         if itm['k'] == "rupture_set_file_id":
@@ -109,7 +63,7 @@ def rupt_set_from_meta(meta):
 
 def fetch_toshi_source(destination, file_id, file_prefix=""):
     headers = {"x-api-key": API_KEY}
-    api = SourceSolution(API_URL, S3_URL, None, with_schema_validation=False, headers=headers)
+    api = SourceSolution(API_URL, None, None, with_schema_validation=False, headers=headers)
 
     # click.echo(f'checking {file_id}')
     file_detail = api.get_source(file_id)
