@@ -5,6 +5,7 @@ from pathlib import Path, PurePath
 import pytest
 
 import nzshm_model
+from nzshm_model.psha_adapter import OpenquakeSimplePshaAdapter
 
 MODEL = nzshm_model.get_model_version('NSHM_v1.0.4')
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
@@ -34,7 +35,8 @@ def test_gmm_logic_tree():
 
 def test_source_logic_tree():
 
-    src_logic_tree = MODEL.source_logic_tree_nrml()
+    src_logic_tree = MODEL.source_logic_tree()\
+        .psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
 
     assert len(src_logic_tree.branch_sets) == 4
 
@@ -59,7 +61,10 @@ def test_source_logic_tree_uncertainty_PUY():
     # NB for crustal, the first is the ltb.onfault_nrml_id
     #    the 2nd is ltb.distributed_nrml_id
 
-    src_logic_tree = MODEL.source_logic_tree_nrml()
+    # src_logic_tree = MODEL.source_logic_tree_nrml()
+    src_logic_tree = MODEL.source_logic_tree()\
+        .psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+
     BSID = 0
 
     assert src_logic_tree.branch_sets[BSID].branchSetID == "PUY"
@@ -93,7 +98,9 @@ def test_source_logic_tree_uncertainty_SLAB():
     # uncertainty model attributes (SourceUncertaintyModel)
     # NB for slab we have just a distributed model
 
-    src_logic_tree = MODEL.source_logic_tree_nrml()
+    # src_logic_tree = MODEL.source_logic_tree_nrml()
+    src_logic_tree = MODEL.source_logic_tree()\
+        .psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
     BSID = 3
 
     assert src_logic_tree.branch_sets[BSID].branchSetID == "SLAB"
@@ -110,7 +117,9 @@ def test_source_logic_tree_uncertainty_SLAB():
 def test_source_logic_tree_uncertainty_CRU():
     # uncertainty model attributes (SourceUncertaintyModel)
 
-    src_logic_tree = MODEL.source_logic_tree_nrml()
+    # src_logic_tree = MODEL.source_logic_tree_nrml()
+    src_logic_tree = MODEL.source_logic_tree()\
+        .psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
     BSID = 2
     assert src_logic_tree.branch_sets[BSID].branchSetID == "CRU"
     assert src_logic_tree.branch_sets[BSID].branches[0].path() == PurePath(

@@ -8,7 +8,8 @@ import sys
 import click
 
 import nzshm_model
-from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids  # noqa
+# from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids  # noqa
+from nzshm_model.psha_adapter import OpenquakeSimplePshaAdapter
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.DEBUG)
@@ -46,7 +47,9 @@ def fetch(work_folder, model_id, long_filenames):
 
     model = nzshm_model.get_model_version(model_id)
 
-    model.source_logic_tree().psha_adapter().fetch_resources(work_folder, long_filenames)
+    model.source_logic_tree()\
+        .psha_adapter(provider=OpenquakeSimplePshaAdapter)\
+        .fetch_resources(work_folder, long_filenames)
 
     click.echo('DONE')
 
@@ -67,7 +70,10 @@ def psha_config(work_folder, model_id, long_filenames):
     assert destination.is_dir()
     destination.mkdir(parents=True, exist_ok=True)
 
-    model.source_logic_tree().psha_adapter(help="future there may be multiple adapters").write_config(destination)
+    model.source_logic_tree()\
+        .psha_adapter(provider=OpenquakeSimplePshaAdapter,
+                      help="future there may be multiple adapters")\
+        .write_config(destination)
     click.echo('DONE')
 
 

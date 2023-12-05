@@ -3,7 +3,7 @@ from pathlib import Path
 
 import dacite
 
-from nzshm_model.nrml.logic_tree import LogicTree, NrmlDocument
+from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree, NrmlDocument
 from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree
 
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
