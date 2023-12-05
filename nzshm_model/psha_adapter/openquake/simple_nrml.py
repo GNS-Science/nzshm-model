@@ -5,12 +5,12 @@ from typing import Union
 
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
-from nzshm_model.source_logic_tree.toshi_api import get_secret
 
 try:
+    from nzshm_model.source_logic_tree.toshi_api import get_secret
     from nshm_toshi_client.toshi_file import ToshiFile
 except (ModuleNotFoundError, ImportError):
-    print("WARNING: optional toshi dependency `nshm_toshi_client` is not installed")
+    print("WARNING: optional `toshi` dependencies are not installed.")
 
 
 # Get API key from AWS secrets manager
