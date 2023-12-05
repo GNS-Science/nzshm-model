@@ -35,8 +35,7 @@ def test_gmm_logic_tree():
 
 def test_source_logic_tree():
 
-    src_logic_tree = MODEL.source_logic_tree()\
-        .psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+    src_logic_tree = MODEL.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
 
     assert len(src_logic_tree.branch_sets) == 4
 
@@ -62,8 +61,7 @@ def test_source_logic_tree_uncertainty_PUY():
     #    the 2nd is ltb.distributed_nrml_id
 
     # src_logic_tree = MODEL.source_logic_tree_nrml()
-    src_logic_tree = MODEL.source_logic_tree()\
-        .psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+    src_logic_tree = MODEL.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
 
     BSID = 0
 
@@ -99,8 +97,7 @@ def test_source_logic_tree_uncertainty_SLAB():
     # NB for slab we have just a distributed model
 
     # src_logic_tree = MODEL.source_logic_tree_nrml()
-    src_logic_tree = MODEL.source_logic_tree()\
-        .psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+    src_logic_tree = MODEL.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
     BSID = 3
 
     assert src_logic_tree.branch_sets[BSID].branchSetID == "SLAB"
@@ -118,8 +115,7 @@ def test_source_logic_tree_uncertainty_CRU():
     # uncertainty model attributes (SourceUncertaintyModel)
 
     # src_logic_tree = MODEL.source_logic_tree_nrml()
-    src_logic_tree = MODEL.source_logic_tree()\
-        .psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+    src_logic_tree = MODEL.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
     BSID = 2
     assert src_logic_tree.branch_sets[BSID].branchSetID == "CRU"
     assert src_logic_tree.branch_sets[BSID].branches[0].path() == PurePath(

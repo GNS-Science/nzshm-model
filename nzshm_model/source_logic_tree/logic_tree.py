@@ -12,7 +12,7 @@ from math import isclose
 from operator import add, mul
 from typing import Any, Dict, Generator, Iterable, List, Type, Union
 
-from nzshm_model.psha_adapter import OpenquakeSimplePshaAdapter, PshaAdapterInterface
+from nzshm_model.psha_adapter import PshaAdapterInterface
 
 
 @dataclass

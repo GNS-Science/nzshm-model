@@ -1,10 +1,15 @@
 import json
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import dacite
 
-from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree, NrmlDocument
+from nzshm_model.psha_adapter import NrmlDocument, OpenquakeSimplePshaAdapter
 from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree
+
+if TYPE_CHECKING:
+    from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
+
 
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
@@ -22,13 +27,13 @@ class NshmModel:
         assert self._slt_json.exists()
         assert self._gmm_xml.exists()
 
-    def source_logic_tree(self) -> SourceLogicTree:
+    def source_logic_tree(self) -> "SourceLogicTree":
         return dacite.from_dict(data_class=SourceLogicTree, data=json.load(open(self._slt_json)))
 
     # DEPRECATED. use model.source_logic_tree().psha_adapter().config() instead
     def source_logic_tree_nrml(self) -> "LogicTree":
         slt = self.source_logic_tree()
-        return slt.psha_adapter().config()
+        return slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
 
     def gmm_logic_tree(self) -> "LogicTree":
         doc = NrmlDocument.from_xml_file(self._gmm_xml)

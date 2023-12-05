@@ -28,7 +28,7 @@ REGION = os.getenv('REGION', 'ap-southeast-2')  # SYDNEY
 
 class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     """
-    Openquake simple NRML represention
+    Openquake PSHA simple nrml support.
     """
 
     def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
