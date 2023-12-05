@@ -2,8 +2,6 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import dacite
-
 from nzshm_model.psha_adapter import NrmlDocument, OpenquakeSimplePshaAdapter
 from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree
 
@@ -28,7 +26,10 @@ class NshmModel:
         assert self._gmm_xml.exists()
 
     def source_logic_tree(self) -> "SourceLogicTree":
-        return dacite.from_dict(data_class=SourceLogicTree, data=json.load(open(self._slt_json)))
+        data = json.load(open(self._slt_json))
+        ltv = data.get("logic_tree_version")
+        if ltv is None:  # original json is unversioned
+            return SourceLogicTree.from_dict(data)
 
     # DEPRECATED. use model.source_logic_tree().psha_adapter().config() instead
     def source_logic_tree_nrml(self) -> "LogicTree":

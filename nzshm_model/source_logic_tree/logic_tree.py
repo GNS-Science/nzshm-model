@@ -3,6 +3,9 @@
 """
 Define source logic tree structures used in NSHM.
 """
+import dacite
+import json
+import pathlib
 
 from copy import deepcopy
 from dataclasses import dataclass, field
@@ -148,6 +151,18 @@ class SourceLogicTree:
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(self)
+
+    @staticmethod
+    def from_dict(data: Dict):
+        ltv = data.get("logic_tree_version")
+        if ltv:
+            raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
+        return dacite.from_dict(data_class=SourceLogicTree, data=data)
+
+    @staticmethod
+    def from_json(json_path: Union[pathlib.Path, str]):
+        data = json.load(open(json_path))
+        return SourceLogicTree.from_dict(data)
 
 
 @dataclass
