@@ -1,8 +1,9 @@
 import os
 
 try:
-    from nzshm_model.source_logic_tree.toshi_api import get_secret
     from nshm_toshi_client.toshi_file import ToshiFile
+
+    from nzshm_model.source_logic_tree.toshi_api import get_secret
 except (ModuleNotFoundError, ImportError):
     print("WARNING: optional `toshi` dependencies are not installed.")
     raise
@@ -20,9 +21,9 @@ except AttributeError as err:
     print(f"unable to get secret from secretmanager: {err}")
     API_KEY = os.getenv('NZSHM22_TOSHI_API_KEY', "")
 
-#S3_URL = None
-#DEPLOYMENT_STAGE = os.getenv('DEPLOYMENT_STAGE', 'LOCAL').upper()
-#REGION = os.getenv('REGION', 'ap-southeast-2')  # SYDNEY
+# S3_URL = None
+# DEPLOYMENT_STAGE = os.getenv('DEPLOYMENT_STAGE', 'LOCAL').upper()
+# REGION = os.getenv('REGION', 'ap-southeast-2')  # SYDNEY
 
 
 class SourceSolution(ToshiFile):

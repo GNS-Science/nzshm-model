@@ -1,4 +1,3 @@
-
 import pathlib
 import zipfile
 from typing import Union
@@ -7,9 +6,10 @@ from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
 
 try:
-    from .toshi import SourceSolution, API_URL, API_KEY
-except:
+    from .toshi import API_KEY, API_URL, SourceSolution
+except (ModuleNotFoundError, ImportError):
     print('Running without `toshi` options')
+
 
 class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     """
