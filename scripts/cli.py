@@ -48,6 +48,8 @@ def fetch(work_folder, model_id, long_filenames):
 
     model = nzshm_model.get_model_version(model_id)
 
+    model.source_logic_tree_nrml()
+
     model.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter).fetch_resources(
         work_folder, long_filenames
     )

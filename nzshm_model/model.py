@@ -27,11 +27,12 @@ class NshmModel:
         assert self._gmm_xml.exists()
 
     def source_logic_tree(self) -> "SourceLogicTree":
-        data = json.load(open(self._slt_json))
-        ltv = data.get("logic_tree_version")
-        if ltv is None:  # original json is unversioned
-            return SourceLogicTree.from_dict(data)
-        raise ValueError("Unsupported logic_tree_version.")
+        with open(self._slt_json, 'r') as jsonfile:
+            data = json.load(jsonfile)
+            ltv = data.get("logic_tree_version")
+            if ltv is None:  # original json is unversioned
+                return SourceLogicTree.from_dict(data)
+            raise ValueError("Unsupported logic_tree_version.")
 
     def source_logic_tree_nrml(self) -> "LogicTree":
         warnings.warn("use NshmModel.source_logic_tree().psha_adapter().config() instead", DeprecationWarning)
