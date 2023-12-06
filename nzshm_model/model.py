@@ -1,4 +1,5 @@
 import json
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -30,9 +31,10 @@ class NshmModel:
         ltv = data.get("logic_tree_version")
         if ltv is None:  # original json is unversioned
             return SourceLogicTree.from_dict(data)
+        raise ValueError("Unsupported logic_tree_version.")
 
-    # DEPRECATED. use model.source_logic_tree().psha_adapter().config() instead
     def source_logic_tree_nrml(self) -> "LogicTree":
+        warnings.warn("use NshmModel.source_logic_tree().psha_adapter().config() instead", DeprecationWarning)
         slt = self.source_logic_tree()
         return slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
 

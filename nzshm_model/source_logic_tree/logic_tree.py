@@ -3,10 +3,8 @@
 """
 Define source logic tree structures used in NSHM.
 """
-import dacite
 import json
 import pathlib
-
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
@@ -14,6 +12,8 @@ from itertools import product
 from math import isclose
 from operator import add, mul
 from typing import Any, Dict, Generator, Iterable, List, Type, Union
+
+import dacite
 
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
