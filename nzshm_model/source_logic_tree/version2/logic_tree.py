@@ -6,9 +6,11 @@ Define source logic tree structures used in NSHM.
 import json
 import pathlib
 from dataclasses import dataclass, field
-from typing import Dict, List, Union
+from typing import Dict, List, Type, Union
 
 import dacite
+
+from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from ..logic_tree import BranchAttributeValue
 
@@ -42,6 +44,9 @@ class Branch:
     sources: List[Union[DistributedSource, InversionSource]] = field(default_factory=list)
     weight: float = 1.0
     rupture_rate_scaling: float = 1.0
+
+    def tag(self):
+        return str(self.values)
 
 
 @dataclass
@@ -94,3 +99,6 @@ class SourceLogicTree:
     def from_json(json_path: Union[pathlib.Path, str]):
         data = json.load(open(json_path))
         return SourceLogicTree.from_dict(data)
+
+    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
+        return provider(self)

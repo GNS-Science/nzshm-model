@@ -2,6 +2,9 @@ import pathlib
 import zipfile
 from typing import Union
 
+from lxml import etree
+from lxml.builder import ElementMaker
+
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
 
@@ -11,24 +14,84 @@ except (ModuleNotFoundError, ImportError):
     print('Running without `toshi` options')
 
 
+def build_sources_xml(
+    source_logic_tree,
+):
+    """Build a source model for a set of LTBs with their source files."""
+    E = ElementMaker(
+        namespace="http://openquake.org/xmlns/nrml/0.5",
+        nsmap={"gml": "http://www.opengis.net/gml", None: "http://openquake.org/xmlns/nrml/0.5"},
+    )
+    NRML = E.nrml
+    LT = E.logicTree
+    LTBS = E.logicTreeBranchSet
+    LTBL = E.logicTreeBranchingLevel
+    LTB = E.logicTreeBranch
+    UM = E.uncertaintyModel
+    UW = E.uncertaintyWeight
+
+    for fs in source_logic_tree.fault_systems:
+        ltbs = LTBS(uncertaintyType="sourceModel", branchSetID=fs.short_name)
+        for branch in fs.branches:
+            branch_name = str(branch.values)
+            files = ""
+            for source in branch.sources:
+                files += f"\t{source.nrml_id}\t"  # this should be the unpacked file sources!
+            ltb = LTB(UM(files), UW(str(branch.weight)), branchID=branch_name)
+            ltbs.append(ltb)
+
+    nrml = NRML(LT(LTBL(ltbs, branchingLevelID="1"), logicTreeID="Combined"))
+    return etree.tostring(nrml, pretty_print=True).decode()
+
+
 class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     """
     Openquake PSHA simple nrml support.
     """
 
-    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+    @staticmethod
+    def _get_destination_args(uncertainty_model, target_folder: Union[pathlib.Path, str], long_filenames: bool):
+
+        if long_filenames:
+            # flatten the paths
+            file_prefix = str(uncertainty_model.path().parent).replace('/', "_")
+            destination = pathlib.Path(target_folder)  # / current_model.version
+            return dict(file_prefix=file_prefix, destination=destination)
+        else:
+            # otherwise use folders
+            destination = pathlib.Path(target_folder) / uncertainty_model.path.parent
+            return dict(destination=destination)
+
+    def write_config(self, target_folder: Union[pathlib.Path, str], long_filenames: bool = False):  # -> pathlib.Path
         destination = pathlib.Path(target_folder)
         assert destination.exists()
         assert destination.is_dir()
 
         ## TODO implement XML writer
-        print(dir(self.config()))
-        assert 0
+        assert self._source_logic_tree.logic_tree_version >= 2
 
-        target_file = pathlib.Path(destination, 'sources.xml')
-        with open(target_file, 'w') as fout:
-            fout.write(self.config())
-        return target_file
+        for fs in self._source_logic_tree.fault_systems:
+            # click.echo(f"branch set {branch_set.branchSetID}")
+            for branch in fs.branches:
+                # click.echo(f"branch: {branch.branchID}")
+                for source in branch.sources:
+                    path = pathlib.Path(self._source_logic_tree.version, fs.short_name, branch.tag())
+                    source.path = path
+                    kwargs = self._get_destination_args(source, target_folder, long_filenames=False)
+                    print(kwargs)
+
+                    # TODO: yield list of sources ... either from filesystem == fragile, or
+
+        # assert 0
+        xmlstr = build_sources_xml(self._source_logic_tree)
+
+        print(xmlstr)
+
+        # assert 0
+        # target_file = pathlib.Path(destination, 'sources.xml')
+        # with open(target_file, 'w') as fout:
+        #     fout.write(self.config())
+        # return target_file
 
     def fetch_resources(self, target_folder, long_filenames=False):
         # raise NotImplementedError()
@@ -40,16 +103,8 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
             for branch in branch_set.branches:
                 # click.echo(f"branch: {branch.branchID}")
                 for um in branch.uncertainty_models:
-                    if long_filenames:
-                        # flatten the paths
-                        file_prefix = str(um.path().parent).replace('/', "_")
-                        destination = pathlib.Path(target_folder)  # / current_model.version
-                        # fetch em
-                        fetch_toshi_source(destination, file_id=um.path().name, file_prefix=file_prefix)
-                    else:
-                        # otherwise use folders
-                        destination = pathlib.Path(target_folder) / um.path().parent
-                        fetch_toshi_source(destination, file_id=um.path().name)
+                    kwargs = self._get_destination_args(um, target_folder, long_filenames)
+                    fetch_toshi_source(file_id=um.path().name, **kwargs)
 
     def config(self):
         return NrmlDocument.from_model_slt(self._source_logic_tree).logic_trees[0]
