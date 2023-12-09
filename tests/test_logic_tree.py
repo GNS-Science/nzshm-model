@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from nzshm_model.source_logic_tree.logic_tree import (
+from nzshm_model.source_logic_tree.version1.logic_tree import (
     Branch,
     BranchAttributeSpec,
     BranchAttributeValue,
@@ -16,7 +16,7 @@ from nzshm_model.source_logic_tree.logic_tree import (
     SourceLogicTree,
     SourceLogicTreeCorrelation,
 )
-from nzshm_model.source_logic_tree.slt_config import from_config
+from nzshm_model.source_logic_tree.version1.slt_config import from_config
 
 
 def test_composite_branch():

@@ -12,7 +12,7 @@ import dacite
 
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
-from ..logic_tree import BranchAttributeValue
+from .. import BranchAttributeValue
 
 
 @dataclass
