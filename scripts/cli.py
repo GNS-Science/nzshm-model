@@ -2,7 +2,6 @@
 # noqa
 import logging
 import os
-import pathlib
 import sys
 
 import click
@@ -38,44 +37,46 @@ def cli():
 
 
 @cli.command()
-@click.option('--work_folder', '-w', default=lambda: os.getcwd())
+@click.option('--cache_folder', '-w', default=lambda: os.getcwd())
 @click.option('--model_id', '-m', default="NSHM_v1.0.4")
-@click.option('--long_filenames', '-lf', is_flag=True, help="use long filenames, instead of folders")
-def fetch(work_folder, model_id, long_filenames):
+# @click.option('--long_filenames', '-lf', is_flag=True, help="use long filenames, instead of folders")
+def fetch(cache_folder, model_id):
     """Fetch SLT sources from toshi"""
-    click.echo(f"work folder: {work_folder}")
+    click.echo(f"work folder: {cache_folder}")
     click.echo(f"model_id: {model_id}")
 
     model = nzshm_model.get_model_version(model_id)
+    adapter = model.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter)
 
-    model.source_logic_tree_nrml()
-
-    model.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter).fetch_resources(
-        work_folder, long_filenames
-    )
+    for item in adapter.fetch_resources(cache_folder):
+        click.echo(item)
 
     click.echo('DONE')
 
 
 @cli.command()
-@click.option('--work_folder', '-w', default=lambda: os.getcwd())
+@click.option('--cache_folder', '-w', default=lambda: os.getcwd())
+@click.option('--output_folder', '-o', default=lambda: os.getcwd())
 @click.option('--model_id', '-m', default="NSHM_v1.0.4")
-@click.option('--long_filenames', '-lf', is_flag=True, help="use long filenames, instead of folders")
-def psha_config(work_folder, model_id, long_filenames):
-    """write a psha config"""
-    click.echo(f"work folder: {work_folder}")
-    click.echo(f"model_id: {model_id}")
+def unpack(cache_folder, output_folder, model_id):
 
     model = nzshm_model.get_model_version(model_id)
+    adapter = model.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter)
+    source_map = adapter.unpack_resources(cache_folder, output_folder)
+    click.echo(len(source_map.items()))
+    click.echo('DONE')
 
-    destination = pathlib.Path(work_folder)
-    assert destination.exists()
-    assert destination.is_dir()
-    destination.mkdir(parents=True, exist_ok=True)
 
-    model.source_logic_tree().psha_adapter(
-        provider=OpenquakeSimplePshaAdapter, help="future there may be multiple adapters"
-    ).write_config(destination)
+@cli.command()
+@click.option('--cache_folder', '-w', default=lambda: os.getcwd())
+@click.option('--output_folder', '-o', default=lambda: os.getcwd())
+@click.option('--model_id', '-m', default="NSHM_v1.0.4")
+def config(cache_folder, output_folder, model_id):
+    """write a psha config"""
+
+    model = nzshm_model.get_model_version(model_id)
+    adapter = model.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter)
+    adapter.write_config(cache_folder, output_folder)
     click.echo('DONE')
 
 

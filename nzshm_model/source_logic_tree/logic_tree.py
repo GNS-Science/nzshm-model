@@ -143,6 +143,10 @@ class SourceLogicTree:
         default_factory=list
     )  # to use for selecting branches and re-weighting when logic trees are correlated
 
+    @property
+    def fault_systems(self):
+        return self.fault_system_lts
+
     def derive_spec(self) -> SourceLogicTreeSpec:
         slt_spec = SourceLogicTreeSpec()
         for fslt in self.fault_system_lts:

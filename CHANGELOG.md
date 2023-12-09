@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.0] 2023
+### Added
+ - support caching of downloads in cli
+ - build sources xml
+
 ## [0.4.1] - 2023-12-05
 ## Added
  - new scripts/cli module for PSHA related tasks, starting with fetch_sources
