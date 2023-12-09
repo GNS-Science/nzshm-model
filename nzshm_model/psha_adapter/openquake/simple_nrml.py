@@ -16,7 +16,7 @@ except (ModuleNotFoundError, ImportError):
 
 QUICK_TEST = False
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 def fetch_toshi_source(file_id: str, destination: pathlib.Path) -> pathlib.Path:
@@ -117,17 +117,13 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         assert destination.exists()
         assert destination.is_dir()
 
-        ## TODO implement XML writer
         source_map = source_map or self.unpack_resources(cache_folder, target_folder)
         xmlstr = self.build_sources_xml(source_map)
 
-        print(xmlstr)
-
-        # assert 0
-        # target_file = pathlib.Path(destination, 'sources.xml')
-        # with open(target_file, 'w') as fout:
-        #     fout.write(self.config())
-        # return target_file
+        target_file = pathlib.Path(destination, 'sources.xml')
+        with open(target_file, 'w') as fout:
+            fout.write(xmlstr)
+        return True
 
     def unpack_resources(self, cache_folder: Union[pathlib.Path, str], target_folder: Union[pathlib.Path, str]):
         target = pathlib.Path(target_folder)
