@@ -37,6 +37,13 @@ def test_source_logic_tree_v2_is_branch_iterable(slt_version_2):
 
 def test_source_logic_tree_v2_iterable_size(slt_version_2):
     assert len(list(slt_version_2)) == 1
-    # assert len(list(slt_version_2)[0].sources) == 2
+    assert len(next(iter(slt_version_2)).fault_systems[0].branches[0].sources) == 2
+
+
+def test_source_logic_tree_v2_iterates_source_logic_tree(slt_version_2):
+    assert (
+        next(iter(slt_version_2)).fault_systems[0].branches[0].sources[0]
+        == slt_version_2.fault_systems[0].branches[0].sources[0]
+    )
     print(list(slt_version_2)[0])
     # assert 0
