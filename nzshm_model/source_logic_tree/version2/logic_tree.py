@@ -34,12 +34,6 @@ class DistributedSource:
     rupture_rate_scaling: Union[float, None] = None  # TODO: needed at this level??
     type: str = "distributed"
 
-    # onfault_nrml_id: Union[str, None] = ""
-    # distributed_nrml_id: Union[str, None] = ""
-    # inversion_solution_id: Union[str, None] = ""
-    # inversion_solution_type: Union[str, None] = ""
-    # rupture_set_id: Union[str, None] = ""
-
 
 @dataclass
 class Branch:
@@ -50,6 +44,12 @@ class Branch:
 
     def tag(self):
         return str(self.values)
+
+
+@dataclass
+class FlattenedBranch(Branch):
+    fslt: Union['FaultSystemLogicTree', None] = None  # this should never be serialised, only used for filtering
+    slt: Union['SourceLogicTree', None] = None  # this should never be serialised, only used for filtering
 
 
 @dataclass
@@ -124,28 +124,33 @@ class SourceLogicTree:
 
     def __iter__(self):
         self.__current_branch = 0
-        self.__branch_list = list(self.__branches__())
-        self.__slt_list = list(self.__slts__())
+        self.__branch_list = list(self.__flattened_branches__())
         return self
 
-    def __branches__(self):
-        for fslt in self.fault_systems:
-            for branch in fslt.branches:
-                yield branch
+    def __flattened_branches__(self):
+        """
+        Produce list of Flattened branches, each with a shallow copy of it's slt and fslt parents
+        for use in filtering.
 
-    def __slts__(self):
+        NB this class is never used for serialising models.
+        """
         for fslt in self.fault_systems:
             for branch in fslt.branches:
-                slt = SourceLogicTree(title=self.title, version=self.version)
-                fs = FaultSystemLogicTree(short_name=fslt.short_name, long_name=fslt.long_name)
-                b = Branch(values=branch.values, sources=copy.deepcopy(branch.sources), weight=branch.weight)
-                fs.branches.append(b)
-                slt.fault_systems.append(fs)
-                yield slt
+                fslt_lite = FaultSystemLogicTree(short_name=fslt.short_name, long_name=fslt.long_name)
+                slt_lite = SourceLogicTree(
+                    title=self.title, version=self.version, logic_tree_version=self.logic_tree_version
+                )
+                yield FlattenedBranch(
+                    values=branch.values,
+                    sources=copy.deepcopy(branch.sources),
+                    weight=branch.weight,
+                    fslt=fslt_lite,
+                    slt=slt_lite,
+                )
 
     def __next__(self):
         if self.__current_branch >= len(self.__branch_list):
             raise StopIteration
         else:
             self.__current_branch += 1
-            return self.__slt_list[self.__current_branch - 1]
+            return self.__branch_list[self.__current_branch - 1]
