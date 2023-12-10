@@ -4,13 +4,14 @@ test migration from slt v1 to v2
 import pytest
 
 import nzshm_model
-from nzshm_model.source_logic_tree.version2 import SourceLogicTree
+from nzshm_model.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
 
 
 @pytest.fixture(scope='module')
 def slt_version_1():
     # get a published v1 logic tree
-    yield nzshm_model.get_model_version('NSHM_v1.0.4').source_logic_tree()
+    data = nzshm_model.get_model_version('NSHM_v1.0.4')._data
+    yield SourceLogicTreeV1.from_dict(data)
 
 
 def test_migrate_NSHM_v1_0_4(slt_version_1):

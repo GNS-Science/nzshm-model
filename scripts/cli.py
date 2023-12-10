@@ -73,7 +73,9 @@ def config(cache_folder, output_folder, model_id):
     """write a psha config"""
 
     model = nzshm_model.get_model_version(model_id)
-    adapter = model.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter)
+    slt = model.source_logic_tree()  # always version 2
+    adapter = slt.psha_adapter(provider=OpenquakeSimplePshaAdapter)
+
     adapter.write_config(cache_folder, output_folder)
     click.echo('DONE')
 

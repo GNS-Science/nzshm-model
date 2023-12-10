@@ -1,7 +1,7 @@
 import json
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from nzshm_model.psha_adapter import NrmlDocument, OpenquakeSimplePshaAdapter
 from nzshm_model.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
@@ -26,13 +26,18 @@ class NshmModel:
         assert self._slt_json.exists()
         assert self._gmm_xml.exists()
 
-    def source_logic_tree(self) -> Union["SourceLogicTreeV1", "SourceLogicTree"]:
+    @property
+    def _data(self):
         with open(self._slt_json, 'r') as jsonfile:
             data = json.load(jsonfile)
-            ltv = data.get("logic_tree_version")
-            if ltv is None:  # original json is unversioned
-                return SourceLogicTreeV1.from_dict(data)
-            raise ValueError("Unsupported logic_tree_version.")
+        return data
+
+    def source_logic_tree(self) -> "SourceLogicTree":
+        data = self._data
+        ltv = data.get("logic_tree_version")
+        if ltv is None:  # original json is unversioned
+            return SourceLogicTree.from_source_logic_tree(SourceLogicTreeV1.from_dict(data))
+        raise ValueError("Unsupported logic_tree_version.")
 
     def source_logic_tree_nrml(self) -> "LogicTree":
         warnings.warn("use NshmModel.source_logic_tree().psha_adapter().config() instead", DeprecationWarning)

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Iterator, List
 from lxml import objectify
 
 if TYPE_CHECKING:
-    from nzshm_model.source_logic_tree.version1 import logic_tree as slt
+    from nzshm_model.source_logic_tree.version2 import logic_tree as slt
 
     from .logic_tree import LogicTreeBranch
 
@@ -77,12 +77,14 @@ class NshmSourceUncertaintyModel:
     @classmethod
     def from_parent_slt(cls, ltb: "slt.Branch", parent: "LogicTreeBranch") -> Iterator["NshmSourceUncertaintyModel"]:
         """resolve to filenames of NRML sources"""
-        if ltb.onfault_nrml_id:
-            yield NshmSourceUncertaintyModel(parent=parent, toshi_nrml_id=ltb.onfault_nrml_id, model_type="FaultSource")
-        if ltb.distributed_nrml_id:
-            yield NshmSourceUncertaintyModel(
-                parent=parent, toshi_nrml_id=ltb.distributed_nrml_id, model_type="DistributedSource"
-            )
+        for source in ltb.sources:
+            # print(source)
+            if source.type == 'inversion':
+                yield NshmSourceUncertaintyModel(parent=parent, toshi_nrml_id=source.nrml_id, model_type="FaultSource")
+            if source.type == 'distributed':
+                yield NshmSourceUncertaintyModel(
+                    parent=parent, toshi_nrml_id=source.nrml_id, model_type="DistributedSource"
+                )
 
     def path(self) -> PurePath:
         return PurePath(self.parent.path(), self.toshi_nrml_id)  # todo unique combination of sources

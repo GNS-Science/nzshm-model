@@ -45,6 +45,10 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     Openquake PSHA simple nrml support.
     """
 
+    def __init__(self, source_logic_tree):
+        self._source_logic_tree = source_logic_tree
+        assert source_logic_tree.logic_tree_version == 2
+
     def build_sources_xml(self, source_map):
         """Build a source model for a set of LTBs with their source files."""
         E = ElementMaker(
@@ -60,7 +64,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         UW = E.uncertaintyWeight
 
         """
-        #Build from NRML logici_tree
+        # Build from existing NRML logic_tree
         nrml_logic_tree = self.config()
         # print(nrml_logic_tree)
         ltbl = LTBL(branchingLevelID="1")
@@ -77,7 +81,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
             ltbl.append(ltbs)
         """
 
-        # Build from the source_logic_tree (multiple versions)
+        # Build from the source_logic_tree
         ltbl = LTBL(branchingLevelID="1")
         for fs in self.source_logic_tree.fault_systems:
             ltbs = LTBS(uncertaintyType="sourceModel", branchSetID=fs.short_name)
@@ -89,19 +93,21 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                     # new logic trees
                     for source in branch.sources:
                         for filepath in source_map.get(source.nrml_id):
-                            files += f"\t'{filepath}'\n"
-                        ltb = LTB(UM(files), UW(str(branch.weight)), branchID=branch_name)
-                else:
-                    # old style logic tree
-                    if source_map.get(branch.onfault_nrml_id):
-                        for filepath in source_map.get(branch.onfault_nrml_id):
                             if not filepath.suffix == '.xml':
                                 continue
                             files += f"\t'{filepath}'\n"
-                    if source_map.get(branch.distributed_nrml_id):
-                        for filepath in source_map.get(branch.distributed_nrml_id):
-                            files += f"\t'{filepath}'\n"
-                    ltb = LTB(UM(files), UW(str(branch.weight)), branchID=str(branch.values))
+                        ltb = LTB(UM(files), UW(str(branch.weight)), branchID=branch_name)
+                # else:
+                #     # old style logic tree
+                #     if source_map.get(branch.onfault_nrml_id):
+                #         for filepath in source_map.get(branch.onfault_nrml_id):
+                #             if not filepath.suffix == '.xml':
+                #                 continue
+                #             files += f"\t'{filepath}'\n"
+                #     if source_map.get(branch.distributed_nrml_id):
+                #         for filepath in source_map.get(branch.distributed_nrml_id):
+                #             files += f"\t'{filepath}'\n"
+                #     ltb = LTB(UM(files), UW(str(branch.weight)), branchID=str(branch.values))
                 ltbs.append(ltb)
             ltbl.append(ltbs)
         nrml = NRML(LT(ltbl, logicTreeID="Combined"))

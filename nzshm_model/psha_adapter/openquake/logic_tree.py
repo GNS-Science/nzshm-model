@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING, Any, Iterator, List, Union
 from lxml import objectify
 
 if TYPE_CHECKING:
-    from nzshm_model.source_logic_tree.version1 import logic_tree as slt
+    from nzshm_model.source_logic_tree.version2 import logic_tree as slt
 
 from .uncertainty_models import (
     GenericUncertaintyModel,
@@ -122,7 +122,7 @@ class LogicTreeBranchSet:
     @classmethod
     def from_parent_slt(cls, slt: "slt.SourceLogicTree", parent: "LogicTree") -> Iterator["LogicTreeBranchSet"]:
         # assert slt_spec.fault_system_lts[0].short_name == "PUY"
-        for ltbs in slt.fault_system_lts:
+        for ltbs in slt.fault_systems:
             _instance = LogicTreeBranchSet(
                 parent=parent,
                 branchSetID=ltbs.short_name,
