@@ -1,1 +1,1 @@
-from .logic_tree import SourceLogicTree
+from .logic_tree import Branch, SourceLogicTree

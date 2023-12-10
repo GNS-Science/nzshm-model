@@ -13,6 +13,8 @@ import dacite
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .. import BranchAttributeValue
+from ..core import FaultSystemLogicTreeBase, FaultSystemLogicTreeSpec
+from ..version1 import SourceLogicTree as SourceLogicTreeV1
 
 
 @dataclass
@@ -50,20 +52,8 @@ class Branch:
 
 
 @dataclass
-class FaultSystemLogicTree:
-    short_name: str
-    long_name: str
-    branches: List['Branch'] = field(default_factory=list)
-
-    def derive_spec(self) -> 'FaultSystemLogicTreeSpec':
-        raise NotImplementedError()
-
-
-@dataclass
-class FaultSystemLogicTreeSpec:
-    short_name: str
-    long_name: str
-    branches: List['BranchAttributeValue'] = field(default_factory=list)
+class FaultSystemLogicTree(FaultSystemLogicTreeBase):
+    branches: List[Branch] = field(default_factory=list)
 
 
 @dataclass
@@ -73,10 +63,11 @@ class SourceLogicTreeSpec:
 
 @dataclass
 class SourceLogicTree:
-    logic_tree_version: Union[int, None]
     version: str
     title: str
     fault_systems: List[FaultSystemLogicTree] = field(default_factory=list)
+    logic_tree_version: Union[int, None] = 2
+
     # correlations: List[SourceLogicTreeCorrelation] = field(
     #     default_factory=list
     # )  # to use for selecting branches and re-weighting when logic trees are correlated
@@ -99,6 +90,16 @@ class SourceLogicTree:
     def from_json(json_path: Union[pathlib.Path, str]):
         data = json.load(open(json_path))
         return SourceLogicTree.from_dict(data)
+
+    @staticmethod
+    def from_source_logic_tree(original_slt: "SourceLogicTreeV1") -> "SourceLogicTree":
+        """
+        Migrate from old version slt.
+        """
+        if not isinstance(original_slt, SourceLogicTreeV1):
+            raise ValueError(f"supplied object of {type(original_slt)} is not supported.")
+        slt = SourceLogicTree(version=original_slt.version, title=original_slt.title)
+        return slt
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(self)

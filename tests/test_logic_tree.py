@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
+from nzshm_model.source_logic_tree.branch_attribute import BranchAttributeSpec
 from nzshm_model.source_logic_tree.version1.logic_tree import (
     Branch,
-    BranchAttributeSpec,
     BranchAttributeValue,
     CompositeBranch,
     FaultSystemLogicTree,
