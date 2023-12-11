@@ -47,7 +47,7 @@ class Branch:
 
 
 @dataclass
-class FlattenedBranch(Branch):
+class FilteredBranch(Branch):
     fslt: Union['FaultSystemLogicTree', None] = None  # this should never be serialised, only used for filtering
     slt: Union['SourceLogicTree', None] = None  # this should never be serialised, only used for filtering
 
@@ -140,7 +140,7 @@ class SourceLogicTree:
                 slt_lite = SourceLogicTree(
                     title=self.title, version=self.version, logic_tree_version=self.logic_tree_version
                 )
-                yield FlattenedBranch(
+                yield FilteredBranch(
                     values=branch.values,
                     sources=copy.deepcopy(branch.sources),
                     weight=branch.weight,
@@ -154,3 +154,26 @@ class SourceLogicTree:
         else:
             self.__current_branch += 1
             return self.__branch_list[self.__current_branch - 1]
+
+    @staticmethod
+    def from_filtered_branches(filtered_branches):
+        def match_fslt(slt: SourceLogicTree, fb):
+            for fslt in slt.fault_systems:
+                if fb.fslt.short_name == fslt.short_name:
+                    return fslt
+
+        slt = None
+        for fb in filtered_branches:
+            # ensure an slt
+            if not slt:
+                slt = SourceLogicTree(version=fb.slt.version, title=fb.slt.title)
+            else:
+                assert slt.version == fb.slt.version
+
+            # ensure an fslt
+            fslt = match_fslt(slt, fb)
+            if not fslt:
+                fslt = FaultSystemLogicTree(short_name=fb.fslt.short_name, long_name=fb.fslt.long_name)
+                slt.fault_systems.append(fslt)
+            fslt.branches.append(fb)
+        return slt
