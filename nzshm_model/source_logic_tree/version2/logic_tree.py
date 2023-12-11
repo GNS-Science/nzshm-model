@@ -156,14 +156,20 @@ class SourceLogicTree:
             return self.__branch_list[self.__current_branch - 1]
 
     @staticmethod
-    def from_filtered_branches(filtered_branches):
+    def from_branches(branches):
+        """
+        Build a complete SLT from a iterable od branches.
+
+        We expect that all the branhches have come from a single SLT.
+        """
+
         def match_fslt(slt: SourceLogicTree, fb):
             for fslt in slt.fault_systems:
                 if fb.fslt.short_name == fslt.short_name:
                     return fslt
 
         slt = None
-        for fb in filtered_branches:
+        for fb in branches:
             # ensure an slt
             if not slt:
                 slt = SourceLogicTree(version=fb.slt.version, title=fb.slt.title)

@@ -1,11 +1,13 @@
 # Changelog
 
-## [0.5.0] 2023
+## [0.5.0] 2023-12-12
 ### Added
- - support caching of downloads in cli
+ - support caching of downloads
  - build sources xml
+ - migration of version1 to version2 SLT
  - iterate branches with SourceLogicTree
- - build new SLT from filtered branches
+ - build new SLT from branches iterable
+ - scripts/cli config command demonstrates building openquake config from an SLT
 
 ## [0.4.1] - 2023-12-05
 ## Added

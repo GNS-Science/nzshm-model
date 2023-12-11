@@ -63,7 +63,7 @@ def test_generator_filtering_logic_tree_branches(full_slt):
 def test_build_slt_from_filtered_slt(full_slt):
 
     flt = (filt_branch for filt_branch in full_slt if filt_branch.fslt.short_name == "HIK")
-    slt = SourceLogicTree.from_filtered_branches(flt)
+    slt = SourceLogicTree.from_branches(flt)
     print(slt)
     assert len(slt.fault_systems) == 1
     assert len(slt.fault_systems[0].branches) == 9

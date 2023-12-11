@@ -76,7 +76,7 @@ def config(cache_folder, output_folder, model_id):
     model = nzshm_model.get_model_version(model_id)
     slt = model.source_logic_tree()  # always version 2
 
-    ## texample filter functions
+    ## example filter functions
     def unscaled_filter(obj):
         for v in obj.values:
             if v.name == 's' and v.value == 1.0:  # moment rate scaling
@@ -87,7 +87,7 @@ def config(cache_folder, output_folder, model_id):
             if v.long_name == 'deformation model' and v.value == "geodetic":
                 return True
 
-    slt = SourceLogicTree.from_filtered_branches((fb for fb in slt if unscaled_filter(fb) and geodetic_filter(fb)))
+    slt = SourceLogicTree.from_branches((fb for fb in slt if unscaled_filter(fb) and geodetic_filter(fb)))
 
     adapter = slt.psha_adapter(provider=OpenquakeSimplePshaAdapter)
 
