@@ -4,6 +4,8 @@
 ### Added
  - support caching of downloads in cli
  - build sources xml
+ - iterate branches with SourceLogicTree
+ - build new SLT from filtered branches
 
 ## [0.4.1] - 2023-12-05
 ## Added

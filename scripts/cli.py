@@ -9,6 +9,7 @@ import nzshm_model
 
 # from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids  # noqa
 from nzshm_model.psha_adapter import OpenquakeSimplePshaAdapter
+from nzshm_model.source_logic_tree import SourceLogicTree
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.DEBUG)
@@ -74,6 +75,20 @@ def config(cache_folder, output_folder, model_id):
 
     model = nzshm_model.get_model_version(model_id)
     slt = model.source_logic_tree()  # always version 2
+
+    ## texample filter functions
+    def unscaled_filter(obj):
+        for v in obj.values:
+            if v.name == 's' and v.value == 1.0:  # moment rate scaling
+                return True
+
+    def geodetic_filter(obj):
+        for v in obj.values:
+            if v.long_name == 'deformation model' and v.value == "geodetic":
+                return True
+
+    slt = SourceLogicTree.from_filtered_branches((fb for fb in slt if unscaled_filter(fb) and geodetic_filter(fb)))
+
     adapter = slt.psha_adapter(provider=OpenquakeSimplePshaAdapter)
 
     adapter.write_config(cache_folder, output_folder)
