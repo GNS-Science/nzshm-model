@@ -7,7 +7,7 @@ import copy
 import json
 import pathlib
 from dataclasses import dataclass, field
-from typing import Dict, List, Type, Union, Iterator
+from typing import Dict, Iterator, List, Type, Union
 
 import dacite
 
@@ -52,9 +52,8 @@ class FilteredBranch(Branch):
     slt: Union['SourceLogicTree', None] = None  # this should never be serialised, only used for filtering
 
     def to_branch(self) -> Branch:
-        branch_attributes = {k:v for k,v in self.__dict__.items() if k not in ('fslt','slt')}
+        branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('fslt', 'slt')}
         return Branch(**branch_attributes)
-
 
 
 @dataclass
@@ -177,14 +176,14 @@ class SourceLogicTree:
         for fb in branches:
             # ensure an slt
             if not slt:
-                slt = SourceLogicTree(version=fb.slt.version, title=fb.slt.title)
+                slt = SourceLogicTree(version=fb.slt.version, title=fb.slt.title)  # type: ignore
             else:
-                assert slt.version == fb.slt.version
+                assert slt.version == fb.slt.version  # type: ignore
 
             # ensure an fslt
             fslt = match_fslt(slt, fb)
             if not fslt:
-                fslt = FaultSystemLogicTree(short_name=fb.fslt.short_name, long_name=fb.fslt.long_name)
+                fslt = FaultSystemLogicTree(short_name=fb.fslt.short_name, long_name=fb.fslt.long_name)  # type: ignore
                 slt.fault_systems.append(fslt)
             fslt.branches.append(fb.to_branch())
-        return slt
+        return slt  # type: ignore
