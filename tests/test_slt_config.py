@@ -7,8 +7,8 @@ import dacite
 import pytest
 
 import nzshm_model
-from nzshm_model.source_logic_tree.logic_tree import Branch, FaultSystemLogicTree, SourceLogicTree
-from nzshm_model.source_logic_tree.slt_config import (
+from nzshm_model.source_logic_tree.version1 import Branch, FaultSystemLogicTree, SourceLogicTree
+from nzshm_model.source_logic_tree.version1.slt_config import (
     decompose_crustal_tag,
     decompose_subduction_tag,
     from_config,

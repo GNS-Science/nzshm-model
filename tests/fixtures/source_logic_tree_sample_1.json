@@ -1,0 +1,59 @@
+{   
+    "logic_tree_version" : 2,
+    "title": "a SRM logic tree",
+    "version": "SRM_v10.4.0",
+    "rupture_rate_scaling": [0.66, 1.0, 1.5],
+    "fault_systems": [
+        {
+            "name": "Hik",
+            "rupture_rate_scaling": [0.66, 1.0, 1.5],
+            "branches": [
+                {
+                    "tag":  "Hik TL, N16.5, b0.95, C4, s0.42",
+                    "weight": 0.147216637218474,
+                    "inv_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQyOA==",
+                    "bg_id": "RmlsZToxMzA3MzI="
+                },
+                {
+                    "tag": "Hik TL, N16.5, b0.95, C4, s1",
+                    "weight": 0.281154911079988,
+                    "inv_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExNDQxNw==",
+                    "bg_id": "RmlsZToxMzA3MzQ="
+                }
+            ]
+        },
+        {
+            "name": "Puy",
+            "branches": [
+                {
+                    "rupture_rate_scaling": 0.28,
+                    "tag": "Puy 0.7, N4.6, b0.902, C4, s0.28",
+                    "weight": 0.21,
+                    "sources": [
+                        {"type":"fault_source", "id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcxNw==", "weight": 0.25},
+                        {"type":"point_source", "id": "RmlsZToxMzA3NTM=", "weight": 0.5},
+                    }
+                  },
+                  {
+                    "rupture_rate_scaling": 1.0,                    
+                    "tag": "Puy 0.7, N4.6, b0.902, C4, s1",
+                    "weight": 0.52,
+                    "inv_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcyMw==",
+                    "bg_id": "RmlsZToxMzA3NTQ="
+                  }
+            ]
+        }
+    ],
+
+    "correlations": [
+        {
+            "primary": {"group": "Hik", "tag": "Hik TL, N16.5, b0.95, C4, s0.42"},
+            "secondary": {"group": "Puy", "tag": "Puy 0.7, N4.6, b0.902, C4, s0.28"}
+        },
+        {
+            "primary": {"group": "Hik", "tag": "Hik TL, N16.5, b0.95, C4, s1"},
+            "secondary": {"group": "PUY", "tag": "Puy 0.7, N4.6, b0.902, C4, s1"}
+        }
+    ]
+    
+}

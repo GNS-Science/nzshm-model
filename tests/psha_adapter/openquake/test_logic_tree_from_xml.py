@@ -4,7 +4,7 @@ from pathlib import Path, PurePath
 
 import pytest
 
-from nzshm_model.nrml.logic_tree import NrmlDocument
+from nzshm_model.psha_adapter import NrmlDocument
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
 

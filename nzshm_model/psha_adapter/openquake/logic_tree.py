@@ -26,11 +26,12 @@ write source XML on the fly, using SLT python modules as inputs.
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path, PurePath
-from typing import Any, Iterator, List, Union
+from typing import TYPE_CHECKING, Any, Iterator, List, Union
 
 from lxml import objectify
 
-from nzshm_model.source_logic_tree import logic_tree as slt
+if TYPE_CHECKING:
+    from nzshm_model.source_logic_tree.version2 import logic_tree as slt
 
 from .uncertainty_models import (
     GenericUncertaintyModel,
@@ -81,7 +82,7 @@ class LogicTreeBranch:
 
     @classmethod
     def from_parent_slt(
-        cls, slt_ltbs: slt.FaultSystemLogicTree, parent: "LogicTreeBranchSet"
+        cls, slt_ltbs: "slt.FaultSystemLogicTree", parent: "LogicTreeBranchSet"
     ) -> Iterator["LogicTreeBranch"]:
         for ltb in slt_ltbs.branches:
             _instance = LogicTreeBranch(
@@ -119,9 +120,9 @@ class LogicTreeBranchSet:
             yield (_instance)
 
     @classmethod
-    def from_parent_slt(cls, slt: slt.SourceLogicTree, parent: "LogicTree") -> Iterator["LogicTreeBranchSet"]:
+    def from_parent_slt(cls, slt: "slt.SourceLogicTree", parent: "LogicTree") -> Iterator["LogicTreeBranchSet"]:
         # assert slt_spec.fault_system_lts[0].short_name == "PUY"
-        for ltbs in slt.fault_system_lts:
+        for ltbs in slt.fault_systems:
             _instance = LogicTreeBranchSet(
                 parent=parent,
                 branchSetID=ltbs.short_name,
@@ -158,7 +159,7 @@ class LogicTree:
         return PurePath(self.logicTreeID)
 
     @classmethod
-    def from_parent_slt(cls, slt: slt.SourceLogicTree) -> "LogicTree":
+    def from_parent_slt(cls, slt: "slt.SourceLogicTree") -> "LogicTree":
         """
         build nrml instance from old-skool dataclasses instance.
         """

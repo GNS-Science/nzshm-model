@@ -1,0 +1,55 @@
+{   
+    "logic_tree_version" : 2,
+    "title": "a SRM logic tree",
+    "version": "SLT_v9p0p0",
+    "fault_systems": [
+        {
+            "short_name": "PUY",
+            "long_name" : "Puysegur",           
+            "branches": [
+                {
+                    "values": [
+                        {
+                            "name": "dm",
+                            "long_name": "deformation model",
+                            "value": "0.7"
+                        },
+                        {
+                            "name": "bN",
+                            "long_name": "bN pair",
+                            "value": [
+                                0.902,
+                                4.6
+                            ]
+                        },
+                        {
+                            "name": "C",
+                            "long_name": "area-magnitude scaling",
+                            "value": 4.0
+                        },
+                        {
+                            "name": "s",
+                            "long_name": "moment rate scaling",
+                            "value": 0.28
+                        }
+                    ], 
+                    "rupture_rate_scaling": 0.28,
+                    "weight": 1.0,
+                    "sources": [
+                        {
+                            "type":"inversion",
+                            "nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcxNw==",
+                            "rupture_set_id": "RmlsZToxNzU3My4wQUYzU1o=",
+                            "rupture_rate_scaling": 0.9
+                        },
+                        {
+                            "type":"distributed", 
+                            "nrml_id": "RmlsZToxMzA3NTM=", 
+                            "rupture_rate_scaling": 1.1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

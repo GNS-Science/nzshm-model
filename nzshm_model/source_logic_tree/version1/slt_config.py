@@ -2,6 +2,8 @@
 
 """
 Functions for converting SLT config .py files as used in Runzi and THP etc into the standardised nzshm-model form.
+
+NB: this is needed only for version 1 logic trees, Version 2 are defined directly in JSON.
 """
 
 import copy
@@ -10,9 +12,9 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Union
 
-from nzshm_model.source_logic_tree.logic_tree import (
+from nzshm_model.source_logic_tree import BranchAttributeValue
+from nzshm_model.source_logic_tree.version1 import (
     Branch,
-    BranchAttributeValue,
     FaultSystemLogicTree,
     SourceLogicTree,
     SourceLogicTreeCorrelation,

@@ -2,7 +2,6 @@
 
 """
 enrich SLT from TOSHI_API.
-
 """
 
 import base64
