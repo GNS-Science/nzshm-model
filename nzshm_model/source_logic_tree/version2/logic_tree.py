@@ -47,16 +47,6 @@ class Branch:
 
 
 @dataclass
-class FilteredBranch(Branch):
-    fslt: Union['FaultSystemLogicTree', None] = None  # this should never be serialised, only used for filtering
-    slt: Union['SourceLogicTree', None] = None  # this should never be serialised, only used for filtering
-
-    def to_branch(self) -> Branch:
-        branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('fslt', 'slt')}
-        return Branch(**branch_attributes)
-
-
-@dataclass
 class FaultSystemLogicTree(FaultSystemLogicTreeBase):
     branches: List[Branch] = field(default_factory=list)
 
@@ -160,7 +150,7 @@ class SourceLogicTree:
             return self.__branch_list[self.__current_branch - 1]
 
     @staticmethod
-    def from_branches(branches: Iterator[FilteredBranch]) -> "SourceLogicTree":
+    def from_branches(branches: Iterator['FilteredBranch']) -> 'SourceLogicTree':
         """
         Build a complete SLT from a iterable od branches.
 
@@ -172,18 +162,30 @@ class SourceLogicTree:
                 if fb.fslt.short_name == fslt.short_name:
                     return fslt
 
-        slt = None
+        version = None
         for fb in branches:
             # ensure an slt
-            if not slt:
-                slt = SourceLogicTree(version=fb.slt.version, title=fb.slt.title)  # type: ignore
+            if not version:
+                slt = SourceLogicTree(version=fb.slt.version, title=fb.slt.title)
+                version = fb.slt.version
             else:
-                assert slt.version == fb.slt.version  # type: ignore
+                assert version == fb.slt.version
 
             # ensure an fslt
             fslt = match_fslt(slt, fb)
             if not fslt:
-                fslt = FaultSystemLogicTree(short_name=fb.fslt.short_name, long_name=fb.fslt.long_name)  # type: ignore
+                fslt = FaultSystemLogicTree(short_name=fb.fslt.short_name, long_name=fb.fslt.long_name)
                 slt.fault_systems.append(fslt)
             fslt.branches.append(fb.to_branch())
-        return slt  # type: ignore
+        return slt
+
+
+# this should never be serialised, only used for filtering
+@dataclass
+class FilteredBranch(Branch):
+    fslt: 'FaultSystemLogicTree' = FaultSystemLogicTree('shortname', 'longname')
+    slt: 'SourceLogicTree' = SourceLogicTree('version', 'title')
+
+    def to_branch(self) -> Branch:
+        branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('fslt', 'slt')}
+        return Branch(**branch_attributes)

@@ -52,7 +52,7 @@ def test_source_logic_tree():
     assert src_logic_tree.branch_sets[0].branches[0].uncertainty_weight == pytest.approx(0.210000)
     assert (
         src_logic_tree.branch_sets[0].branches[0].path()
-        == PurePath('SLT_v9p0p0') / "PUY" / "[dm0.7, bN[0.902, 4.6], C4.0, s0.28]"
+        == PurePath('SLT_v9p0p0') / "PUY" / "[dm0.7,bN[0.902,4.6],C4.0,s0.28]"
     )
 
 
@@ -67,7 +67,7 @@ def test_source_logic_tree_uncertainty_PUY():
 
     assert src_logic_tree.branch_sets[BSID].branchSetID == "PUY"
     assert src_logic_tree.branch_sets[BSID].branches[0].path() == PurePath(
-        'SLT_v9p0p0', 'PUY', '[dm0.7, bN[0.902, 4.6], C4.0, s0.28]'
+        'SLT_v9p0p0', 'PUY', '[dm0.7,bN[0.902,4.6],C4.0,s0.28]'
     )
 
     assert len(src_logic_tree.branch_sets[BSID].branches[0].uncertainty_models) == 2
@@ -101,7 +101,7 @@ def test_source_logic_tree_uncertainty_SLAB():
     BSID = 3
 
     assert src_logic_tree.branch_sets[BSID].branchSetID == "SLAB"
-    assert src_logic_tree.branch_sets[BSID].branches[0].path() == PurePath('SLT_v9p0p0', 'SLAB', '[runiform, d1]')
+    assert src_logic_tree.branch_sets[BSID].branches[0].path() == PurePath('SLT_v9p0p0', 'SLAB', '[runiform,d1]')
 
     assert len(src_logic_tree.branch_sets[BSID].branches[0].uncertainty_models) == 1
 
@@ -119,7 +119,7 @@ def test_source_logic_tree_uncertainty_CRU():
     BSID = 2
     assert src_logic_tree.branch_sets[BSID].branchSetID == "CRU"
     assert src_logic_tree.branch_sets[BSID].branches[0].path() == PurePath(
-        'SLT_v9p0p0/CRU/[dmgeodetic, tdFalse, bN[0.823, 2.7], C4.2, s0.66]'
+        'SLT_v9p0p0/CRU/[dmgeodetic,tdFalse,bN[0.823,2.7],C4.2,s0.66]'
     )
     assert len(src_logic_tree.branch_sets[BSID].branches[0].uncertainty_models) == 2
 

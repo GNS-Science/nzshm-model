@@ -38,6 +38,7 @@ from .uncertainty_models import (
     GroundMotionUncertaintyModel,
     NshmSourceUncertaintyModel,
     SourcesUncertaintyModel,
+    _strip_whitespace,
 )
 
 NRML_NS = None
@@ -94,7 +95,7 @@ class LogicTreeBranch:
             yield _instance
 
     def path(self) -> PurePath:
-        return PurePath(self.parent.path(), self.branchID)
+        return PurePath(self.parent.path(), _strip_whitespace(self.branchID))
 
 
 @dataclass
@@ -140,7 +141,7 @@ class LogicTreeBranchSet:
         return GenericUncertaintyModel
 
     def path(self) -> PurePath:
-        return PurePath(self.parent.path(), self.branchSetID)
+        return PurePath(self.parent.path(), _strip_whitespace(self.branchSetID))
 
 
 @dataclass
@@ -156,7 +157,7 @@ class LogicTree:
             yield _instance
 
     def path(self) -> PurePath:
-        return PurePath(self.logicTreeID)
+        return PurePath(_strip_whitespace(self.logicTreeID))
 
     @classmethod
     def from_parent_slt(cls, slt: "slt.SourceLogicTree") -> "LogicTree":

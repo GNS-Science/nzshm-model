@@ -13,6 +13,10 @@ if TYPE_CHECKING:
     from .logic_tree import LogicTreeBranch
 
 
+def _strip_whitespace(string: str) -> str:
+    return ''.join(string.split())
+
+
 @dataclass
 class GenericUncertaintyModel:
     parent: "LogicTreeBranch"
@@ -23,7 +27,7 @@ class GenericUncertaintyModel:
         return GenericUncertaintyModel(parent=parent, text=node.text.strip())
 
     def path(self) -> PurePath:
-        return PurePath(self.parent.path(), self.text)
+        return PurePath(self.parent.path(), _strip_whitespace(self.text))
 
 
 @dataclass
@@ -44,7 +48,7 @@ class GroundMotionUncertaintyModel:
         )
 
     def path(self) -> PurePath:
-        return PurePath(self.parent.path(), self.text)  # todo unique combination of name + args
+        return PurePath(self.parent.path(), _strip_whitespace(self.text))  # todo unique combination of name + args
 
 
 @dataclass
@@ -61,7 +65,7 @@ class SourcesUncertaintyModel:
         )
 
     def path(self) -> PurePath:
-        return PurePath(self.parent.path(), self.text)  # todo unique combination of sources
+        return PurePath(self.parent.path(), _strip_whitespace(self.text))  # todo unique combination of sources
 
 
 @dataclass
@@ -87,4 +91,4 @@ class NshmSourceUncertaintyModel:
                 )
 
     def path(self) -> PurePath:
-        return PurePath(self.parent.path(), self.toshi_nrml_id)  # todo unique combination of sources
+        return PurePath(self.parent.path(), _strip_whitespace(self.toshi_nrml_id))  # todo unique combination of sources
