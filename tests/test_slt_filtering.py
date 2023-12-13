@@ -5,6 +5,7 @@ import pytest
 
 import nzshm_model
 from nzshm_model.source_logic_tree import SourceLogicTree
+from nzshm_model.source_logic_tree.version2 import Branch
 
 
 ## three example filter functions
@@ -67,3 +68,4 @@ def test_build_slt_from_filtered_slt(full_slt):
     print(slt)
     assert len(slt.fault_systems) == 1
     assert len(slt.fault_systems[0].branches) == 9
+    assert type(slt.fault_systems[0].branches[0]) is Branch  # isinstance() not used to avoid true for inherited classes

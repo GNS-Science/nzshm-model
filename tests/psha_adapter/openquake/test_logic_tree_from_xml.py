@@ -5,6 +5,7 @@ from pathlib import Path, PurePath
 import pytest
 
 from nzshm_model.psha_adapter import NrmlDocument
+from nzshm_model.psha_adapter.openquake.uncertainty_models import _strip_whitespace
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
 
@@ -56,15 +57,14 @@ def test_nrml_gmm_logic_tree_paths():
         "lt1",
         "bs_crust",
         "STF22_upper",
-        '[Stafford2022]\n                  mu_branch = "Upper"',
+        '[Stafford2022]mu_branch="Upper"',
     )
 
     assert doc.logic_trees[0].branch_sets[1].branches[0].uncertainty_models[0].path() == PurePath(
         "lt1",
         "bs_slab",
         "Kuehn2020SS_GLO_lower",
-        '[KuehnEtAl2020SSlab]\n                        region = "GLO"'
-        '\n                        sigma_mu_epsilon = -1.28155',
+        '[KuehnEtAl2020SSlab]region="GLO"' 'sigma_mu_epsilon=-1.28155',
     )
 
 
@@ -161,5 +161,8 @@ def test_nrml_srm_logic_tree_path(
     assert doc.logic_trees[0].branch_sets[0].branches[0].path() == PurePath(logic_tree_id, branch_set_id, branch_id)
 
     assert doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_models[0].path() == PurePath(
-        logic_tree_id, branch_set_id, branch_id, uncertainty_model
+        _strip_whitespace(logic_tree_id),
+        _strip_whitespace(branch_set_id),
+        _strip_whitespace(branch_id),
+        _strip_whitespace(uncertainty_model),
     )

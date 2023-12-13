@@ -1,7 +1,7 @@
 import logging
 import pathlib
 import zipfile
-from typing import Dict, Union
+from typing import Any, Dict, Generator, Union
 
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -95,7 +95,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                         for filepath in source_map.get(source.nrml_id):
                             if not filepath.suffix == '.xml':
                                 continue
-                            files += f"\t'{filepath}'\n"
+                            files += f"\t{filepath}\n"
                         ltb = LTB(UM(files), UW(str(branch.weight)), branchID=branch_name)
                 # else:
                 #     # old style logic tree
@@ -118,7 +118,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         cache_folder: Union[pathlib.Path, str],
         target_folder: Union[pathlib.Path, str],
         source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
-    ):  # -> pathlib.Path
+    ) -> pathlib.Path:
         destination = pathlib.Path(target_folder)
         assert destination.exists()
         assert destination.is_dir()
@@ -129,9 +129,11 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         target_file = pathlib.Path(destination, 'sources.xml')
         with open(target_file, 'w') as fout:
             fout.write(xmlstr)
-        return True
+        return target_file
 
-    def unpack_resources(self, cache_folder: Union[pathlib.Path, str], target_folder: Union[pathlib.Path, str]):
+    def unpack_resources(
+        self, cache_folder: Union[pathlib.Path, str], target_folder: Union[pathlib.Path, str]
+    ) -> Dict[str, list[pathlib.Path]]:
         target = pathlib.Path(target_folder)
         target.mkdir(parents=True, exist_ok=True)
         source_map = {}
@@ -163,7 +165,9 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         #         prefixed = pathlib.Path(destination, f"{file_prefix}_{name}")
         #         extracted.rename(prefixed)
 
-    def fetch_resources(self, cache_folder: Union[pathlib.Path, str]):
+    def fetch_resources(
+        self, cache_folder: Union[pathlib.Path, str]
+    ) -> Generator[tuple[Any, pathlib.Path, Any], None, None]:
         destination = pathlib.Path(cache_folder)
         destination.mkdir(parents=True, exist_ok=True)
         nrml_logic_tree = self.config()
@@ -171,7 +175,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
             for branch in branch_set.branches:
                 for um in branch.uncertainty_models:
                     filepath = fetch_toshi_source(um.toshi_nrml_id, destination)
-                    yield tuple([um.toshi_nrml_id, filepath, um])
+                    yield um.toshi_nrml_id, filepath, um
 
     def config(self):
         return NrmlDocument.from_model_slt(self._source_logic_tree).logic_trees[0]

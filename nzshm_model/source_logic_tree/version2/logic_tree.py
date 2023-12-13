@@ -7,7 +7,7 @@ import copy
 import json
 import pathlib
 from dataclasses import dataclass, field
-from typing import Dict, List, Type, Union
+from typing import Dict, Iterator, List, Type, Union
 
 import dacite
 
@@ -44,12 +44,6 @@ class Branch:
 
     def tag(self):
         return str(self.values)
-
-
-@dataclass
-class FilteredBranch(Branch):
-    fslt: Union['FaultSystemLogicTree', None] = None  # this should never be serialised, only used for filtering
-    slt: Union['SourceLogicTree', None] = None  # this should never be serialised, only used for filtering
 
 
 @dataclass
@@ -156,7 +150,7 @@ class SourceLogicTree:
             return self.__branch_list[self.__current_branch - 1]
 
     @staticmethod
-    def from_branches(branches):
+    def from_branches(branches: Iterator['FilteredBranch']) -> 'SourceLogicTree':
         """
         Build a complete SLT from a iterable od branches.
 
@@ -168,18 +162,30 @@ class SourceLogicTree:
                 if fb.fslt.short_name == fslt.short_name:
                     return fslt
 
-        slt = None
+        version = None
         for fb in branches:
             # ensure an slt
-            if not slt:
+            if not version:
                 slt = SourceLogicTree(version=fb.slt.version, title=fb.slt.title)
+                version = fb.slt.version
             else:
-                assert slt.version == fb.slt.version
+                assert version == fb.slt.version
 
             # ensure an fslt
             fslt = match_fslt(slt, fb)
             if not fslt:
                 fslt = FaultSystemLogicTree(short_name=fb.fslt.short_name, long_name=fb.fslt.long_name)
                 slt.fault_systems.append(fslt)
-            fslt.branches.append(fb)
+            fslt.branches.append(fb.to_branch())
         return slt
+
+
+# this should never be serialised, only used for filtering
+@dataclass
+class FilteredBranch(Branch):
+    fslt: 'FaultSystemLogicTree' = FaultSystemLogicTree('shortname', 'longname')
+    slt: 'SourceLogicTree' = SourceLogicTree('version', 'title')
+
+    def to_branch(self) -> Branch:
+        branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('fslt', 'slt')}
+        return Branch(**branch_attributes)
