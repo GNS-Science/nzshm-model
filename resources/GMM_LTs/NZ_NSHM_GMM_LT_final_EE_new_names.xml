@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Old version of GMCM logic tree that works with OpenQuake <=3.18 with the gsim library modified by NZ NSHM lib-->
+<!--Version of GMCM logic tree that works with OpenQuake >=3.19 with new NZ NSHM gsim class names and arguments-->
+
+
 <nrml xmlns:gml="http://www.opengis.net/gml"
       xmlns="http://openquake.org/xmlns/nrml/0.4">
     <logicTree logicTreeID='lt1'>
@@ -26,19 +28,25 @@
 
                     <logicTreeBranch branchID="ATK22_crust_upper">
                 <uncertaintyModel>[Atkinson2022Crust]
-                  epistemic = "Upper"</uncertaintyModel>
+                  epistemic = "Upper"
+                  modified_sigma = "true"
+                  </uncertaintyModel>
                         <uncertaintyWeight>0.084</uncertaintyWeight>
                     </logicTreeBranch>
 
                     <logicTreeBranch branchID="ATK22_crust_center">
                 <uncertaintyModel>[Atkinson2022Crust]
-                  epistemic = "Central"</uncertaintyModel>
+                  epistemic = "Central"
+                  modified_sigma = "true"
+                  </uncertaintyModel>
                         <uncertaintyWeight>0.112</uncertaintyWeight>
                     </logicTreeBranch>
 
                     <logicTreeBranch branchID="ATK22_crust_lower">
                 <uncertaintyModel>[Atkinson2022Crust]
-                  epistemic = "Lower"</uncertaintyModel>
+                  epistemic = "Lower"
+                  modified_sigma = "true"
+                  </uncertaintyModel>
                         <uncertaintyWeight>0.084</uncertaintyWeight>
                     </logicTreeBranch>
 
@@ -138,24 +146,30 @@
 
                 <logicTreeBranch branchID="ATK22_SI_upper">
                     <uncertaintyModel>[Atkinson2022SInter]
-                      epistemic = "Upper" </uncertaintyModel>
+                      epistemic = "Upper"
+                      modified_sigma = "true"
+                       </uncertaintyModel>
                     <uncertaintyWeight>0.081</uncertaintyWeight>
                       </logicTreeBranch>
 
                 <logicTreeBranch branchID="ATK22_SI_center">
                     <uncertaintyModel>[Atkinson2022SInter]
-                          epistemic = "Central" </uncertaintyModel>
+                          epistemic = "Central"
+                            modified_sigma = "true"
+                           </uncertaintyModel>
                     <uncertaintyWeight>0.108</uncertaintyWeight>
                       </logicTreeBranch>
 
                 <logicTreeBranch branchID="ATK22_SI_lower">
                   <uncertaintyModel>[Atkinson2022SInter]
-                  epistemic = "Lower" </uncertaintyModel>
+                  epistemic = "Lower" 
+                      modified_sigma = "true"
+                  </uncertaintyModel>
                   <uncertaintyWeight>0.081</uncertaintyWeight>
                       </logicTreeBranch>
 
                 <logicTreeBranch branchID= "AbrahamsonGulerece2020SI_GLO_upper">
-                    <uncertaintyModel>[AbrahamsonGulerce2020SInter]
+                    <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SInter]
                         region = "GLO"
                         sigma_mu_epsilon = 1.28155
                     </uncertaintyModel>
@@ -163,7 +177,7 @@
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "AbrahamsonGulerece2020SI_GLO_center">
-                    <uncertaintyModel>[AbrahamsonGulerce2020SInter]
+                    <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SInter]
                         region = "GLO"
                         sigma_mu_epsilon = 0.0
                     </uncertaintyModel>
@@ -171,54 +185,60 @@
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "AbrahamsonGulerece2020SI_GLO_lower">
-                    <uncertaintyModel>[AbrahamsonGulerce2020SInter]
+                    <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SInter]
                         region = "GLO"
                         sigma_mu_epsilon = -1.28155
                     </uncertaintyModel>
                     <uncertaintyWeight>0.075</uncertaintyWeight>
                 </logicTreeBranch>
 
-                <logicTreeBranch branchID= "ParkerEtAl2021SI_GLO_upper">
-                    <uncertaintyModel>[ParkerEtAl2021SInter]
+                <logicTreeBranch branchID= "ParkerEtAl2020SI_GLO_upper">
+                    <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SInter]
                       sigma_mu_epsilon = 1.28155
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.072</uncertaintyWeight>
                 </logicTreeBranch>
 
-                <logicTreeBranch branchID= "ParkerEtAl2021SI_GLO_center">
-                    <uncertaintyModel>[ParkerEtAl2021SInter]
+                <logicTreeBranch branchID= "ParkerEtAl2020SI_GLO_center">
+                    <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SInter]
                       sigma_mu_epsilon = 0.0
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.096</uncertaintyWeight>
                 </logicTreeBranch>
 
-                <logicTreeBranch branchID= "ParkerEtAl2021SI_GLO_lower">
-                    <uncertaintyModel>[ParkerEtAl2021SInter]
+                <logicTreeBranch branchID= "ParkerEtAl2020SI_GLO_lower">
+                    <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SInter]
                       sigma_mu_epsilon = -1.28155
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.072</uncertaintyWeight>
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "Kuehn2020I_GLO_upper">
-                    <uncertaintyModel>[KuehnEtAl2020SInter]
+                    <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SInter]
                         region = "GLO"
                         sigma_mu_epsilon = 1.28155
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.072</uncertaintyWeight>
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "Kuehn2020I_GLO_center">
-                    <uncertaintyModel>[KuehnEtAl2020SInter]
+                    <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SInter]
                         region = "GLO"
                         sigma_mu_epsilon = 0.0
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.096</uncertaintyWeight>
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "Kuehn2020I_GLO_lower">
-                    <uncertaintyModel>[KuehnEtAl2020SInter]
+                    <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SInter]
                         region = "GLO"
                         sigma_mu_epsilon = -1.28155
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.072</uncertaintyWeight>
                 </logicTreeBranch>
@@ -229,24 +249,30 @@
 
                 <logicTreeBranch branchID="ATK22_SS_upper">
                       <uncertaintyModel>[Atkinson2022SSlab]
-                          epistemic = "Upper" </uncertaintyModel>
+                          epistemic = "Upper"
+                            modified_sigma = "true"
+                           </uncertaintyModel>
                         <uncertaintyWeight>0.084</uncertaintyWeight>
                           </logicTreeBranch>
 
                 <logicTreeBranch branchID="ATK22_SS_center">
                       <uncertaintyModel>[Atkinson2022SSlab]
-                              epistemic = "Central" </uncertaintyModel>
+                              epistemic = "Central"
+                              modified_sigma = "true"
+                              </uncertaintyModel>
                         <uncertaintyWeight>0.112</uncertaintyWeight>
                           </logicTreeBranch>
 
                 <logicTreeBranch branchID="ATK22_SS_lower">
                     <uncertaintyModel>[Atkinson2022SSlab]
-                      epistemic = "Lower" </uncertaintyModel>
+                      epistemic = "Lower"
+                        modified_sigma = "true"
+                      </uncertaintyModel>
                       <uncertaintyWeight>0.084</uncertaintyWeight>
                           </logicTreeBranch>
 
                 <logicTreeBranch branchID= "AbrahamsonGulerece2020SS_GLO_upper">
-                    <uncertaintyModel>[AbrahamsonGulerce2020SSlab]
+                    <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SSlab]
                         region = "GLO"
                         sigma_mu_epsilon = 1.28155
                     </uncertaintyModel>
@@ -254,7 +280,7 @@
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "AbrahamsonGulerece2020SS_GLO_center">
-                    <uncertaintyModel>[AbrahamsonGulerce2020SSlab]
+                    <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SSlab]
                         region = "GLO"
                         sigma_mu_epsilon = 0.0
                     </uncertaintyModel>
@@ -262,54 +288,60 @@
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "AbrahamsonGulerece2020SS_GLO_lower">
-                    <uncertaintyModel>[AbrahamsonGulerce2020SSlab]
+                    <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SSlab]
                         region = "GLO"
                         sigma_mu_epsilon = -1.28155
                     </uncertaintyModel>
                     <uncertaintyWeight>0.075</uncertaintyWeight>
                 </logicTreeBranch>
 
-                <logicTreeBranch branchID= "ParkerEtAl2021SS_GLO_upper">
-                    <uncertaintyModel>[ParkerEtAl2021SSlab]
+                <logicTreeBranch branchID= "ParkerEtAl2020SS_GLO_upper">
+                    <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SSlab]
                       sigma_mu_epsilon = 1.28155
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.069</uncertaintyWeight>
                 </logicTreeBranch>
 
-                <logicTreeBranch branchID= "ParkerEtAl2021SS_GLO_center">
-                    <uncertaintyModel>[ParkerEtAl2021SSlab]
+                <logicTreeBranch branchID= "ParkerEtAl2020SS_GLO_center">
+                    <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SSlab]
                       sigma_mu_epsilon = 0.0
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.092</uncertaintyWeight>
                 </logicTreeBranch>
 
-                <logicTreeBranch branchID= "ParkerEtAl2021SS_GLO_lower">
-                    <uncertaintyModel>[ParkerEtAl2021SSlab]
+                <logicTreeBranch branchID= "ParkerEtAl2020SS_GLO_lower">
+                    <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SSlab]
                       sigma_mu_epsilon = -1.28155
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.069</uncertaintyWeight>
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "Kuehn2020SS_GLO_upper">
-                    <uncertaintyModel>[KuehnEtAl2020SSlab]
+                    <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SSlab]
                         region = "GLO"
                         sigma_mu_epsilon = 1.28155
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.072</uncertaintyWeight>
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "Kuehn2020SS_GLO_center">
-                    <uncertaintyModel>[KuehnEtAl2020SSlab]
+                    <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SSlab]
                         region = "GLO"
                         sigma_mu_epsilon = 0.0
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.096</uncertaintyWeight>
                 </logicTreeBranch>
 
                 <logicTreeBranch branchID= "Kuehn2020SS_GLO_lower">
-                    <uncertaintyModel>[KuehnEtAl2020SSlab]
+                    <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SSlab]
                         region = "GLO"
                         sigma_mu_epsilon = -1.28155
+                        modified_sigma = "true"
                     </uncertaintyModel>
                     <uncertaintyWeight>0.072</uncertaintyWeight>
                 </logicTreeBranch>
