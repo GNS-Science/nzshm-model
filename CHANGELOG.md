@@ -1,7 +1,12 @@
 # Changelog
 
+## [0.5.1] 2023-12-14
+### Changed
+ - SourceLogicTree.from_branches() returns logic tree with Branch objects rather than FilterdBranch objects
+ - remove whitespace from logic tree file paths for compatability with OpenQuake
+
 ## [0.5.0] 2023-12-12
-### Added
+## Added
  - support caching of downloads
  - build sources xml
  - migration of version1 to version2 SLT
