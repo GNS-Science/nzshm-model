@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.2] 2023-12-14
+### Changed
+ - Updated GMCM logic tree nrml files to reflect new OpenQuake class names and arguments for NZ NSHM gsims
+
 ## [0.5.1] 2023-12-14
 ### Changed
  - SourceLogicTree.from_branches() returns logic tree with Branch objects rather than FilterdBranch objects
