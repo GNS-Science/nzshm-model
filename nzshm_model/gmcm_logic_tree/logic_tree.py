@@ -1,19 +1,23 @@
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Union
+import json
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from typing import Any, Dict, List, Union
+
+import dacite
 
 from nzshm_model.psha_adapter import NrmlDocument
 
+
 def _process_gmm_args(args: List[str]) -> Dict[str, Any]:
     def clean_string(string):
-        return string.replace('"','').replace("'",'').strip()
+        return string.replace('"', '').replace("'", '').strip()
 
     args_dict = dict()
     for arg in args:
         if '=' in arg:
             k, v = arg.split('=')
             args_dict[clean_string(k)] = clean_string(v)
-    
+
     return args_dict
 
 
@@ -23,10 +27,12 @@ class Branch:
     gsim_args: Dict[str, Any] = field(default_factory=dict)
     weight: float = 1.0
 
+
 @dataclass
 class BranchSet:
     tectonic_region_type: str
     branches: List[Branch] = field(default_factory=list)
+
 
 @dataclass
 class GMCMLogicTree:
@@ -49,7 +55,7 @@ class GMCMLogicTree:
             for branch in branch_set.branches:
                 if len(branch.uncertainty_models) != 1:
                     raise ValueError('gmpe branches must have only one uncertainty model')
-                gmpe_name = branch.uncertainty_models[0].gmpe_name.replace('[','').replace(']','')
+                gmpe_name = branch.uncertainty_models[0].gmpe_name.replace('[', '').replace(']', '')
                 branches.append(
                     Branch(
                         gsim_clsname=gmpe_name,
@@ -68,3 +74,16 @@ class GMCMLogicTree:
             title=doc.logic_trees[0].logicTreeID,
             branch_sets=branch_sets,
         )
+
+    @staticmethod
+    def from_dict(data: Dict) -> 'GMCMLogicTree':
+        return dacite.from_dict(data_class=GMCMLogicTree, data=data, config=dacite.Config(strict=True))
+
+    @staticmethod
+    def from_json(json_path: Union[Path, str]) -> 'GMCMLogicTree':
+        with Path(json_path).open() as jsonfile:
+            data = json.load(jsonfile)
+        return GMCMLogicTree.from_dict(data)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
