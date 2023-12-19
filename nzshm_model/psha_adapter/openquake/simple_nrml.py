@@ -1,13 +1,15 @@
 import logging
 import pathlib
+from pathlib import Path
 import zipfile
-from typing import Any, Dict, Generator, Union
+from typing import Any, Dict, Generator, Union, List
 
 from lxml import etree
 from lxml.builder import ElementMaker
 
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
+from nzshm_model.gmcm_logic_tree.logic_tree import GMCMLogicTree, BranchSet, Branch
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution
@@ -38,6 +40,77 @@ def rupt_set_from_meta(meta):
     for itm in meta:
         if itm['k'] == "rupture_set_file_id":
             return itm['v']
+
+
+def process_gmm_args(args: List[str]) -> Dict[str, Any]:
+    def clean_string(string):
+        return string.replace('"', '').replace("'", '').strip()
+
+    args_dict = dict()
+    for arg in args:
+        if '=' in arg:
+            k, v = arg.split('=')
+            args_dict[clean_string(k)] = clean_string(v)
+
+    return args_dict
+
+
+class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
+    """
+    Openquake GMCM logic tree nrml support.
+    """
+
+    def __init__(self, gmcm_logic_tree: GMCMLogicTree):
+        self._gmcm_logic_tree = gmcm_logic_tree
+
+    @staticmethod 
+    def logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
+        """
+        Build a GMCMLogicTree from an OpenQuake nrml gmcm logic tree file.
+        """
+        doc = NrmlDocument.from_xml_file(xml_path)
+        if len(doc.logic_trees) != 1:
+            raise ValueError("xml must have only 1 logic tree")
+
+        branch_sets = []
+        for branch_set in doc.logic_trees[0].branch_sets:
+            branches = []
+            for branch in branch_set.branches:
+                if len(branch.uncertainty_models) != 1:
+                    raise ValueError('gmpe branches must have only one uncertainty model')
+                gmpe_name = branch.uncertainty_models[0].gmpe_name.replace('[', '').replace(']', '')
+                branches.append(
+                    Branch(
+                        gsim_clsname=gmpe_name,
+                        gsim_args=process_gmm_args(branch.uncertainty_models[0].arguments),
+                        weight=branch.uncertainty_weight,
+                    )
+                )
+            branch_sets.append(
+                BranchSet(
+                    tectonic_region_type=branch_set.applyToTectonicRegionType,
+                    branches=branches,
+                )
+            )
+        return GMCMLogicTree(
+            version='',
+            title=doc.logic_trees[0].logicTreeID,
+            branch_sets=branch_sets,
+        )
+    
+    def fetch_resources(self, cache_folder):
+        return super().fetch_resources(cache_folder)
+    
+    def unpack_resources(self, cache_folder: Path | str, target_folder: Path | str):
+        return super().unpack_resources(cache_folder, target_folder)
+    
+    def write_config(self, cache_folder: Path | str, target_folder: Path | str, resource_map: Dict[str, list[Path]]) -> Path:
+        return super().write_config(cache_folder, target_folder, resource_map)
+
+
+
+
+
 
 
 class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
