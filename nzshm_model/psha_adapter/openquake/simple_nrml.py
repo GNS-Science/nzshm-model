@@ -121,7 +121,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
             string = ''
             for k, v in args.items():
                 value = f'"{v}"' if isinstance(v, str) else v
-                string += '='.join((k, value))
+                string += '='.join((k, value)) + ' '
             return string
 
         i_branch = 0
