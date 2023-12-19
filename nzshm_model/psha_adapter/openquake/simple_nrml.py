@@ -1,15 +1,14 @@
 import logging
 import pathlib
-from pathlib import Path
 import zipfile
-from typing import Any, Dict, Generator, Union, List, Optional
+from typing import Any, Dict, Generator, List, Optional, Union
 
 from lxml import etree
 from lxml.builder import ElementMaker
 
+from nzshm_model.gmcm_logic_tree import Branch, BranchSet, GMCMLogicTree
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
-from nzshm_model.gmcm_logic_tree import GMCMLogicTree, BranchSet, Branch
 from nzshm_model.source_logic_tree import SourceLogicTree
 
 try:
@@ -61,13 +60,15 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     Openquake PSHA simple nrml support.
     """
 
-    def __init__(self, source_logic_tree: Optional[SourceLogicTree] = None, gmcm_logic_tree: Optional[GMCMLogicTree] = None):
+    def __init__(
+        self, source_logic_tree: Optional[SourceLogicTree] = None, gmcm_logic_tree: Optional[GMCMLogicTree] = None
+    ):
         self._source_logic_tree = source_logic_tree
         self._gmcm_logic_tree = gmcm_logic_tree
         if source_logic_tree:
             assert source_logic_tree.logic_tree_version == 2
-    
-    @staticmethod 
+
+    @staticmethod
     def logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
         """
         Build a GMCMLogicTree from an OpenQuake nrml gmcm logic tree file.
@@ -126,7 +127,11 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         i_branch = 0
         lt = LT(logicTreeID="lt1")
         for bs in self.gmcm_logic_tree.branch_sets:
-            ltbs = LTBS(uncertaintyType="gmpeModel", branchSetID="BS:" + bs.tectonic_region_type, applyToTectonicRegionType=bs.tectonic_region_type)
+            ltbs = LTBS(
+                uncertaintyType="gmpeModel",
+                branchSetID="BS:" + bs.tectonic_region_type,
+                applyToTectonicRegionType=bs.tectonic_region_type,
+            )
             for branch in bs.branches:
                 um = ' '.join((branch.gsim_clsname, args2str(branch.gsim_args)))
                 ltb = LTB(UM(um), UW(str(branch.weight)), branchID=branch.gsim_clsname + str(i_branch))

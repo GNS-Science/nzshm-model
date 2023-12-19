@@ -1,1 +1,1 @@
-from .logic_tree import GMCMLogicTree, BranchSet, Branch
+from .logic_tree import Branch, BranchSet, GMCMLogicTree
