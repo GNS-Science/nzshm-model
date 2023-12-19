@@ -97,6 +97,40 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
             title=doc.logic_trees[0].logicTreeID,
             branch_sets=branch_sets,
         )
+
+    def build_gmcm_xml(self):
+        """Build a gmcm logic tree xml."""
+        E = ElementMaker(
+            namespace="http://openquake.org/xmlns/nrml/0.5",
+            nsmap={"gml": "http://www.opengis.net/gml", None: "http://openquake.org/xmlns/nrml/0.5"},
+        )
+        NRML = E.nrml
+        LT = E.logicTree
+        LTBS = E.logicTreeBranchSet
+        # LTBL = E.logicTreeBranchingLevel
+        LTB = E.logicTreeBranch
+        UM = E.uncertaintyModel
+        UW = E.uncertaintyWeight
+
+        def args2str(args):
+            string = ''
+            for k, v in args.items():
+                value = f'"{v}"' if isinstance(v, str) else v
+                string += '='.join((k, value))
+            return string
+
+        i_branch = 0
+        lt = LT(logicTreeID="lt1")
+        for bs in self.gmcm_logic_tree.branch_sets:
+            ltbs = LTBS(uncertaintyType="gmpeModel", branchSetID="BS:" + bs.tectonic_region_type, applyToTectonicRegionType=bs.tectonic_region_type)
+            for branch in bs.branches:
+                um = ' '.join((branch.gsim_clsname, args2str(branch.gsim_args)))
+                ltb = LTB(UM(um), UW(str(branch.weight)), branchID=branch.gsim_clsname + str(i_branch))
+                ltbs.append(ltb)
+                i_branch += 1
+            lt.append(ltbs)
+        nrml = NRML(lt)
+        return etree.tostring(nrml, pretty_print=True).decode()
     
     def fetch_resources(self, cache_folder):
         return super().fetch_resources(cache_folder)
@@ -105,7 +139,21 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
         return super().unpack_resources(cache_folder, target_folder)
     
     def write_config(self, cache_folder: Path | str, target_folder: Path | str, resource_map: Dict[str, list[Path]]) -> Path:
-        return super().write_config(cache_folder, target_folder, resource_map)
+        destination = pathlib.Path(target_folder)
+        assert destination.exists()
+        assert destination.is_dir()
+
+        xmlstr = self.build_gmcm_xml()
+        target_file = pathlib.Path(destination, 'gmcm.xml')
+        with open(target_file, 'w') as fout:
+            fout.write(xmlstr)
+        return target_file
+
+    @property
+    def gmcm_logic_tree(self):
+        return self._gmcm_logic_tree
+
+
 
 
 
