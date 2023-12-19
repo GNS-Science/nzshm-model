@@ -3,7 +3,7 @@ from pathlib import Path
 
 from nzshm_model.gmcm_logic_tree.logic_tree import GMCMLogicTree
 from nzshm_model.psha_adapter.openquake import NrmlDocument
-from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeGMCMPshaAdapter
+from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeSimplePshaAdapter
 
 
 class TestGMCMLogicTree(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestGMCMLogicTree(unittest.TestCase):
         self.gmcm_nrml_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.xml'
         self.gmcm_json_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.json'
 
-        adapter = GMCMLogicTree().psha_adapter(OpenquakeGMCMPshaAdapter)
+        adapter = GMCMLogicTree().psha_adapter(OpenquakeSimplePshaAdapter)
         self.gmcm_logic_tree_fromxml = adapter.logic_tree_from_xml(self.gmcm_nrml_filepath)
         # self.gmcm_logic_tree_fromxml = GMCMLogicTree.from_xml(self.gmcm_nrml_filepath)
         self.gmcm_logic_tree_fromjson = GMCMLogicTree.from_json(self.gmcm_json_filepath)

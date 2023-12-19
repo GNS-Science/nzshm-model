@@ -41,4 +41,4 @@ class GMCMLogicTree:
         return asdict(self)
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-        return provider(self)
+        return provider(gmcm_logic_tree=self)

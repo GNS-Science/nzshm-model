@@ -2,14 +2,15 @@ import logging
 import pathlib
 from pathlib import Path
 import zipfile
-from typing import Any, Dict, Generator, Union, List
+from typing import Any, Dict, Generator, Union, List, Optional
 
 from lxml import etree
 from lxml.builder import ElementMaker
 
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
-from nzshm_model.gmcm_logic_tree.logic_tree import GMCMLogicTree, BranchSet, Branch
+from nzshm_model.gmcm_logic_tree import GMCMLogicTree, BranchSet, Branch
+from nzshm_model.source_logic_tree import SourceLogicTree
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution
@@ -55,14 +56,17 @@ def process_gmm_args(args: List[str]) -> Dict[str, Any]:
     return args_dict
 
 
-class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
+class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     """
-    Openquake GMCM logic tree nrml support.
+    Openquake PSHA simple nrml support.
     """
 
-    def __init__(self, gmcm_logic_tree: GMCMLogicTree):
+    def __init__(self, source_logic_tree: Optional[SourceLogicTree] = None, gmcm_logic_tree: Optional[GMCMLogicTree] = None):
+        self._source_logic_tree = source_logic_tree
         self._gmcm_logic_tree = gmcm_logic_tree
-
+        if source_logic_tree:
+            assert source_logic_tree.logic_tree_version == 2
+    
     @staticmethod 
     def logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
         """
@@ -131,44 +135,6 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
             lt.append(ltbs)
         nrml = NRML(lt)
         return etree.tostring(nrml, pretty_print=True).decode()
-    
-    def fetch_resources(self, cache_folder):
-        return super().fetch_resources(cache_folder)
-    
-    def unpack_resources(self, cache_folder: Path | str, target_folder: Path | str):
-        return super().unpack_resources(cache_folder, target_folder)
-    
-    def write_config(self, cache_folder: Path | str, target_folder: Path | str, resource_map: Dict[str, list[Path]]) -> Path:
-        destination = pathlib.Path(target_folder)
-        assert destination.exists()
-        assert destination.is_dir()
-
-        xmlstr = self.build_gmcm_xml()
-        target_file = pathlib.Path(destination, 'gmcm.xml')
-        with open(target_file, 'w') as fout:
-            fout.write(xmlstr)
-        return target_file
-
-    @property
-    def gmcm_logic_tree(self):
-        return self._gmcm_logic_tree
-
-
-
-
-
-
-
-
-
-class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
-    """
-    Openquake PSHA simple nrml support.
-    """
-
-    def __init__(self, source_logic_tree):
-        self._source_logic_tree = source_logic_tree
-        assert source_logic_tree.logic_tree_version == 2
 
     def build_sources_xml(self, source_map):
         """Build a source model for a set of LTBs with their source files."""
@@ -304,3 +270,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     @property
     def source_logic_tree(self):
         return self._source_logic_tree
+
+    @property
+    def gmcm_logic_tree(self):
+        return self._gmcm_logic_tree
