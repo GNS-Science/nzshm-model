@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0] 2023-12-21
+### Added
+ - GMCM logic tree classes for ground motion model serialization and deserialization (as json or xml)
+ - OpenQuake specific adaptor for GMCM logic tree classes (nrml)
+
+### Changed
+ - PshaAdaptorInterface used for both source and ground motion logic trees
+
 ## [0.5.3] 2023-12-21
 ### Added
  - added backward_compatible property `fault_system_lts`  with deprecation warning.
