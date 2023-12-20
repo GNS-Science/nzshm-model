@@ -1,11 +1,10 @@
-import pytest
-import unittest
 from pathlib import Path
+
+import pytest
 
 from nzshm_model.gmcm_logic_tree.logic_tree import GMCMLogicTree
 from nzshm_model.psha_adapter.openquake import NrmlDocument
 from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeSimplePshaAdapter
-
 
 gmcm_nrml_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.xml'
 gmcm_json_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.json'
@@ -49,9 +48,8 @@ def test_serialize_gmcm_logic_tree():
 
 @pytest.mark.parametrize("gmcm_logic_tree", [gmcm_logic_tree_fromxml, gmcm_logic_tree_fromjson])
 def test_float_args(gmcm_logic_tree):
-
     def is_number(value):
-        return value.replace("-","").replace(".", "").replace("e", "").isnumeric()
+        return value.replace("-", "").replace(".", "").replace("e", "").isnumeric()
 
     for branch_set in gmcm_logic_tree.branch_sets:
         for branch in branch_set.branches:

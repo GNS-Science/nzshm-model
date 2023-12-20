@@ -32,8 +32,9 @@ class GMCMLogicTree:
 
     def _fix_args(self) -> 'GMCMLogicTree':
         """Replace string representations of numeric arguments with floats"""
+
         def is_number(value):
-            return value.replace("-","").replace(".", "").replace("e", "").isnumeric()
+            return value.replace("-", "").replace(".", "").replace("e", "").isnumeric()
 
         for branch_set in self.branch_sets:
             for branch in branch_set.branches:

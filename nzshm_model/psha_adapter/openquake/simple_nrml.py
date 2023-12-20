@@ -103,7 +103,6 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
             branch_sets=branch_sets,
         )
 
-
     def build_gmcm_xml(self):
         """Build a gmcm logic tree xml."""
         E = ElementMaker(

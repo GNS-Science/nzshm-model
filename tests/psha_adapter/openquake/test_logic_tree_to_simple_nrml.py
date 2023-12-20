@@ -39,11 +39,9 @@ def test_gmcm_logic_tree_to_xml():
     with Path(Path(__file__).parent / 'fixtures' / 'gmcm.xml').open('w') as xmlfile:
         xmlfile.write(adapter.build_gmcm_xml())
 
-
     with tempfile.TemporaryDirectory() as tmpdir:
         with open(Path(tmpdir, 'gmcm_lt.xml'), 'w') as xmlfile:
             xmlfile.write(xml_str)
         gmcm_logic_tree_deserialized = adapter.logic_tree_from_xml(Path(tmpdir, 'gmcm_lt.xml'))
 
     assert gmcm_logic_tree_deserialized == gmcm_logic_tree
-
