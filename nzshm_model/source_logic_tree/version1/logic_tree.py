@@ -77,7 +77,7 @@ class SourceLogicTree:
         return slt_spec
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-        return provider(self)
+        return provider(source_logic_tree=self)
 
     @staticmethod
     def from_dict(data: Dict):

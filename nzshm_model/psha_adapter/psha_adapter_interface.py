@@ -8,8 +8,9 @@ class PshaAdapterInterface(ABC):
     Defines methods to be provided by a PSHA adapter class implementation.
     """
 
-    def __init__(self, source_logic_tree):
+    def __init__(self, source_logic_tree=None, gmcm_logic_tree=None):
         self._source_logic_tree = source_logic_tree
+        self._gmcm_logic_tree = gmcm_logic_tree
 
     @abstractmethod
     def fetch_resources(self, cache_folder):

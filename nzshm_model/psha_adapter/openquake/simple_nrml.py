@@ -1,13 +1,15 @@
 import logging
 import pathlib
 import zipfile
-from typing import Any, Dict, Generator, Union
+from typing import Any, Dict, Generator, List, Optional, Union
 
 from lxml import etree
 from lxml.builder import ElementMaker
 
+from nzshm_model.gmcm_logic_tree import Branch, BranchSet, GMCMLogicTree
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
+from nzshm_model.source_logic_tree import SourceLogicTree
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution
@@ -40,14 +42,107 @@ def rupt_set_from_meta(meta):
             return itm['v']
 
 
+def process_gmm_args(args: List[str]) -> Dict[str, Any]:
+    def clean_string(string):
+        return string.replace('"', '').replace("'", '').strip()
+
+    args_dict = dict()
+    for arg in args:
+        if '=' in arg:
+            k, v = arg.split('=')
+            args_dict[clean_string(k)] = clean_string(v)
+
+    return args_dict
+
+
 class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     """
     Openquake PSHA simple nrml support.
     """
 
-    def __init__(self, source_logic_tree):
+    def __init__(
+        self, source_logic_tree: Optional[SourceLogicTree] = None, gmcm_logic_tree: Optional[GMCMLogicTree] = None
+    ):
         self._source_logic_tree = source_logic_tree
-        assert source_logic_tree.logic_tree_version == 2
+        self._gmcm_logic_tree = gmcm_logic_tree
+        if source_logic_tree:
+            assert source_logic_tree.logic_tree_version == 2
+
+    @staticmethod
+    def logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
+        """
+        Build a GMCMLogicTree from an OpenQuake nrml gmcm logic tree file.
+        """
+        doc = NrmlDocument.from_xml_file(xml_path)
+        if len(doc.logic_trees) != 1:
+            raise ValueError("xml must have only 1 logic tree")
+
+        branch_sets = []
+        for branch_set in doc.logic_trees[0].branch_sets:
+            branches = []
+            for branch in branch_set.branches:
+                if len(branch.uncertainty_models) != 1:
+                    raise ValueError('gmpe branches must have only one uncertainty model')
+                gmpe_name = branch.uncertainty_models[0].gmpe_name.replace('[', '').replace(']', '')
+                branches.append(
+                    Branch(
+                        gsim_name=gmpe_name,
+                        gsim_args=process_gmm_args(branch.uncertainty_models[0].arguments),
+                        weight=branch.uncertainty_weight,
+                    )
+                )
+            branch_sets.append(
+                BranchSet(
+                    tectonic_region_type=branch_set.applyToTectonicRegionType,
+                    branches=branches,
+                )
+            )
+        return GMCMLogicTree(
+            version='',
+            title=doc.logic_trees[0].logicTreeID,
+            branch_sets=branch_sets,
+        )
+
+    def build_gmcm_xml(self):
+        """Build a gmcm logic tree xml."""
+        E = ElementMaker(
+            namespace="http://openquake.org/xmlns/nrml/0.5",
+            nsmap={"gml": "http://www.opengis.net/gml", None: "http://openquake.org/xmlns/nrml/0.5"},
+        )
+        NRML = E.nrml
+        LT = E.logicTree
+        LTBS = E.logicTreeBranchSet
+        # LTBL = E.logicTreeBranchingLevel
+        LTB = E.logicTreeBranch
+        UM = E.uncertaintyModel
+        UW = E.uncertaintyWeight
+
+        def um_string(gsim_name, gsim_args):
+            return '\n\t\t\t\t'.join(("[" + branch.gsim_name + "]", args2str(branch.gsim_args)))
+
+        def args2str(args):
+            string = ''
+            for k, v in args.items():
+                value = f'"{v}"' if isinstance(v, str) else v
+                string += '='.join((k, str(value))) + '\n'
+            return string
+
+        i_branch = 0
+        lt = LT(logicTreeID="lt1")
+        for bs in self.gmcm_logic_tree.branch_sets:
+            ltbs = LTBS(
+                uncertaintyType="gmpeModel",
+                branchSetID="BS:" + bs.tectonic_region_type,
+                applyToTectonicRegionType=bs.tectonic_region_type,
+            )
+            for branch in bs.branches:
+                um = um_string(branch.gsim_name, branch.gsim_args)
+                ltb = LTB(UM(um), UW(str(branch.weight)), branchID=branch.gsim_name + str(i_branch))
+                ltbs.append(ltb)
+                i_branch += 1
+            lt.append(ltbs)
+        nrml = NRML(lt)
+        return etree.tostring(nrml, pretty_print=True).decode()
 
     def build_sources_xml(self, source_map):
         """Build a source model for a set of LTBs with their source files."""
@@ -183,3 +278,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     @property
     def source_logic_tree(self):
         return self._source_logic_tree
+
+    @property
+    def gmcm_logic_tree(self):
+        return self._gmcm_logic_tree

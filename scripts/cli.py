@@ -8,7 +8,7 @@ import click
 import nzshm_model
 
 # from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids  # noqa
-from nzshm_model.psha_adapter import OpenquakeSimplePshaAdapter
+from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter
 from nzshm_model.source_logic_tree import SourceLogicTree
 
 log = logging.getLogger()

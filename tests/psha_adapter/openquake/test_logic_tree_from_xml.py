@@ -4,7 +4,7 @@ from pathlib import Path, PurePath
 
 import pytest
 
-from nzshm_model.psha_adapter import NrmlDocument
+from nzshm_model.psha_adapter.openquake import NrmlDocument
 from nzshm_model.psha_adapter.openquake.uncertainty_models import _strip_whitespace
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures"

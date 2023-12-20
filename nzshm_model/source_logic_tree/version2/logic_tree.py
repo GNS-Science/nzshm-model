@@ -123,7 +123,7 @@ class SourceLogicTree:
         return self.fault_systems
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-        return provider(self)
+        return provider(source_logic_tree=self)
 
     def __iter__(self):
         self.__current_branch = 0

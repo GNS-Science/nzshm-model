@@ -175,7 +175,7 @@ class NrmlDocument:
 
     @classmethod
     @lru_cache
-    def from_xml_file(cls, filepath: Union[Path, str]):
+    def from_xml_file(cls, filepath: Union[Path, str]) -> "NrmlDocument":
         gmm_tree = objectify.parse(filepath)
         root = gmm_tree.getroot()
 

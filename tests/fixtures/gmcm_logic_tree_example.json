@@ -1,0 +1,369 @@
+{
+    "version": "",
+    "title": "lt1",
+    "branch_sets": [
+        {
+            "tectonic_region_type": "Active Shallow Crust",
+            "branches": [
+                {
+                    "gsim_name": "Stafford2022",
+                    "gsim_args": {
+                        "mu_branch": "Upper"
+                    },
+                    "weight": 0.117
+                },
+                {
+                    "gsim_name": "Stafford2022",
+                    "gsim_args": {
+                        "mu_branch": "Central"
+                    },
+                    "weight": 0.156
+                },
+                {
+                    "gsim_name": "Stafford2022",
+                    "gsim_args": {
+                        "mu_branch": "Lower"
+                    },
+                    "weight": 0.117
+                },
+                {
+                    "gsim_name": "Atkinson2022Crust",
+                    "gsim_args": {
+                        "epistemic": "Upper",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.084
+                },
+                {
+                    "gsim_name": "Atkinson2022Crust",
+                    "gsim_args": {
+                        "epistemic": "Central",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.112
+                },
+                {
+                    "gsim_name": "Atkinson2022Crust",
+                    "gsim_args": {
+                        "epistemic": "Lower",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.084
+                },
+                {
+                    "gsim_name": "AbrahamsonEtAl2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "1.28155"
+                    },
+                    "weight": 0.0198
+                },
+                {
+                    "gsim_name": "AbrahamsonEtAl2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "0.0"
+                    },
+                    "weight": 0.0264
+                },
+                {
+                    "gsim_name": "AbrahamsonEtAl2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "-1.28155"
+                    },
+                    "weight": 0.0198
+                },
+                {
+                    "gsim_name": "BooreEtAl2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "1.28155"
+                    },
+                    "weight": 0.0198
+                },
+                {
+                    "gsim_name": "BooreEtAl2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "0.0"
+                    },
+                    "weight": 0.0264
+                },
+                {
+                    "gsim_name": "BooreEtAl2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "-1.28155"
+                    },
+                    "weight": 0.0198
+                },
+                {
+                    "gsim_name": "CampbellBozorgnia2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "1.28155"
+                    },
+                    "weight": 0.0198
+                },
+                {
+                    "gsim_name": "CampbellBozorgnia2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "0.0"
+                    },
+                    "weight": 0.0264
+                },
+                {
+                    "gsim_name": "CampbellBozorgnia2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "-1.28155"
+                    },
+                    "weight": 0.0198
+                },
+                {
+                    "gsim_name": "ChiouYoungs2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "1.28155"
+                    },
+                    "weight": 0.0198
+                },
+                {
+                    "gsim_name": "ChiouYoungs2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "0.0"
+                    },
+                    "weight": 0.0264
+                },
+                {
+                    "gsim_name": "ChiouYoungs2014",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "-1.28155"
+                    },
+                    "weight": 0.0198
+                },
+                {
+                    "gsim_name": "Bradley2013",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "1.28155"
+                    },
+                    "weight": 0.0198
+                },
+                {
+                    "gsim_name": "Bradley2013",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "0.0"
+                    },
+                    "weight": 0.0264
+                },
+                {
+                    "gsim_name": "Bradley2013",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "-1.28155"
+                    },
+                    "weight": 0.0198
+                }
+            ]
+        },
+        {
+            "tectonic_region_type": "Subduction Interface",
+            "branches": [
+                {
+                    "gsim_name": "Atkinson2022SInter",
+                    "gsim_args": {
+                        "epistemic": "Upper",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.081
+                },
+                {
+                    "gsim_name": "Atkinson2022SInter",
+                    "gsim_args": {
+                        "epistemic": "Central",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.108
+                },
+                {
+                    "gsim_name": "Atkinson2022SInter",
+                    "gsim_args": {
+                        "epistemic": "Lower",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.081
+                },
+                {
+                    "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SInter",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "1.28155"
+                    },
+                    "weight": 0.075
+                },
+                {
+                    "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SInter",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "0.0"
+                    },
+                    "weight": 0.1
+                },
+                {
+                    "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SInter",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "-1.28155"
+                    },
+                    "weight": 0.075
+                },
+                {
+                    "gsim_name": "NZNSHM2022_ParkerEtAl2020SInter",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "1.28155",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.072
+                },
+                {
+                    "gsim_name": "NZNSHM2022_ParkerEtAl2020SInter",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "0.0",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.096
+                },
+                {
+                    "gsim_name": "NZNSHM2022_ParkerEtAl2020SInter",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "-1.28155",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.072
+                },
+                {
+                    "gsim_name": "NZNSHM2022_KuehnEtAl2020SInter",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "1.28155",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.072
+                },
+                {
+                    "gsim_name": "NZNSHM2022_KuehnEtAl2020SInter",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "0.0",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.096
+                },
+                {
+                    "gsim_name": "NZNSHM2022_KuehnEtAl2020SInter",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "-1.28155",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.072
+                }
+            ]
+        },
+        {
+            "tectonic_region_type": "Subduction Intraslab",
+            "branches": [
+                {
+                    "gsim_name": "Atkinson2022SSlab",
+                    "gsim_args": {
+                        "epistemic": "Upper",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.084
+                },
+                {
+                    "gsim_name": "Atkinson2022SSlab",
+                    "gsim_args": {
+                        "epistemic": "Central",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.112
+                },
+                {
+                    "gsim_name": "Atkinson2022SSlab",
+                    "gsim_args": {
+                        "epistemic": "Lower",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.084
+                },
+                {
+                    "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SSlab",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "1.28155"
+                    },
+                    "weight": 0.075
+                },
+                {
+                    "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SSlab",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "0.0"
+                    },
+                    "weight": 0.1
+                },
+                {
+                    "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SSlab",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "-1.28155"
+                    },
+                    "weight": 0.075
+                },
+                {
+                    "gsim_name": "NZNSHM2022_ParkerEtAl2020SSlab",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "1.28155",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.069
+                },
+                {
+                    "gsim_name": "NZNSHM2022_ParkerEtAl2020SSlab",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "0.0",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.092
+                },
+                {
+                    "gsim_name": "NZNSHM2022_ParkerEtAl2020SSlab",
+                    "gsim_args": {
+                        "sigma_mu_epsilon": "-1.28155",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.069
+                },
+                {
+                    "gsim_name": "NZNSHM2022_KuehnEtAl2020SSlab",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "1.28155",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.072
+                },
+                {
+                    "gsim_name": "NZNSHM2022_KuehnEtAl2020SSlab",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "0.0",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.096
+                },
+                {
+                    "gsim_name": "NZNSHM2022_KuehnEtAl2020SSlab",
+                    "gsim_args": {
+                        "region": "GLO",
+                        "sigma_mu_epsilon": "-1.28155",
+                        "modified_sigma": "true"
+                    },
+                    "weight": 0.072
+                }
+            ]
+        }
+    ]
+}
