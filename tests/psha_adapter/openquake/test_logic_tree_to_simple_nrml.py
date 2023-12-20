@@ -23,7 +23,7 @@ def test_source_logic_tree_to_source_xml_basic():
     # assert 0
 
 
-# @pytest.mark.skip("WIP: need way to compare xml without being exact (or create fixture for exact match)")
+@pytest.mark.skip("WIP: need way to compare xml without being exact (or create fixture for exact match)")
 def test_gmcm_logic_tree_to_xml():
 
     gmcm_json_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.json'
@@ -31,6 +31,10 @@ def test_gmcm_logic_tree_to_xml():
 
     gmcm_logic_tree = GMCMLogicTree.from_json(gmcm_json_filepath)
     adapter = gmcm_logic_tree.psha_adapter(OpenquakeSimplePshaAdapter)
+
+    with Path(Path(__file__).parent / 'fixtures' / 'gmcm.xml').open('w') as xmlfile:
+        xmlfile.write(adapter.build_gmcm_xml())
+
 
     with gmcm_nrml_filepath.open() as gmcm_expected_file:
         xml_expected = gmcm_expected_file.read()

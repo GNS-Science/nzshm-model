@@ -27,6 +27,22 @@ class GMCMLogicTree:
     title: str = ''
     branch_sets: List[BranchSet] = field(default_factory=list)
 
+    def __post_init__(self):
+        self._fix_args()
+
+    def _fix_args(self) -> 'GMCMLogicTree':
+        """Replace string representations of numeric arguments with floats"""
+        def is_number(value):
+            return value.replace("-","").replace(".", "").replace("e", "").isnumeric()
+
+        for branch_set in self.branch_sets:
+            for branch in branch_set.branches:
+                for k, v in branch.gsim_args.items():
+                    if (isinstance(v, str)) and (is_number(v)):
+                        branch.gsim_args[k] = float(v)
+
+        return self
+
     @staticmethod
     def from_dict(data: Dict) -> 'GMCMLogicTree':
         return dacite.from_dict(data_class=GMCMLogicTree, data=data, config=dacite.Config(strict=True))

@@ -103,6 +103,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
             branch_sets=branch_sets,
         )
 
+
     def build_gmcm_xml(self):
         """Build a gmcm logic tree xml."""
         E = ElementMaker(
@@ -121,7 +122,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
             string = ''
             for k, v in args.items():
                 value = f'"{v}"' if isinstance(v, str) else v
-                string += '='.join((k, value)) + ' '
+                string += '='.join((k, str(value))) + ' '
             return string
 
         i_branch = 0

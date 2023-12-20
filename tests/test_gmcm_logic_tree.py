@@ -13,7 +13,6 @@ class TestGMCMLogicTree(unittest.TestCase):
 
         adapter = GMCMLogicTree().psha_adapter(OpenquakeSimplePshaAdapter)
         self.gmcm_logic_tree_fromxml = adapter.logic_tree_from_xml(self.gmcm_nrml_filepath)
-        # self.gmcm_logic_tree_fromxml = GMCMLogicTree.from_xml(self.gmcm_nrml_filepath)
         self.gmcm_logic_tree_fromjson = GMCMLogicTree.from_json(self.gmcm_json_filepath)
 
         return super().setUp()
@@ -40,10 +39,27 @@ class TestGMCMLogicTree(unittest.TestCase):
 
     def test_gmcm_logic_tree_from_json(self):
         gmcm_logic_tree = self.gmcm_logic_tree_fromjson
-
         assert gmcm_logic_tree == self.gmcm_logic_tree_fromxml
 
     def test_serialize_gmcm_logic_tree(self):
         lt_as_dict = self.gmcm_logic_tree_fromjson.to_dict()
         gmcm_logic_tree = GMCMLogicTree.from_dict(lt_as_dict)
         assert gmcm_logic_tree == self.gmcm_logic_tree_fromjson
+
+    @pytest.mark.parameterize(gg)
+    def test_float_ags(self):
+
+        def is_number(value):
+            return value.replace("-","").replace(".", "").replace("e", "").isnumeric()
+
+        for branch_set in self.gmcm_logic_tree_fromjson.branch_sets:
+            for branch in branch_set.branches:
+                for value in branch.gsim_args.values():
+                    if is_number(str(value)):
+                        assert isinstance(value, float)
+
+        for branch_set in self.gmcm_logic_tree_fromxml.branch_sets:
+            for branch in branch_set.branches:
+                for value in branch.gsim_args.values():
+                    if is_number(str(value)):
+                        assert isinstance(value, float)
