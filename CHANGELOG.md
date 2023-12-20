@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.3] 2023-12-21
+### Added
+ - added backward_compatible property `fault_system_lts`  with deprecation warning.
+
 ## [0.5.2] 2023-12-14
 ### Changed
  - Updated GMCM logic tree nrml files to reflect new OpenQuake class names and arguments for NZ NSHM gsims

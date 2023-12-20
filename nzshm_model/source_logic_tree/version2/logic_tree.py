@@ -6,6 +6,7 @@ Define source logic tree structures used in NSHM.
 import copy
 import json
 import pathlib
+import warnings
 from dataclasses import dataclass, field
 from typing import Dict, Iterator, List, Type, Union
 
@@ -112,6 +113,14 @@ class SourceLogicTree:
                 new_fslt.branches.append(new_branch)
             slt.fault_systems.append(new_fslt)
         return slt
+
+    @property
+    def fault_system_lts(self):
+        """
+        API alias for fault_systems
+        """
+        warnings.warn("Please use fault_systems property instead", DeprecationWarning)
+        return self.fault_systems
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(self)
