@@ -86,7 +86,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                 gmpe_name = branch.uncertainty_models[0].gmpe_name.replace('[', '').replace(']', '')
                 branches.append(
                     Branch(
-                        gsim_clsname=gmpe_name,
+                        gsim_name=gmpe_name,
                         gsim_args=process_gmm_args(branch.uncertainty_models[0].arguments),
                         weight=branch.uncertainty_weight,
                     )
@@ -118,11 +118,14 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         UM = E.uncertaintyModel
         UW = E.uncertaintyWeight
 
+        def um_string(gsim_name, gsim_args):
+            return '\n\t\t\t\t'.join(("[" + branch.gsim_name + "]", args2str(branch.gsim_args)))
+
         def args2str(args):
             string = ''
             for k, v in args.items():
                 value = f'"{v}"' if isinstance(v, str) else v
-                string += '='.join((k, str(value))) + ' '
+                string += '='.join((k, str(value))) + '\n'
             return string
 
         i_branch = 0
@@ -134,8 +137,8 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                 applyToTectonicRegionType=bs.tectonic_region_type,
             )
             for branch in bs.branches:
-                um = ' '.join((branch.gsim_clsname, args2str(branch.gsim_args)))
-                ltb = LTB(UM(um), UW(str(branch.weight)), branchID=branch.gsim_clsname + str(i_branch))
+                um = um_string(branch.gsim_name, branch.gsim_args)
+                ltb = LTB(UM(um), UW(str(branch.weight)), branchID=branch.gsim_name + str(i_branch))
                 ltbs.append(ltb)
                 i_branch += 1
             lt.append(ltbs)

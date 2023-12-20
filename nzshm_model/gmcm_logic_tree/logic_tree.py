@@ -10,7 +10,7 @@ from nzshm_model.psha_adapter import PshaAdapterInterface
 
 @dataclass
 class Branch:
-    gsim_clsname: str
+    gsim_name: str
     gsim_args: Dict[str, Any] = field(default_factory=dict)
     weight: float = 1.0
 

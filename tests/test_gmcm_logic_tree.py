@@ -31,7 +31,7 @@ def test_gmcm_logic_tree_from_xml():
         gmcm_logic_tree.branch_sets[0].branches[0].weight
         == doc.logic_trees[0].branch_sets[0].branches[0].uncertainty_weight
     )
-    assert gmcm_logic_tree.branch_sets[0].branches[0].gsim_clsname == 'Stafford2022'
+    assert gmcm_logic_tree.branch_sets[0].branches[0].gsim_name == 'Stafford2022'
     expected_args = dict(mu_branch='Upper')
     assert gmcm_logic_tree.branch_sets[0].branches[0].gsim_args == expected_args
 
