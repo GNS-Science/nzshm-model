@@ -6,7 +6,7 @@ from typing import Any, Dict, Generator, List, Optional, Union
 from lxml import etree
 from lxml.builder import ElementMaker
 
-from nzshm_model.gmcm_logic_tree import Branch, BranchSet, GMCMLogicTree
+from nzshm_model.gmcm_logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
 from nzshm_model.source_logic_tree import SourceLogicTree
@@ -85,20 +85,19 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                     raise ValueError('gmpe branches must have only one uncertainty model')
                 gmpe_name = branch.uncertainty_models[0].gmpe_name.replace('[', '').replace(']', '')
                 branches.append(
-                    Branch(
+                    GMCMBranch(
                         gsim_name=gmpe_name,
                         gsim_args=process_gmm_args(branch.uncertainty_models[0].arguments),
                         weight=branch.uncertainty_weight,
                     )
                 )
             branch_sets.append(
-                BranchSet(
+                GMCMBranchSet(
                     tectonic_region_type=branch_set.applyToTectonicRegionType,
                     branches=branches,
                 )
             )
         return GMCMLogicTree(
-            version='',
             title=doc.logic_trees[0].logicTreeID,
             branch_sets=branch_sets,
         )
