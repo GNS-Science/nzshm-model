@@ -174,7 +174,7 @@ class SourceLogicTree:
         version = None
         for fb in branches:
             # ensure an slt
-            if not version:
+            if version is None:
                 slt = SourceLogicTree(version=fb.slt.version, title=fb.slt.title)
                 version = fb.slt.version
             else:
