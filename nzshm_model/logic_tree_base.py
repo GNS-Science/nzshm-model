@@ -3,7 +3,7 @@ import json
 from abc import ABC, ABCMeta, abstractclassmethod
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Type, Union
+from typing import Any, Dict, Iterator, List, Type, Union, Optional
 
 import dacite
 
@@ -14,7 +14,7 @@ from nzshm_model.psha_adapter import PshaAdapterInterface
 # What do we think?
 @dataclass
 class Branch(ABC):
-    weight: float
+    weight: float = 1.0
 
     @abstractclassmethod
     def filtered_branch(self):
@@ -84,7 +84,7 @@ class LogicTree(ABC):
         for branch_set in self.branch_sets:
             bs_fields = get_fields(branch_set)
             for branch in branch_set.branches:
-                bs_lite = branch_set.__class__(**bs_fields, branches=[branch.__class__(weight=1.0)])
+                bs_lite = branch_set.__class__(**bs_fields, branches=[branch.__class__()])
                 lt_lite = type(self)(**lt_fields)
                 # b_fields = get_fields(branch)
                 yield branch.filtered_branch(
@@ -137,8 +137,8 @@ class LogicTree(ABC):
 
 @dataclass
 class FilteredBranch(Branch, metaclass=ABCMeta):
-    logic_tree: 'LogicTree'
-    branch_set: 'BranchSet'
+    logic_tree: Optional['LogicTree'] = None
+    branch_set: Optional['BranchSet'] = None
 
     def to_branch(self) -> Branch:
         branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('branch_set', 'logic_tree')}
