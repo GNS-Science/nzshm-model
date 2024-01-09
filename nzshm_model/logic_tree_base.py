@@ -84,7 +84,7 @@ class LogicTree(ABC):
         for branch_set in self.branch_sets:
             bs_fields = get_fields(branch_set)
             for branch in branch_set.branches:
-                bs_lite = branch_set.__class__(**bs_fields, branches=[branch.__class__()])
+                bs_lite = type(branch_set)(**bs_fields, branches=[type(branch)()])
                 lt_lite = type(self)(**lt_fields)
                 # b_fields = get_fields(branch)
                 yield branch.filtered_branch(
@@ -117,7 +117,7 @@ class LogicTree(ABC):
             # ensure an branch_set
             bs = match_branch_set(logic_tree, fb)
             if not bs:
-                bs = fb.branch_set.__class__(short_name=fb.branch_set.short_name, long_name=fb.branch_set.long_name)
+                bs = type(fb.branch_set)(short_name=fb.branch_set.short_name, long_name=fb.branch_set.long_name)
                 logic_tree.branch_sets.append(bs)
             bs.branches.append(fb.to_branch())
         return logic_tree
@@ -137,8 +137,8 @@ class LogicTree(ABC):
 
 @dataclass
 class FilteredBranch(Branch, metaclass=ABCMeta):
-    logic_tree: Optional['LogicTree'] = None
-    branch_set: Optional['BranchSet'] = None
+    logic_tree: LogicTree = field(default_factory=LogicTree)
+    branch_set: BranchSet = field(default_factory=BranchSet)
 
     def to_branch(self) -> Branch:
         branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('branch_set', 'logic_tree')}

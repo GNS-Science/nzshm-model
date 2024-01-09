@@ -57,16 +57,11 @@ class SourceLogicTreeSpec:
 
 
 # this should never be serialised, only used for filtering
-@dataclass
-class SourceFilteredBranch(FilteredBranch, SourceBranch):
-    logic_tree: Optional['SourceLogicTree'] = None
-    branch_set: Optional['SourceBranchSet'] = None
 
 
 @dataclass
 class SourceLogicTree(LogicTree):
     branch_sets: List[SourceBranchSet] = field(default_factory=list)
-    filtered_branch_type = SourceFilteredBranch
     logic_tree_version: Union[int, None] = 2
 
     # correlations: List[SourceLogicTreeCorrelation] = field(
@@ -132,3 +127,8 @@ class SourceLogicTree(LogicTree):
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(source_logic_tree=self)
+
+@dataclass
+class SourceFilteredBranch(FilteredBranch, SourceBranch):
+    logic_tree: 'SourceLogicTree' = SourceLogicTree()
+    branch_set: 'SourceBranchSet' = SourceBranchSet()

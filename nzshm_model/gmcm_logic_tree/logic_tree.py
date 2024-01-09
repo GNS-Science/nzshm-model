@@ -20,17 +20,11 @@ class GMCMBranchSet(BranchSet):
     branches: List[GMCMBranch] = field(default_factory=list)
 
 
-@dataclass
-class GMCMFilteredBranch(FilteredBranch, GMCMBranch):
-    logic_tree: Optional['GMCMLogicTree'] = None
-    branch_set: Optional['GMCMBranchSet'] = None
-
 
 @dataclass
 class GMCMLogicTree(LogicTree):
     # should we enforce that there is only one branch_set per TRT?
     branch_sets: List[GMCMBranchSet] = field(default_factory=list)
-    filtered_branch_type = GMCMFilteredBranch
 
     def __post_init__(self):
         self._fix_args()
@@ -51,3 +45,8 @@ class GMCMLogicTree(LogicTree):
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(gmcm_logic_tree=self)
+
+@dataclass
+class GMCMFilteredBranch(FilteredBranch, GMCMBranch):
+    logic_tree: 'GMCMLogicTree' = GMCMLogicTree()
+    branch_set: 'GMCMBranchSet' = GMCMBranchSet()
