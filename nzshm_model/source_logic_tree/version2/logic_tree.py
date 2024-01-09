@@ -4,25 +4,15 @@
 Define source logic tree structures used in NSHM.
 """
 import copy
-import json
-import pathlib
 import warnings
 from dataclasses import dataclass, field
-from typing import Dict, Iterator, List, Type, Union, Optional
+from typing import Dict, List, Optional, Type, Union
 
-import dacite
-
+from nzshm_model.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
-from nzshm_model.logic_tree_base import (
-    LogicTree,
-    Branch,
-    BranchSet,
-    FilteredBranch,
-)
-
 from .. import BranchAttributeValue
-from ..core import FaultSystemLogicTreeBase, FaultSystemLogicTreeSpec
+from ..core import FaultSystemLogicTreeSpec
 from ..version1 import SourceLogicTree as SourceLogicTreeV1
 
 
@@ -71,6 +61,7 @@ class SourceLogicTreeSpec:
 class SourceFilteredBranch(FilteredBranch, SourceBranch):
     logic_tree: Optional['SourceLogicTree'] = None
     branch_set: Optional['SourceBranchSet'] = None
+
 
 @dataclass
 class SourceLogicTree(LogicTree):

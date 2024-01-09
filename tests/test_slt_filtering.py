@@ -68,4 +68,6 @@ def test_build_slt_from_filtered_slt(full_slt):
     print(slt)
     assert len(slt.branch_sets) == 1
     assert len(slt.branch_sets[0].branches) == 9
-    assert type(slt.branch_sets[0].branches[0]) is SourceBranch  # isinstance() not used to avoid true for inherited classes
+    assert (
+        type(slt.branch_sets[0].branches[0]) is SourceBranch
+    )  # isinstance() not used to avoid true for inherited classes

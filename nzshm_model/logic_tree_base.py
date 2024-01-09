@@ -1,9 +1,9 @@
 import copy
 import json
-from abc import ABC, abstractclassmethod, ABCMeta
+from abc import ABC, ABCMeta, abstractclassmethod
+from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
-from dataclasses import dataclass, field, asdict, fields
-from typing import Any, Dict, Generator, List, Union, Type, Iterator
+from typing import Any, Dict, Iterator, List, Type, Union
 
 import dacite
 
@@ -30,7 +30,7 @@ class Branch(ABC):
 class BranchSet(ABC):
     short_name: str = 'shortname'
     long_name: str = 'longname'
-    branches: List[Branch] = field(default_factory=list)
+    branches: List[Any] = field(default_factory=list)
 
     def validate_weights(self) -> bool:
         weight = 0.0
@@ -43,7 +43,7 @@ class BranchSet(ABC):
 class LogicTree(ABC):
     title: str = ''
     version: str = ''
-    branch_sets: List[BranchSet] = field(default_factory=list)
+    branch_sets: List[Any] = field(default_factory=list)
     # should there be placeholder type members?
 
     @classmethod
@@ -58,7 +58,7 @@ class LogicTree(ABC):
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
-    
+
     # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
     @abstractclassmethod
@@ -72,10 +72,12 @@ class LogicTree(ABC):
 
         NB this class is never used for serialising models.
         """
+
         def get_fields(obj):
             return {
                 field.name: copy.deepcopy(getattr(obj, field.name))
-                for field in fields(obj) if field.name not in ('branches', 'branch_sets')
+                for field in fields(obj)
+                if field.name not in ('branches', 'branch_sets')
             }
 
         lt_fields = get_fields(self)
@@ -120,7 +122,6 @@ class LogicTree(ABC):
             bs.branches.append(fb.to_branch())
         return logic_tree
 
-    
     def __iter__(self):
         self.__current_branch = 0
         self.__branch_list = list(self.__flattened_branches__())
@@ -132,7 +133,7 @@ class LogicTree(ABC):
         else:
             self.__current_branch += 1
             return self.__branch_list[self.__current_branch - 1]
-    
+
 
 @dataclass
 class FilteredBranch(Branch, metaclass=ABCMeta):
