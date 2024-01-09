@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Type
 
 from nzshm_model.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
@@ -18,7 +18,6 @@ class GMCMBranch(Branch):
 class GMCMBranchSet(BranchSet):
     tectonic_region_type: str = ""  # need a default becasue base class has a memeber with a default
     branches: List[GMCMBranch] = field(default_factory=list)
-
 
 
 @dataclass
@@ -45,6 +44,7 @@ class GMCMLogicTree(LogicTree):
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(gmcm_logic_tree=self)
+
 
 @dataclass
 class GMCMFilteredBranch(FilteredBranch, GMCMBranch):

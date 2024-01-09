@@ -6,7 +6,7 @@ Define source logic tree structures used in NSHM.
 import copy
 import warnings
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Type, Union
+from typing import Dict, List, Type, Union
 
 from nzshm_model.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
@@ -127,6 +127,7 @@ class SourceLogicTree(LogicTree):
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(source_logic_tree=self)
+
 
 @dataclass
 class SourceFilteredBranch(FilteredBranch, SourceBranch):

@@ -3,7 +3,7 @@ import json
 from abc import ABC, ABCMeta, abstractclassmethod
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Type, Union, Optional
+from typing import Any, Dict, Iterator, List, Type, Union
 
 import dacite
 
