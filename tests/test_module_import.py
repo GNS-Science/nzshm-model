@@ -33,6 +33,6 @@ def test_source_logic_tree_in_all_models(model_version):
     slt = current_model.source_logic_tree()
 
     old_api_fslt = slt.fault_system_lts[0]
-    new_api_fslt = slt.fault_systems[0]
+    new_api_fslt = slt.branch_sets[0]
 
     assert old_api_fslt is new_api_fslt

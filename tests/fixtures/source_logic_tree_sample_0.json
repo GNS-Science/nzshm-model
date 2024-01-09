@@ -2,7 +2,7 @@
     "logic_tree_version" : 2,
     "title": "a SRM logic tree",
     "version": "SLT_v9p0p0",
-    "fault_systems": [
+    "branch_sets": [
         {
             "short_name": "PUY",
             "long_name" : "Puysegur",           

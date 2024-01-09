@@ -5,7 +5,7 @@ import pytest
 
 import nzshm_model
 from nzshm_model.source_logic_tree import SourceLogicTree
-from nzshm_model.source_logic_tree.version2 import Branch
+from nzshm_model.source_logic_tree.version2 import SourceBranch
 
 
 ## three example filter functions
@@ -33,7 +33,7 @@ def full_slt():
 
 def test_filter_fn_on_logic_tree_branches(full_slt):
     # functional style
-    assert len([filt_branch for filt_branch in filter(lambda obj: obj.fslt.short_name == 'HIK', full_slt)]) == 9
+    assert len([filt_branch for filt_branch in filter(lambda obj: obj.branch_set.short_name == 'HIK', full_slt)]) == 9
     assert len([filt_branch for filt_branch in filter(unscaled_filter_str, full_slt)]) == 16
     assert len([filt_branch for filt_branch in filter(unscaled_filter, full_slt)]) == 16
     assert len([filt_branch for filt_branch in filter(geodetic_filter, full_slt)]) == 18
@@ -42,7 +42,7 @@ def test_filter_fn_on_logic_tree_branches(full_slt):
 
 def test_list_comprehension_filtering_logic_tree_branches(full_slt):
     # old-skool pythonic style
-    assert len([filt_branch for filt_branch in full_slt if filt_branch.fslt.short_name == "HIK"]) == 9
+    assert len([filt_branch for filt_branch in full_slt if filt_branch.branch_set.short_name == "HIK"]) == 9
     assert len([filt_branch for filt_branch in full_slt if unscaled_filter_str(filt_branch)]) == 16
     assert len([filt_branch for filt_branch in full_slt if unscaled_filter(filt_branch)]) == 16
     assert len([filt_branch for filt_branch in full_slt if geodetic_filter(filt_branch)]) == 18
@@ -54,7 +54,7 @@ def test_list_comprehension_filtering_logic_tree_branches(full_slt):
 
 def test_generator_filtering_logic_tree_branches(full_slt):
     # most memory efficient & pythonic
-    assert sum((1 for filt_branch in full_slt if filt_branch.fslt.short_name == "HIK")) == 9
+    assert sum((1 for filt_branch in full_slt if filt_branch.branch_set.short_name == "HIK")) == 9
     assert sum(1 for filt_branch in full_slt if unscaled_filter_str(filt_branch)) == 16
     assert sum(1 for filt_branch in full_slt if unscaled_filter(filt_branch)) == 16
     assert sum(1 for filt_branch in full_slt if geodetic_filter(filt_branch)) == 18
@@ -63,9 +63,9 @@ def test_generator_filtering_logic_tree_branches(full_slt):
 
 def test_build_slt_from_filtered_slt(full_slt):
 
-    flt = (filt_branch for filt_branch in full_slt if filt_branch.fslt.short_name == "HIK")
+    flt = (filt_branch for filt_branch in full_slt if filt_branch.branch_set.short_name == "HIK")
     slt = SourceLogicTree.from_branches(flt)
     print(slt)
-    assert len(slt.fault_systems) == 1
-    assert len(slt.fault_systems[0].branches) == 9
-    assert type(slt.fault_systems[0].branches[0]) is Branch  # isinstance() not used to avoid true for inherited classes
+    assert len(slt.branch_sets) == 1
+    assert len(slt.branch_sets[0].branches) == 9
+    assert type(slt.branch_sets[0].branches[0]) is SourceBranch  # isinstance() not used to avoid true for inherited classes

@@ -177,7 +177,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
 
         # Build from the source_logic_tree
         ltbl = LTBL(branchingLevelID="1")
-        for fs in self.source_logic_tree.fault_systems:
+        for fs in self.source_logic_tree.branch_sets:
             ltbs = LTBS(uncertaintyType="sourceModel", branchSetID=fs.short_name)
             for branch in fs.branches:
                 branch_name = str(branch.values)

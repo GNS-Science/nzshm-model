@@ -3,7 +3,7 @@
     "title": "a SRM logic tree",
     "version": "SRM_v10.4.0",
     "rupture_rate_scaling": [0.66, 1.0, 1.5],
-    "fault_systems": [
+    "branch_sets": [
         {
             "name": "Hik",
             "rupture_rate_scaling": [0.66, 1.0, 1.5],
