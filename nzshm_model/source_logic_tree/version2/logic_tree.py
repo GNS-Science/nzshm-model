@@ -12,7 +12,7 @@ from nzshm_model.logic_tree_base import Branch, BranchSet, FilteredBranch, Logic
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .. import BranchAttributeValue
-from ..core import FaultSystemLogicTreeSpec
+from ..core import BranchSetSpec
 from ..version1 import SourceLogicTree as SourceLogicTreeV1
 
 
@@ -42,6 +42,7 @@ class SourceBranch(Branch):
     def filtered_branch(self, logic_tree, branch_set):
         return SourceFilteredBranch(logic_tree=logic_tree, branch_set=branch_set, **self.__dict__)
 
+    @property
     def tag(self):
         return str(self.values)
 
@@ -53,7 +54,7 @@ class SourceBranchSet(BranchSet):
 
 @dataclass
 class SourceLogicTreeSpec:
-    fault_systems: List[FaultSystemLogicTreeSpec] = field(default_factory=list)
+    fault_systems: List[BranchSetSpec] = field(default_factory=list)
 
 
 # this should never be serialised, only used for filtering

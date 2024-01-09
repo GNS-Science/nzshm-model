@@ -28,8 +28,8 @@ class Branch(ABC):
 # should the type for branches be List[Any]?
 @dataclass
 class BranchSet(ABC):
-    short_name: str = 'shortname'
-    long_name: str = 'longname'
+    short_name: str = ''
+    long_name: str = ''
     branches: List[Any] = field(default_factory=list)
 
     def validate_weights(self) -> bool:

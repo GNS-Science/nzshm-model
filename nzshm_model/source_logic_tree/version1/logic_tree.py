@@ -18,7 +18,7 @@ import dacite
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .. import BranchAttributeValue
-from ..core import FaultSystemLogicTreeBase, FaultSystemLogicTreeSpec
+from ..core import BranchSetBase, BranchSetSpec
 
 
 @dataclass
@@ -33,7 +33,7 @@ class Branch:
 
 
 @dataclass
-class FaultSystemLogicTree(FaultSystemLogicTreeBase):
+class FaultSystemLogicTree(BranchSetBase):
     branches: List[Branch] = field(default_factory=list)
 
 
@@ -54,7 +54,7 @@ class SourceLogicTreeCorrelation:
 
 @dataclass
 class SourceLogicTreeSpec:
-    fault_system_lts: List[FaultSystemLogicTreeSpec] = field(default_factory=list)
+    fault_system_lts: List[BranchSetSpec] = field(default_factory=list)
 
 
 @dataclass
