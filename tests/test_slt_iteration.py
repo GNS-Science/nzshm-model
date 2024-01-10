@@ -7,7 +7,7 @@ import pytest
 
 import nzshm_model
 from nzshm_model.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
-from nzshm_model.source_logic_tree.version2 import Branch, FaultSystemLogicTree
+from nzshm_model.source_logic_tree.version2 import SourceBranch, SourceBranchSet
 
 
 @pytest.fixture(scope='module')
@@ -35,9 +35,9 @@ def test_source_logic_tree_v2_is_iterable(slt_version_2):
 
 def test_source_logic_tree_v2_is_slt_iterable(slt_version_2):
     for obj in slt_version_2:
-        assert isinstance(obj, Branch)
-        assert isinstance(obj.fslt, FaultSystemLogicTree)
-        assert isinstance(obj.slt, SourceLogicTree)
+        assert isinstance(obj, SourceBranch)
+        assert isinstance(obj.branch_set, SourceBranchSet)
+        assert isinstance(obj.logic_tree, SourceLogicTree)
 
 
 def test_source_logic_tree_v2_iterable_size(slt_version_2):
@@ -46,4 +46,4 @@ def test_source_logic_tree_v2_iterable_size(slt_version_2):
 
 
 def test_source_logic_tree_v2_iterates_source_logic_tree(slt_version_2):
-    assert next(iter(slt_version_2)).sources[0] == slt_version_2.fault_systems[0].branches[0].sources[0]
+    assert next(iter(slt_version_2)).sources[0] == slt_version_2.branch_sets[0].branches[0].sources[0]

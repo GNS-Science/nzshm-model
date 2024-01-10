@@ -1,0 +1,313 @@
+<nrml xmlns:gml="http://www.opengis.net/gml" xmlns="http://openquake.org/xmlns/nrml/0.5">
+  <logicTree logicTreeID="lt1">
+    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="BS:Active Shallow Crust" applyToTectonicRegionType="Active Shallow Crust">
+      <logicTreeBranch branchID="Stafford20220">
+        <uncertaintyModel>[Stafford2022]
+				mu_branch="Upper"
+</uncertaintyModel>
+        <uncertaintyWeight>0.117</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Stafford20221">
+        <uncertaintyModel>[Stafford2022]
+				mu_branch="Central"
+</uncertaintyModel>
+        <uncertaintyWeight>0.156</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Stafford20222">
+        <uncertaintyModel>[Stafford2022]
+				mu_branch="Lower"
+</uncertaintyModel>
+        <uncertaintyWeight>0.117</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Atkinson2022Crust3">
+        <uncertaintyModel>[Atkinson2022Crust]
+				epistemic="Upper"
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.084</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Atkinson2022Crust4">
+        <uncertaintyModel>[Atkinson2022Crust]
+				epistemic="Central"
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.112</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Atkinson2022Crust5">
+        <uncertaintyModel>[Atkinson2022Crust]
+				epistemic="Lower"
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.084</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="AbrahamsonEtAl20146">
+        <uncertaintyModel>[AbrahamsonEtAl2014]
+				sigma_mu_epsilon=1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="AbrahamsonEtAl20147">
+        <uncertaintyModel>[AbrahamsonEtAl2014]
+				sigma_mu_epsilon=0.0
+</uncertaintyModel>
+        <uncertaintyWeight>0.0264</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="AbrahamsonEtAl20148">
+        <uncertaintyModel>[AbrahamsonEtAl2014]
+				sigma_mu_epsilon=-1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="BooreEtAl20149">
+        <uncertaintyModel>[BooreEtAl2014]
+				sigma_mu_epsilon=1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="BooreEtAl201410">
+        <uncertaintyModel>[BooreEtAl2014]
+				sigma_mu_epsilon=0.0
+</uncertaintyModel>
+        <uncertaintyWeight>0.0264</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="BooreEtAl201411">
+        <uncertaintyModel>[BooreEtAl2014]
+				sigma_mu_epsilon=-1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="CampbellBozorgnia201412">
+        <uncertaintyModel>[CampbellBozorgnia2014]
+				sigma_mu_epsilon=1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="CampbellBozorgnia201413">
+        <uncertaintyModel>[CampbellBozorgnia2014]
+				sigma_mu_epsilon=0.0
+</uncertaintyModel>
+        <uncertaintyWeight>0.0264</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="CampbellBozorgnia201414">
+        <uncertaintyModel>[CampbellBozorgnia2014]
+				sigma_mu_epsilon=-1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="ChiouYoungs201415">
+        <uncertaintyModel>[ChiouYoungs2014]
+				sigma_mu_epsilon=1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="ChiouYoungs201416">
+        <uncertaintyModel>[ChiouYoungs2014]
+				sigma_mu_epsilon=0.0
+</uncertaintyModel>
+        <uncertaintyWeight>0.0264</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="ChiouYoungs201417">
+        <uncertaintyModel>[ChiouYoungs2014]
+				sigma_mu_epsilon=-1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Bradley201318">
+        <uncertaintyModel>[Bradley2013]
+				sigma_mu_epsilon=1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Bradley201319">
+        <uncertaintyModel>[Bradley2013]
+				sigma_mu_epsilon=0.0
+</uncertaintyModel>
+        <uncertaintyWeight>0.0264</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Bradley201320">
+        <uncertaintyModel>[Bradley2013]
+				sigma_mu_epsilon=-1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.0198</uncertaintyWeight>
+      </logicTreeBranch>
+    </logicTreeBranchSet>
+    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="BS:Subduction Interface" applyToTectonicRegionType="Subduction Interface">
+      <logicTreeBranch branchID="Atkinson2022SInter21">
+        <uncertaintyModel>[Atkinson2022SInter]
+				epistemic="Upper"
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.081</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Atkinson2022SInter22">
+        <uncertaintyModel>[Atkinson2022SInter]
+				epistemic="Central"
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.108</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Atkinson2022SInter23">
+        <uncertaintyModel>[Atkinson2022SInter]
+				epistemic="Lower"
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.081</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_AbrahamsonGulerce2020SInter24">
+        <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SInter]
+				region="GLO"
+sigma_mu_epsilon=1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.075</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_AbrahamsonGulerce2020SInter25">
+        <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SInter]
+				region="GLO"
+sigma_mu_epsilon=0.0
+</uncertaintyModel>
+        <uncertaintyWeight>0.1</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_AbrahamsonGulerce2020SInter26">
+        <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SInter]
+				region="GLO"
+sigma_mu_epsilon=-1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.075</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_ParkerEtAl2020SInter27">
+        <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SInter]
+				sigma_mu_epsilon=1.28155
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.072</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_ParkerEtAl2020SInter28">
+        <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SInter]
+				sigma_mu_epsilon=0.0
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.096</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_ParkerEtAl2020SInter29">
+        <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SInter]
+				sigma_mu_epsilon=-1.28155
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.072</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_KuehnEtAl2020SInter30">
+        <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SInter]
+				region="GLO"
+sigma_mu_epsilon=1.28155
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.072</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_KuehnEtAl2020SInter31">
+        <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SInter]
+				region="GLO"
+sigma_mu_epsilon=0.0
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.096</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_KuehnEtAl2020SInter32">
+        <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SInter]
+				region="GLO"
+sigma_mu_epsilon=-1.28155
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.072</uncertaintyWeight>
+      </logicTreeBranch>
+    </logicTreeBranchSet>
+    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="BS:Subduction Intraslab" applyToTectonicRegionType="Subduction Intraslab">
+      <logicTreeBranch branchID="Atkinson2022SSlab33">
+        <uncertaintyModel>[Atkinson2022SSlab]
+				epistemic="Upper"
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.084</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Atkinson2022SSlab34">
+        <uncertaintyModel>[Atkinson2022SSlab]
+				epistemic="Central"
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.112</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="Atkinson2022SSlab35">
+        <uncertaintyModel>[Atkinson2022SSlab]
+				epistemic="Lower"
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.084</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_AbrahamsonGulerce2020SSlab36">
+        <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SSlab]
+				region="GLO"
+sigma_mu_epsilon=1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.075</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_AbrahamsonGulerce2020SSlab37">
+        <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SSlab]
+				region="GLO"
+sigma_mu_epsilon=0.0
+</uncertaintyModel>
+        <uncertaintyWeight>0.1</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_AbrahamsonGulerce2020SSlab38">
+        <uncertaintyModel>[NZNSHM2022_AbrahamsonGulerce2020SSlab]
+				region="GLO"
+sigma_mu_epsilon=-1.28155
+</uncertaintyModel>
+        <uncertaintyWeight>0.075</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_ParkerEtAl2020SSlab39">
+        <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SSlab]
+				sigma_mu_epsilon=1.28155
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.069</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_ParkerEtAl2020SSlab40">
+        <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SSlab]
+				sigma_mu_epsilon=0.0
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.092</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_ParkerEtAl2020SSlab41">
+        <uncertaintyModel>[NZNSHM2022_ParkerEtAl2020SSlab]
+				sigma_mu_epsilon=-1.28155
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.069</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_KuehnEtAl2020SSlab42">
+        <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SSlab]
+				region="GLO"
+sigma_mu_epsilon=1.28155
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.072</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_KuehnEtAl2020SSlab43">
+        <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SSlab]
+				region="GLO"
+sigma_mu_epsilon=0.0
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.096</uncertaintyWeight>
+      </logicTreeBranch>
+      <logicTreeBranch branchID="NZNSHM2022_KuehnEtAl2020SSlab44">
+        <uncertaintyModel>[NZNSHM2022_KuehnEtAl2020SSlab]
+				region="GLO"
+sigma_mu_epsilon=-1.28155
+modified_sigma="true"
+</uncertaintyModel>
+        <uncertaintyWeight>0.072</uncertaintyWeight>
+      </logicTreeBranch>
+    </logicTreeBranchSet>
+  </logicTree>
+</nrml>

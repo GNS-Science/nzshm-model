@@ -5,14 +5,14 @@ from ..branch_attribute import BranchAttributeSpec, BranchAttributeValue
 
 
 @dataclass
-class FaultSystemLogicTreeSpec:
+class BranchSetSpec:
     short_name: str
     long_name: str
     branches: List['BranchAttributeValue'] = field(default_factory=list)
 
 
 @dataclass
-class FaultSystemLogicTreeBase:
+class BranchSetBase:
     short_name: str
     long_name: str
     branches: List[Any] = field(
@@ -25,8 +25,8 @@ class FaultSystemLogicTreeBase:
             weight += b.weight
         return weight == 1.0
 
-    def derive_spec(self) -> FaultSystemLogicTreeSpec:
-        fslt_spec = FaultSystemLogicTreeSpec(short_name=self.short_name, long_name=self.long_name)
+    def derive_spec(self) -> BranchSetSpec:
+        fslt_spec = BranchSetSpec(short_name=self.short_name, long_name=self.long_name)
 
         options: Dict[str, set] = {}
 

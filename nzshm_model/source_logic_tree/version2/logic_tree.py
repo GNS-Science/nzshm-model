@@ -4,18 +4,15 @@
 Define source logic tree structures used in NSHM.
 """
 import copy
-import json
-import pathlib
 import warnings
 from dataclasses import dataclass, field
-from typing import Dict, Iterator, List, Type, Union
+from typing import Dict, List, Type, Union
 
-import dacite
-
+from nzshm_model.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .. import BranchAttributeValue
-from ..core import FaultSystemLogicTreeBase, FaultSystemLogicTreeSpec
+from ..core import BranchSetSpec
 from ..version1 import SourceLogicTree as SourceLogicTreeV1
 
 
@@ -37,31 +34,40 @@ class DistributedSource:
 
 
 @dataclass
-class Branch:
+class SourceBranch(Branch):
     values: List[BranchAttributeValue] = field(default_factory=list)
     sources: List[Union[DistributedSource, InversionSource]] = field(default_factory=list)
-    weight: float = 1.0
     rupture_rate_scaling: float = 1.0
 
+    def filtered_branch(self, logic_tree, branch_set):
+        return SourceFilteredBranch(logic_tree=logic_tree, branch_set=branch_set, **self.__dict__)
+
+    @property
     def tag(self):
         return str(self.values)
 
 
 @dataclass
-class FaultSystemLogicTree(FaultSystemLogicTreeBase):
-    branches: List[Branch] = field(default_factory=list)
+class SourceBranchSet(BranchSet):
+    branches: List[SourceBranch] = field(default_factory=list)
 
 
 @dataclass
 class SourceLogicTreeSpec:
-    fault_systems: List[FaultSystemLogicTreeSpec] = field(default_factory=list)
+    branch_sets: List[BranchSetSpec] = field(default_factory=list)
+
+    @property
+    def fault_systems(self):
+        """
+        API alias for branch_sets
+        """
+        warnings.warn("Please use branch_sets property instead", DeprecationWarning)
+        return self.branch_sets
 
 
 @dataclass
-class SourceLogicTree:
-    version: str
-    title: str
-    fault_systems: List[FaultSystemLogicTree] = field(default_factory=list)
+class SourceLogicTree(LogicTree):
+    branch_sets: List[SourceBranchSet] = field(default_factory=list)
     logic_tree_version: Union[int, None] = 2
 
     # correlations: List[SourceLogicTreeCorrelation] = field(
@@ -75,17 +81,12 @@ class SourceLogicTree:
         #     slt_spec.fault_systems.append(FaultSystemLogicTree.derive_spec(fslt))
         # return slt_spec
 
-    @staticmethod
-    def from_dict(data: Dict):
+    @classmethod
+    def from_dict(cls, data: Dict):
         ltv = data.get("logic_tree_version")
         if not ltv == 2:
             raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
-        return dacite.from_dict(data_class=SourceLogicTree, data=data, config=dacite.Config(strict=True))
-
-    @staticmethod
-    def from_json(json_path: Union[pathlib.Path, str]):
-        data = json.load(open(json_path))
-        return SourceLogicTree.from_dict(data)
+        return super(SourceLogicTree, cls).from_dict(data)
 
     @staticmethod
     def from_source_logic_tree(original_slt: "SourceLogicTreeV1") -> "SourceLogicTree":
@@ -96,10 +97,10 @@ class SourceLogicTree:
             raise ValueError(f"supplied object of {type(original_slt)} is not supported.")
         slt = SourceLogicTree(version=original_slt.version, title=original_slt.title)
         for fslt in original_slt.fault_systems:
-            new_fslt = FaultSystemLogicTree(short_name=fslt.short_name, long_name=fslt.long_name)
+            new_fslt = SourceBranchSet(short_name=fslt.short_name, long_name=fslt.long_name)
             for branch in fslt.branches:
                 # TODO: handle rate scaling
-                new_branch = Branch(values=copy.deepcopy(branch.values), weight=branch.weight)
+                new_branch = SourceBranch(values=copy.deepcopy(branch.values), weight=branch.weight)
                 if branch.onfault_nrml_id:
                     new_branch.sources.append(
                         InversionSource(
@@ -111,90 +112,46 @@ class SourceLogicTree:
                 if branch.distributed_nrml_id:
                     new_branch.sources.append(DistributedSource(nrml_id=branch.distributed_nrml_id))
                 new_fslt.branches.append(new_branch)
-            slt.fault_systems.append(new_fslt)
+            slt.branch_sets.append(new_fslt)
         return slt
 
     @property
     def fault_system_lts(self):
         """
-        API alias for fault_systems
+        API alias for branch_sets
         """
-        warnings.warn("Please use fault_systems property instead", DeprecationWarning)
-        return self.fault_systems
+        warnings.warn("Please use branch_sets property instead", DeprecationWarning)
+        return self.branch_sets
+
+    @property
+    def fault_systems(self):
+        """
+        API alias for branch_sets
+        """
+        warnings.warn("Please use branch_sets property instead", DeprecationWarning)
+        return self.branch_sets
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(source_logic_tree=self)
 
-    def __iter__(self):
-        self.__current_branch = 0
-        self.__branch_list = list(self.__flattened_branches__())
-        return self
 
-    def __flattened_branches__(self):
-        """
-        Produce list of Flattened branches, each with a shallow copy of it's slt and fslt parents
-        for use in filtering.
-
-        NB this class is never used for serialising models.
-        """
-        for fslt in self.fault_systems:
-            for branch in fslt.branches:
-                fslt_lite = FaultSystemLogicTree(short_name=fslt.short_name, long_name=fslt.long_name)
-                slt_lite = SourceLogicTree(
-                    title=self.title, version=self.version, logic_tree_version=self.logic_tree_version
-                )
-                yield FilteredBranch(
-                    values=branch.values,
-                    sources=copy.deepcopy(branch.sources),
-                    weight=branch.weight,
-                    fslt=fslt_lite,
-                    slt=slt_lite,
-                )
-
-    def __next__(self):
-        if self.__current_branch >= len(self.__branch_list):
-            raise StopIteration
-        else:
-            self.__current_branch += 1
-            return self.__branch_list[self.__current_branch - 1]
-
-    @staticmethod
-    def from_branches(branches: Iterator['FilteredBranch']) -> 'SourceLogicTree':
-        """
-        Build a complete SLT from a iterable od branches.
-
-        We expect that all the branhches have come from a single SLT.
-        """
-
-        def match_fslt(slt: SourceLogicTree, fb):
-            for fslt in slt.fault_systems:
-                if fb.fslt.short_name == fslt.short_name:
-                    return fslt
-
-        version = None
-        for fb in branches:
-            # ensure an slt
-            if not version:
-                slt = SourceLogicTree(version=fb.slt.version, title=fb.slt.title)
-                version = fb.slt.version
-            else:
-                assert version == fb.slt.version
-
-            # ensure an fslt
-            fslt = match_fslt(slt, fb)
-            if not fslt:
-                fslt = FaultSystemLogicTree(short_name=fb.fslt.short_name, long_name=fb.fslt.long_name)
-                slt.fault_systems.append(fslt)
-            fslt.branches.append(fb.to_branch())
-        return slt
-
-
-# this should never be serialised, only used for filtering
 @dataclass
-class FilteredBranch(Branch):
-    fslt: 'FaultSystemLogicTree' = FaultSystemLogicTree('shortname', 'longname')
-    slt: 'SourceLogicTree' = SourceLogicTree('version', 'title')
+class SourceFilteredBranch(FilteredBranch, SourceBranch):
+    logic_tree: 'SourceLogicTree' = SourceLogicTree()
+    branch_set: 'SourceBranchSet' = SourceBranchSet()
 
-    def to_branch(self) -> Branch:
-        branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('fslt', 'slt')}
-        return Branch(**branch_attributes)
+    @property
+    def fslt(self) -> SourceBranchSet:
+        """
+        API alias for branch_set
+        """
+        warnings.warn("Please use branch_set property instead", DeprecationWarning)
+        return self.branch_set
+
+    @property
+    def slt(self) -> SourceLogicTree:
+        """
+        API alias for slt
+        """
+        warnings.warn("Please use logic_tree property instead", DeprecationWarning)
+        return self.logic_tree

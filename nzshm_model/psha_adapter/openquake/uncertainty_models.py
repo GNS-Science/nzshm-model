@@ -79,7 +79,9 @@ class NshmSourceUncertaintyModel:
     model_type: str = ""
 
     @classmethod
-    def from_parent_slt(cls, ltb: "slt.Branch", parent: "LogicTreeBranch") -> Iterator["NshmSourceUncertaintyModel"]:
+    def from_parent_slt(
+        cls, ltb: "slt.SourceBranch", parent: "LogicTreeBranch"
+    ) -> Iterator["NshmSourceUncertaintyModel"]:
         """resolve to filenames of NRML sources"""
         for source in ltb.sources:
             # print(source)

@@ -83,7 +83,7 @@ class LogicTreeBranch:
 
     @classmethod
     def from_parent_slt(
-        cls, slt_ltbs: "slt.FaultSystemLogicTree", parent: "LogicTreeBranchSet"
+        cls, slt_ltbs: "slt.SourceBranchSet", parent: "LogicTreeBranchSet"
     ) -> Iterator["LogicTreeBranch"]:
         for ltb in slt_ltbs.branches:
             _instance = LogicTreeBranch(
@@ -123,7 +123,7 @@ class LogicTreeBranchSet:
     @classmethod
     def from_parent_slt(cls, slt: "slt.SourceLogicTree", parent: "LogicTree") -> Iterator["LogicTreeBranchSet"]:
         # assert slt_spec.fault_system_lts[0].short_name == "PUY"
-        for ltbs in slt.fault_systems:
+        for ltbs in slt.branch_sets:
             _instance = LogicTreeBranchSet(
                 parent=parent,
                 branchSetID=ltbs.short_name,

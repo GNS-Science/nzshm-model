@@ -1,31 +1,29 @@
-import json
-from dataclasses import asdict, dataclass, field
-from pathlib import Path
-from typing import Any, Dict, List, Type, Union
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Type
 
-import dacite
-
+from nzshm_model.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 
 @dataclass
-class Branch:
-    gsim_name: str
+class GMCMBranch(Branch):
+    gsim_name: str = ""
     gsim_args: Dict[str, Any] = field(default_factory=dict)
-    weight: float = 1.0
+
+    def filtered_branch(self, logic_tree, branch_set):
+        return GMCMFilteredBranch(logic_tree=logic_tree, branch_set=branch_set, **self.__dict__)
 
 
 @dataclass
-class BranchSet:
-    tectonic_region_type: str
-    branches: List[Branch] = field(default_factory=list)
+class GMCMBranchSet(BranchSet):
+    tectonic_region_type: str = ""  # need a default becasue base class has a memeber with a default
+    branches: List[GMCMBranch] = field(default_factory=list)
 
 
 @dataclass
-class GMCMLogicTree:
-    version: str = ''
-    title: str = ''
-    branch_sets: List[BranchSet] = field(default_factory=list)
+class GMCMLogicTree(LogicTree):
+    # should we enforce that there is only one branch_set per TRT?
+    branch_sets: List[GMCMBranchSet] = field(default_factory=list)
 
     def __post_init__(self):
         self._fix_args()
@@ -44,18 +42,11 @@ class GMCMLogicTree:
 
         return self
 
-    @staticmethod
-    def from_dict(data: Dict) -> 'GMCMLogicTree':
-        return dacite.from_dict(data_class=GMCMLogicTree, data=data, config=dacite.Config(strict=True))
-
-    @staticmethod
-    def from_json(json_path: Union[Path, str]) -> 'GMCMLogicTree':
-        with Path(json_path).open() as jsonfile:
-            data = json.load(jsonfile)
-        return GMCMLogicTree.from_dict(data)
-
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
-
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(gmcm_logic_tree=self)
+
+
+@dataclass
+class GMCMFilteredBranch(FilteredBranch, GMCMBranch):
+    logic_tree: 'GMCMLogicTree' = GMCMLogicTree()
+    branch_set: 'GMCMBranchSet' = GMCMBranchSet()
