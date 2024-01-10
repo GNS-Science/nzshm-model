@@ -6,10 +6,9 @@ from typing import Any, Dict, Generator, List, Optional, Union
 from lxml import etree
 from lxml.builder import ElementMaker
 
-from nzshm_model.gmcm_logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree
+from nzshm_model.logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree, SourceLogicTree
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
-from nzshm_model.source_logic_tree import SourceLogicTree
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution

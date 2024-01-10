@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from nzshm_model.gmcm_logic_tree.logic_tree import GMCMLogicTree
+from nzshm_model.logic_tree import GMCMLogicTree
 from nzshm_model.psha_adapter.openquake import NrmlDocument
 from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeSimplePshaAdapter
 

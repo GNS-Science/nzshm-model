@@ -12,8 +12,8 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Union
 
-from nzshm_model.source_logic_tree import BranchAttributeValue
-from nzshm_model.source_logic_tree.version1 import (
+from nzshm_model.logic_tree.source_logic_tree import BranchAttributeValue
+from nzshm_model.logic_tree.source_logic_tree.version1 import (
     Branch,
     FaultSystemLogicTree,
     SourceLogicTree,

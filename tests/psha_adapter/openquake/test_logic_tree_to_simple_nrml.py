@@ -5,9 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from nzshm_model.gmcm_logic_tree import GMCMLogicTree
+from nzshm_model.logic_tree import GMCMLogicTree, SourceLogicTree
 from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter
-from nzshm_model.source_logic_tree.version2 import SourceLogicTree
 
 FIXTURE_PATH = Path(__file__).parent.parent.parent / "fixtures"
 

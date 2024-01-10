@@ -1,7 +1,7 @@
 #! nshm_v1_0_4.py
 
 # Is this only used for the correlations ??
-import nzshm_model.source_logic_tree.SLT_v9p0p0 as slt_config
+import nzshm_model.logic_tree.source_logic_tree.SLT_v9p0p0 as slt_config
 
 from .model import NshmModel
 

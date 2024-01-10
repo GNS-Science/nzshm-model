@@ -3,9 +3,11 @@ import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from nzshm_model.logic_tree import SourceLogicTree
+from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
+
 # from nzshm_model.psha_adapter import NrmlDocument, OpenquakeSimplePshaAdapter
 from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
-from nzshm_model.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
 
 if TYPE_CHECKING:
     from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
