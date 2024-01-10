@@ -135,6 +135,7 @@ class LogicTree(ABC):
             return self.__branch_list[self.__current_branch - 1]
 
 
+# this should never be serialised, only used for filtering
 @dataclass
 class FilteredBranch(Branch, metaclass=ABCMeta):
     logic_tree: LogicTree = field(default_factory=LogicTree)

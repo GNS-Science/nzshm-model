@@ -54,10 +54,15 @@ class SourceBranchSet(BranchSet):
 
 @dataclass
 class SourceLogicTreeSpec:
-    fault_systems: List[BranchSetSpec] = field(default_factory=list)
+    branch_sets: List[BranchSetSpec] = field(default_factory=list)
 
-
-# this should never be serialised, only used for filtering
+    @property
+    def fault_systems(self):
+        """
+        API alias for branch_sets
+        """
+        warnings.warn("Please use branch_sets property instead", DeprecationWarning)
+        return self.branch_sets
 
 
 @dataclass
@@ -134,3 +139,19 @@ class SourceLogicTree(LogicTree):
 class SourceFilteredBranch(FilteredBranch, SourceBranch):
     logic_tree: 'SourceLogicTree' = SourceLogicTree()
     branch_set: 'SourceBranchSet' = SourceBranchSet()
+
+    @property
+    def fslt(self) -> SourceBranchSet:
+        """
+        API alias for branch_set
+        """
+        warnings.warn("Please use branch_set property instead", DeprecationWarning)
+        return self.branch_set
+
+    @property
+    def slt(self) -> SourceLogicTree:
+        """
+        API alias for slt
+        """
+        warnings.warn("Please use logic_tree property instead", DeprecationWarning)
+        return self.logic_tree
