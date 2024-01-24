@@ -51,7 +51,7 @@ plugins:
       lang: en
   - mkdocstrings:
       watch:
-        - toshi_hazard_store
+        - nzshm_model
 extra:
   social:
     - icon: fontawesome/brands/twitter
