@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from nzshm_model.gmcm_logic_tree import GMCMBranch, GMCMLogicTree
+from nzshm_model.logic_tree import GMCMBranch, GMCMLogicTree
 
 gmcm_json_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.json'
 

@@ -4,7 +4,7 @@ test migration from slt v1 to v2
 import pytest
 
 import nzshm_model
-from nzshm_model.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
+from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
 
 
 @pytest.fixture(scope='module')

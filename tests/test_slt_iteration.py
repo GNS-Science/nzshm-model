@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 
 import nzshm_model
-from nzshm_model.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
-from nzshm_model.source_logic_tree.version2 import SourceBranch, SourceBranchSet
+from nzshm_model.logic_tree import SourceBranch, SourceBranchSet
+from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
 
 
 @pytest.fixture(scope='module')

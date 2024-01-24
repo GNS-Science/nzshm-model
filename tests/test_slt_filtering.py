@@ -4,8 +4,7 @@ test migration from slt v1 to v2
 import pytest
 
 import nzshm_model
-from nzshm_model.source_logic_tree import SourceLogicTree
-from nzshm_model.source_logic_tree.version2 import SourceBranch
+from nzshm_model.logic_tree import SourceBranch, SourceLogicTree
 
 
 ## three example filter functions

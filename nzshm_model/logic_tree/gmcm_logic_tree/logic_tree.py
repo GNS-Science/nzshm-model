@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Type
 
-from nzshm_model.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
+from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 

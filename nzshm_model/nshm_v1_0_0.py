@@ -1,6 +1,6 @@
 #! nshm_v1_0_0.py
 
-import nzshm_model.source_logic_tree.SLT_v8_gmm_v2_final as slt_config
+import nzshm_model.logic_tree.source_logic_tree.SLT_v8_gmm_v2_final as slt_config
 
 from .model import NshmModel
 

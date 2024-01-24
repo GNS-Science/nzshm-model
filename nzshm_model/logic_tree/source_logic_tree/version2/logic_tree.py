@@ -8,7 +8,7 @@ import warnings
 from dataclasses import dataclass, field
 from typing import Dict, List, Type, Union
 
-from nzshm_model.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
+from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .. import BranchAttributeValue

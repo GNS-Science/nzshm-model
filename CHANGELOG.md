@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0] 2024-01-11
+### Added
+ - logic tree base classes
+
+### Changed
+ - source logic tree fault systems now named branch sets. API aliases available for backward compatibility with deprecation warning
+ - source branch tag method changed to property
+
 ## [0.6.0] 2023-12-21
 ### Added
  - GMCM logic tree classes for ground motion model serialization and deserialization (as json or xml)

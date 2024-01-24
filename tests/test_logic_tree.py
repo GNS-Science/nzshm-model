@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from nzshm_model.source_logic_tree.branch_attribute import BranchAttributeSpec
-from nzshm_model.source_logic_tree.version1.logic_tree import (
+from nzshm_model.logic_tree.source_logic_tree.branch_attribute import BranchAttributeSpec
+from nzshm_model.logic_tree.source_logic_tree.version1.logic_tree import (
     Branch,
     BranchAttributeValue,
     CompositeBranch,
@@ -16,7 +16,7 @@ from nzshm_model.source_logic_tree.version1.logic_tree import (
     SourceLogicTree,
     SourceLogicTreeCorrelation,
 )
-from nzshm_model.source_logic_tree.version1.slt_config import from_config
+from nzshm_model.logic_tree.source_logic_tree.version1.slt_config import from_config
 
 
 def test_composite_branch():
@@ -120,7 +120,9 @@ def test_serialise_slt():
 
 class TestSourceLogicTreeSpecification:
     def test_slt_v8(self):
-        config = Path(__file__).parent.parent / 'nzshm_model' / 'source_logic_tree' / 'SLT_v8_gmm_v2_final.py'
+        config = (
+            Path(__file__).parent.parent / 'nzshm_model' / 'logic_tree' / 'source_logic_tree' / 'SLT_v8_gmm_v2_final.py'
+        )
         slt = from_config(config)
 
         slt_spec = slt.derive_spec()

@@ -1,6 +1,10 @@
 import unittest
 
-from nzshm_model.source_logic_tree import BranchAttributeSpec, BranchAttributeValue, SourceLogicTreeCorrelation
+from nzshm_model.logic_tree.source_logic_tree import (
+    BranchAttributeSpec,
+    BranchAttributeValue,
+    SourceLogicTreeCorrelation,
+)
 
 
 class TestFlattenedSourceLogicTree(unittest.TestCase):
