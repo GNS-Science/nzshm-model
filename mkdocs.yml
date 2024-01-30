@@ -52,6 +52,11 @@ plugins:
   - mkdocstrings:
       watch:
         - nzshm_model
+      handlers:
+        python:
+          options:
+            show_submodules: true
+
 extra:
   social:
     - icon: fontawesome/brands/twitter

@@ -1,8 +1,16 @@
 # Changelog
 
+## [0.8.1] 2024-01-30
+
+### Added
+
+- model version module with the documentation
+- a demo for listing the branch properties by a given model version and short name in branch prop module.
+- Test and documentation added
+
 ## [0.8.0] 2024-01-26
 
-### Add
+### Added
 
 - documentation
 
