@@ -1,1 +1,1 @@
-from .logic_tree import SourceBranch, SourceBranchSet, SourceLogicTree
+from .logic_tree import InversionSource, SourceBranch, SourceBranchSet, SourceLogicTree

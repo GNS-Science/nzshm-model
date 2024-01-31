@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Optional
 
 from . import nshm_v1_0_0, nshm_v1_0_4
 
@@ -12,7 +12,7 @@ versions = {
 }
 
 
-def get_model_version(version_id: str) -> Union['NshmModel', None]:
+def get_model_version(version_id: str) -> Optional['NshmModel']:
     """
     Retrieve a model by a specific version
 

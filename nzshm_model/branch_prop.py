@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from nzshm_model import get_model_version
 
 if TYPE_CHECKING:
-    from nzshm_model.logic_tree import SourceBranchSet
+    from nzshm_model.logic_tree import InversionSource, SourceBranchSet
 
 
 def get_branch_set(model_version: str, branch_set_short_name: str) -> "SourceBranchSet":
@@ -26,10 +26,18 @@ def get_branch_set(model_version: str, branch_set_short_name: str) -> "SourceBra
         The details of specified branch set, including weight, values, sources and etc
     """
     model = get_model_version(model_version)
-    slt = model.source_logic_tree().branch_sets
-    return next(filter(lambda item: item.short_name == branch_set_short_name, slt))
+    if model is not None:
+        slt = model.source_logic_tree().branch_sets
+        try:
+            return next(filter(lambda item: item.short_name == branch_set_short_name, slt))
+        except StopIteration:
+            raise ValueError("The branch " + branch_set_short_name + " was not found.")
+    else:
+        raise ValueError("The model " + model_version + " is not valid.")
 
 
 if __name__ == '__main__':
     for each in get_branch_set("NSHM_v1.0.4", 'CRU').branches:
-        print(each.sources[0].inversion_id, each.values, each.weight)
+        source = each.sources[0]
+        if isinstance(source, InversionSource):
+            print(source.inversion_id, each.values, each.weight)
