@@ -52,10 +52,12 @@ plugins:
   - mkdocstrings:
       watch:
         - nzshm_model
+      default_handler: python
       handlers:
         python:
           options:
-            show_submodules: true
+            show_root_heading: true
+            show_root_full_path: false
 
 extra:
   social:
