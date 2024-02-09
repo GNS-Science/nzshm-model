@@ -1,3 +1,6 @@
-::: nzshm_model.model_version.get_model_version
+::: nzshm_model.model_version
 
-::: nzshm_model.branch_prop.get_branch_set
+::: nzshm_model.branch_prop
+
+::: nzshm_model.logic_tree.logic_tree_base
+
