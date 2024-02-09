@@ -19,6 +19,10 @@ GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
 
 
 class NshmModel:
+    """
+    NshmModel represents a complete National Seismic Hazard Model
+    """
+
     def __init__(self, version, title, slt_json, gmm_xml, slt_config):
         self.version = version
         self.title = title

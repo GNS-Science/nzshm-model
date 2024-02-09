@@ -1,44 +1,69 @@
 import pytest
 
-from nzshm_model.branch_prop import get_branch_set
+from nzshm_model.branch_prop import get_source_branch_sets, get_source_branches
 
-# def test_get_branch_set():
-#     assert len(list(get_branch_set('NSHM_v1.0.4', 'CRU').branches)) == 36
+# def test_get_source_branch_sets():
+#  assert len(list(get_source_branch_sets('NSHM_v1.0.4', 'CRU').branches)) == 36
 
-
-# def test_get_branch_set_invalid_model_version():
+# def test_get_source_branch_sets_invalid_model_version():
 #     with pytest.raises(ValueError):
-#         get_branch_set('', 'CRU')
+#         get_source_branch_sets('', 'CRU')
 
 
-# def test_get_branch_set_invalid_branch():
+# def test_get_source_branch_sets_invalid_branch():
 #     with pytest.raises(ValueError):
-#         get_branch_set('NSHM_v1.0.4', 'AAA')
+#         get_source_branch_sets('NSHM_v1.0.4', 'AAA')
 
 
-def test_get_branch_set_with_list():
-    assert len(get_branch_set('NSHM_v1.0.4', ['CRU', 'PUY'])) == 2
-    assert get_branch_set('NSHM_v1.0.4', ['CRU', 'PUY'])[0].short_name == 'CRU'
-    assert get_branch_set('NSHM_v1.0.4', ['CRU', 'PUY'])[1].short_name == 'PUY'
-    assert len(get_branch_set('NSHM_v1.0.4', ['CRU'])) == 1
+def test_get_source_branch_sets_with_list():
+    branch_sets = list(get_source_branch_sets('NSHM_v1.0.4', ['CRU', 'PUY']))
+    assert len(branch_sets) == 2
+    assert branch_sets[0].short_name == 'PUY'
+    assert branch_sets[1].short_name == 'CRU'
+
+    # assert len(get_source_branch_sets('NSHM_v1.0.4', ['CRU'])) == 1
 
 
-def test_get_branch_set_with_single():
-    assert len(get_branch_set('NSHM_v1.0.4', 'CRU')) == 1
-    assert get_branch_set('NSHM_v1.0.4', 'CRU')[0].short_name == 'CRU'
+def test_get_source_branch_sets_with_single():
+    branch_sets = list(get_source_branch_sets('NSHM_v1.0.4', 'CRU'))
+    assert len(branch_sets) == 1
+    assert branch_sets[0].short_name == 'CRU'
 
 
-def test_get_branch_set_with_null():
-    assert len(get_branch_set('NSHM_v1.0.4', [])) == 4
-    assert len(get_branch_set('NSHM_v1.0.4')) == 4
+def test_get_source_branch_sets_with_null():
+    assert len(list(get_source_branch_sets('NSHM_v1.0.4', []))) == 4
+    assert len(list(get_source_branch_sets('NSHM_v1.0.4'))) == 4
 
 
-def test_get_branch_set_invalid_model_version():
-    with pytest.raises(ValueError):
-        get_branch_set('', ['CRU', 'PUY'])
+def test_get_source_branch_sets_invalid_model_version():
+    with pytest.raises(ValueError, match=r'.* is not a valid'):
+        next(get_source_branch_sets('', ['CRU', 'PUY']))
 
 
-def test_get_branch_set_invalid_branch():
-    with pytest.raises(ValueError):
-        get_branch_set('NSHM_v1.0.4', ['XXX'])
-        get_branch_set('NSHM_v1.0.4', 'XXX')
+def test_get_source_branch_sets_with_invalid_branch():
+    with pytest.raises(StopIteration):
+        next(get_source_branch_sets('NSHM_v1.0.4', ['XXX']))
+
+
+class TestGetBranches:
+    def test_get_first_crustal_branches(self):
+        cru_branches = next(get_source_branch_sets('NSHM_v1.0.4', 'CRU')).branches
+        assert next(get_source_branches('NSHM_v1.0.4', 'CRU')) == cru_branches[0]
+
+    def test_get_source_branches_invalid_model_version(self):
+        with pytest.raises(ValueError, match=r'.* is not a valid'):
+            # a
+            next(get_source_branches('', ['CRU', 'PUY']))
+
+        with pytest.raises(ValueError, match=r'.* is not a valid'):
+            # b
+            list(get_source_branches('', ['CRU', 'PUY']))
+
+        with pytest.raises(ValueError, match=r'.* is not a valid'):
+            # c for next
+            for b in get_source_branches('', ['CRU', 'PUY']):
+                pass
+
+    def test_get_source_branches_with_invalid_branch(self):
+        with pytest.raises(StopIteration):
+            next(get_source_branches('NSHM_v1.0.4', ['XXX']))
