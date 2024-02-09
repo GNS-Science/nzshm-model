@@ -36,10 +36,3 @@ def test_source_logic_tree_in_all_models(model_version):
     new_api_fslt = slt.branch_sets[0]
 
     assert old_api_fslt is new_api_fslt
-
-@pytest.mark.skip('TODO')
-def test_invalid_model_version_raises():
-    with pytest.raises(Exception, match=r'must be \d+$') as exc:
-        m = nzshm_model.get_model_version('XXX')
-        print(m)
-        assert 0

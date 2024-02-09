@@ -2,17 +2,18 @@
 Helper functions to give easy access to the main SLT dataclasses.
 """
 
-from typing import Iterator
+from typing import Iterator, List, Union
 
-from nzshm_model import get_model_version
-from nzshm_model.logic_tree import SourceBranchSet, SourceBranch
+from nzshm_model.logic_tree import SourceBranch, SourceBranchSet
+from nzshm_model.model_version import get_model_version
 
-def get_source_branch_sets(model_version: str, short_names: list = None) -> Iterator['SourceBranchSet']:
+
+def get_source_branch_sets(model_version: str, short_names: Union[List[str], str, None] = None) -> Iterator['SourceBranchSet']:
     """
     get the SourceBranchSets for the specific model version, and branch set name(s).
 
     Examples:
-        >>>  for branch_set in get_branch_set("NSHM_v1.0.4", ['CRU', 'PUY']):
+        >>>  for branch_set in get_branch_sets("NSHM_v1.0.4", ['CRU', 'PUY']):
                 print(branch_set.short_name, len(branch_set.branches))
         >>>
         CRU 36
@@ -25,17 +26,21 @@ def get_source_branch_sets(model_version: str, short_names: list = None) -> Iter
     Yields:
         iterator of branch_set objects
     """
+    # if type(short_names) == str:
+    list_short_names: List[str] = [short_names] if type(short_names) == str else short_names
+
     model = get_model_version(model_version)
     if model is None:
         raise ValueError(model_version + " is not a valid model version.")
 
-    if not short_names: # User passes either an empty list or None
+    if not short_names:  # User passes either an empty list or None
         for branch_set in model.source_logic_tree().branch_sets:
             yield branch_set
     else:
         # user has passes a list of short_names
-        for branch_set in filter(lambda item: item.short_name in short_names, model.source_logic_tree().branch_sets):
+        for branch_set in filter(lambda item: item.short_name in list_short_names, model.source_logic_tree().branch_sets):
             yield branch_set
+
 
 def get_source_branches(model_version: str, short_names: list = None) -> Iterator['SourceBranch']:
     """
@@ -50,7 +55,8 @@ def get_source_branches(model_version: str, short_names: list = None) -> Iterato
     """
     for branch_set in get_source_branch_sets(model_version, short_names):
         for branch in branch_set.branches:
-            yield(branch)
+            yield (branch)
+
 
 # def get_branches(model_version: str, branch_set_short_name_list: list = None):
 #     model = get_model_version(model_version)

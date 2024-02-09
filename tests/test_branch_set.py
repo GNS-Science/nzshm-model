@@ -1,6 +1,5 @@
 import pytest
 
-import nzshm_model
 from nzshm_model.branch_prop import get_source_branch_sets, get_source_branches
 
 # def test_get_source_branch_sets():
@@ -37,24 +36,33 @@ def test_get_source_branch_sets_with_null():
 
 
 def test_get_source_branch_sets_invalid_model_version():
-    with pytest.raises(ValueError, match=r'.* is not a valid') as exc:
+    with pytest.raises(ValueError, match=r'.* is not a valid'):
         next(get_source_branch_sets('', ['CRU', 'PUY']))
+
 
 def test_get_source_branch_sets_with_invalid_branch():
     with pytest.raises(StopIteration):
         next(get_source_branch_sets('NSHM_v1.0.4', ['XXX']))
 
 
-
-class TestGetBranches():
-
-    def test_get_all_crustal_branches(self):
+class TestGetBranches:
+    def test_get_first_crustal_branches(self):
         cru_branches = next(get_source_branch_sets('NSHM_v1.0.4', 'CRU')).branches
         assert next(get_source_branches('NSHM_v1.0.4', 'CRU')) == cru_branches[0]
 
     def test_get_source_branches_invalid_model_version(self):
-        with pytest.raises(ValueError, match=r'.* is not a valid') as exc:
+        with pytest.raises(ValueError, match=r'.* is not a valid'):
+            # a
             next(get_source_branches('', ['CRU', 'PUY']))
+
+        with pytest.raises(ValueError, match=r'.* is not a valid'):
+            # b
+            list(get_source_branches('', ['CRU', 'PUY']))
+
+        with pytest.raises(ValueError, match=r'.* is not a valid'):
+            # c for next
+            for b in get_source_branches('', ['CRU', 'PUY']):
+                pass
 
     def test_get_source_branches_with_invalid_branch(self):
         with pytest.raises(StopIteration):
