@@ -1,0 +1,9 @@
+This package provides support for specifc PSHA definitions of Logic Trees. E.g for Openquake logic trees are defined
+using NRML XML format.
+
+a PSHA adapter implementation should provide the necessary methods to convert to and from the PSHA-specifc logic tree and their equivalent in the nzhsm_model package.
+
+
+TODO: complete these docs
+
+::: nzshm_model.psha_adapter

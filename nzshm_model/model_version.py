@@ -1,25 +1,12 @@
-from typing import TYPE_CHECKING, Optional
+"""
+The model version module defines the availabe models
 
-from . import nshm_v1_0_0, nshm_v1_0_4
+Attributes:
+    versions (Dict[str, str]): a mapping from model version string to its module name
 
-if TYPE_CHECKING:
-    from .model import NshmModel
-
+"""
 
 versions = {
-    "NSHM_v1.0.0": nshm_v1_0_0.model,
-    "NSHM_v1.0.4": nshm_v1_0_4.model,
+    "NSHM_v1.0.0": 'nzshm_model.nshm_v1_0_0',
+    "NSHM_v1.0.4": 'nzshm_model.nshm_v1_0_4',
 }
-
-
-def get_model_version(version_id: str) -> Optional['NshmModel']:
-    """
-    Retrieve a model by a specific version
-
-    Parameters:
-        version_id: The unique identifier for the model version.
-
-    Yields:
-        The specified model version. if found, or None if the version does not exist.
-    """
-    return versions.get(version_id)

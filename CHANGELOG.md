@@ -1,12 +1,19 @@
 # Changelog
 
-## [0.8.1] 2024-01-31
+## [0.9.0] 2024-02-
+
+### Changed
+ - default model version is now NSHM_v.1.0.4
+ - code refactoring to improve docs and tests
+ - NshmModel gmm_logic_treee and source_logic_tree are not propterties
+ - get_model_version in nzshm_model is now a wrapper for the underlying NzshmModel implementation
 
 ### Added
-
-- documentation to get model version
-- a demo for listing the branch properties by a given model version and short name
-- the doc and tests added as well
+- documentation setup
+- new NshmModel methods
+  - get_model_version
+  - get_source_branch_sets
+- more test coverage
 
 ## [0.8.0] 2024-01-26
 

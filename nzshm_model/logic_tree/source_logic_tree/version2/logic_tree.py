@@ -67,7 +67,23 @@ class SourceLogicTreeSpec:
 
 @dataclass
 class SourceLogicTree(LogicTree):
-    branch_sets: List[SourceBranchSet] = field(default_factory=list)
+    """The summary line for a class docstring should fit on one line.
+
+    If the class has public attributes, they may be documented here
+    in an ``Attributes`` section and follow the same formatting as a
+    function's ``Args`` section. Alternatively, attributes may be documented
+    inline with the attribute's declaration (see __init__ method below).
+
+    Properties created with the ``@property`` decorator should be documented
+    in the property's getter method.
+
+    Attributes:
+        branch_sets: Description of `attr1`.
+        logic_tree_version: Description of `attr2`.
+
+    """
+
+    branch_sets: List[SourceBranchSet] = field(default_factory=list)  # branch_sets for this logic tree
     logic_tree_version: Union[int, None] = 2
 
     # correlations: List[SourceLogicTreeCorrelation] = field(
