@@ -215,7 +215,7 @@ class SourceLogicTree(LogicTree):
 
         Arguments:
             provider: the adapter class
-            **kwargs: additional arguments required by the provide class
+            **kwargs: additional arguments required by the provider class
 
         Returns:
             a PSHA Adapter instance

@@ -1,15 +1,22 @@
 """
 This is the top-level package for nzshm_model.
 
-NshmModel is the pure representation of an NSHM Logic Tree whcih includes both **Source** and
+NshmModel is a general representation of an NSHM Logic Tree which includes both **Source** and
 **Ground Motion Model (GMM)** logic trees.
 
+## PSHA abstraction and adapters
+
+PSHA applications (such as Openquake, and USGS-PHaz provide methods for calculating hazard based on input models.
+
+PSHA adapter classes convert to/from the internal NSHM source models to the form required by a PSHA tool.
+This lets us support different PSHA engines, although currently only an **openquake** adapter
+is implemented.
+
+Note that NSHM GMM logic trees use the same serialised form as openquake, so no abstraction is provided.
+
 Todo:
-
  - about flattening
- - about PSHA-abstraction (esp openquake example)
  - about correlations
-
 
 Examples:
     >>> import nzshm_model as nm

@@ -1,3 +1,7 @@
+"""
+This module contains abstract base classes common to both **Source** and
+**Ground Motion Model (GMM)** logic trees.
+"""
 import copy
 import json
 from abc import ABC, ABCMeta, abstractclassmethod
@@ -97,7 +101,7 @@ class LogicTree(ABC):
         """
         Build a complete LogicTree from a iterable of branches.
 
-        We expect that all the branhches have come from a single LogicTree.
+        We expect that all the branches have come from a single LogicTree.
         """
 
         def match_branch_set(slt: LogicTree, fb):

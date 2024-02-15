@@ -128,7 +128,7 @@ class NshmModel:
 
         Examples:
             >>>  model = get_model_version("NSHM_v1.0.4")
-            >>>  for branch_set in model.get_branch_sets(['CRU', 'PUY']):
+            >>>  for branch_set in model.get_source_branch_sets(['CRU', 'PUY']):
                     print(branch_set.short_name, len(branch_set.branches))
             >>>
             CRU 36
