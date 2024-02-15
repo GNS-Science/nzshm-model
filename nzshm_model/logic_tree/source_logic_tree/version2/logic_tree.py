@@ -1,5 +1,5 @@
 """
-Define source logic tree structures used in NSHM.
+Defines source logic tree structures used in NSHM.
 """
 import copy
 import warnings
@@ -41,7 +41,7 @@ class InversionSource:
 @dataclass
 class DistributedSource:
     """
-    A griddedhazard source built from background (off-fault) seismic rate model
+    A gridded hazard source built from a background (off-fault) seismic rate model
 
     Contains the specific identifiers used in NSHM Toshi API.
 
@@ -59,7 +59,7 @@ class DistributedSource:
 @dataclass
 class SourceBranch(Branch):
     """
-    A source branch can contain multiple sources
+    A source branch can contain multiple sources.
 
     Contains the specific identifiers used in NSHM Toshi API.
 
@@ -74,12 +74,25 @@ class SourceBranch(Branch):
     rupture_rate_scaling: float = 1.0
 
     def filtered_branch(self, logic_tree: 'LogicTree', branch_set: 'BranchSet') -> 'FilteredBranch':
-        """get a filtered branch containing reference to parent instances."""
+        """get a filtered branch containing reference to parent instances.
+
+        Arguments:
+            logic_tree: the source_logic_tree containing the branch
+            branch_set: the branch_set containing the branch
+
+        Returns:
+            a SourceFilteredBranch instance
+        """
         return SourceFilteredBranch(logic_tree=logic_tree, branch_set=branch_set, **self.__dict__)
 
     @property
-    def tag(self):
-        """A string representation of the the list of values list(BranchAttributeValue)"""
+    def tag(self) -> str:
+        """tag identifies a branch based on its values (BranchAttributeValue).
+
+        Returns:
+            a string representation of the the list of values
+
+        """
         return str(self.values)
 
 
@@ -139,6 +152,9 @@ class SourceLogicTree(LogicTree):
 
         Arguments:
             data: a dictionary of the SourceLogicTree properties.
+
+        Returns:
+            a new SourceLogicTree instance
         """
         ltv = data.get("logic_tree_version")
         if not ltv == 2:
@@ -152,6 +168,9 @@ class SourceLogicTree(LogicTree):
 
         Arguments:
             original_slt: a v1 SourceLogicTree instance.
+
+        Returns:
+            a new SourceLogicTree instance
         """
         if not isinstance(original_slt, SourceLogicTreeV1):
             raise ValueError(f"supplied object of {type(original_slt)} is not supported.")
@@ -197,19 +216,34 @@ class SourceLogicTree(LogicTree):
         Arguments:
             provider: the adapter class
             **kwargs: additional arguments required by the provide class
+
+        Returns:
+            a PSHA Adapter instance
         """
         return provider(source_logic_tree=self)
 
 
 @dataclass
 class SourceFilteredBranch(FilteredBranch, SourceBranch):
+    """A logic tree source branch with additional properties
+
+    Used to represent a branch that has been pruned (filtered) from a
+    complete Source Logic Tree (SLT). The additional properties make the prundd branch
+    traceable to its original SLT.
+
+    Attributes:
+        logic_tree: the source_logic_tree containing the branch
+        branch_set: the branch_set containing the branch
+
+    """
+
     logic_tree: 'LogicTree' = SourceLogicTree()
     branch_set: 'BranchSet' = SourceBranchSet()
 
     @property
     def fslt(self) -> 'BranchSet':
         """
-        API alias for branch_set (Deprecated)
+        API alias for branch_set (deprecated)
         """
         warnings.warn("Please use branch_set property instead", DeprecationWarning)
         return self.branch_set
@@ -217,7 +251,7 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
     @property
     def slt(self) -> 'LogicTree':
         """
-        API alias for slt (Deprecated)
+        API alias for slt (deprecated)
         """
         warnings.warn("Please use logic_tree property instead", DeprecationWarning)
         return self.logic_tree
