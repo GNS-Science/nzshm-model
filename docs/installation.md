@@ -2,17 +2,22 @@
 
 ## Stable release
 
-To install nzshm-model, run this command in your
+To install nzshm-model, run one of these commands in your
 terminal:
 
-```console
+### using pip
+
+``` console
 $ pip install nzshm-model
 ```
 
-This is the preferred method to install nzshm-model, as it will always install the most recent stable release.
+### using  poetry
 
-If you don't have [pip][] installed, this [Python installation guide][]
-can guide you through the process.
+``` console
+$ poetry add nzshm-model
+```
+
+These are the preferred method to install nzshm-model, as they will always install the most recent stable release.
 
 ## From source
 
@@ -35,6 +40,11 @@ Once you have a copy of the source, you can install it with:
 
 ```console
 $ pip install .
+```
+or
+
+```console
+$ poetry install
 ```
 
 [pip]: https://pip.pypa.io

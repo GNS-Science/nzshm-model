@@ -1,12 +1,10 @@
-#! logic_tree_version_2.py
-
 """
 Define source logic tree structures used in NSHM.
 """
 import copy
 import warnings
 from dataclasses import dataclass, field
-from typing import Dict, List, Type, Union
+from typing import Dict, List, Optional, Type, Union
 
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
@@ -18,6 +16,20 @@ from ..version1 import SourceLogicTree as SourceLogicTreeV1
 
 @dataclass
 class InversionSource:
+    """
+    A hazard source built from an NSHM Grand Inversion experiment
+
+    Contains the specific identifiers used in NSHM Toshi API.
+
+    Attributes:
+        nrml_id: toshi_id for a NRML source file (needed by openquake)
+        rupture_rate_scaling: the scaling ratio
+        inversion_id: toshi_id for the source inversion solution
+        rupture_set_id: toshi_id for the source rupture set
+        inversion_solution_type: type (if any) of the source inversion solution
+        type: constant "inversion"
+    """
+
     nrml_id: str
     rupture_rate_scaling: Union[float, None] = None  # TODO: needed at this level??
     inversion_id: Union[str, None] = ""
@@ -28,6 +40,17 @@ class InversionSource:
 
 @dataclass
 class DistributedSource:
+    """
+    A griddedhazard source built from background (off-fault) seismic rate model
+
+    Contains the specific identifiers used in NSHM Toshi API.
+
+    Attributes:
+        nrml_id: toshi_id for a NRML source file (needed by openquake)
+        rupture_rate_scaling: the scaling ratio
+        type: constant "distributed"
+    """
+
     nrml_id: str
     rupture_rate_scaling: Union[float, None] = None  # TODO: needed at this level??
     type: str = "distributed"
@@ -35,31 +58,52 @@ class DistributedSource:
 
 @dataclass
 class SourceBranch(Branch):
+    """
+    A source branch can contain multiple sources
+
+    Contains the specific identifiers used in NSHM Toshi API.
+
+    Attributes:
+        values: list of attribute values that define the branch.
+        sources: list of branch sources.
+        rupture_rate_scaling: the scaling ratio.
+    """
+
     values: List[BranchAttributeValue] = field(default_factory=list)
     sources: List[Union[DistributedSource, InversionSource]] = field(default_factory=list)
     rupture_rate_scaling: float = 1.0
 
-    def filtered_branch(self, logic_tree, branch_set):
+    def filtered_branch(self, logic_tree: 'LogicTree', branch_set: 'BranchSet') -> 'FilteredBranch':
+        """get a filtered branch containing reference to parent instances."""
         return SourceFilteredBranch(logic_tree=logic_tree, branch_set=branch_set, **self.__dict__)
 
     @property
     def tag(self):
+        """A string representation of the the list of values list(BranchAttributeValue)"""
         return str(self.values)
 
 
 @dataclass
 class SourceBranchSet(BranchSet):
+    """A list of Source Branches.
+
+    Attributes:
+        branches: list of branches.
+    """
+
     branches: List[SourceBranch] = field(default_factory=list)
 
 
 @dataclass
 class SourceLogicTreeSpec:
+    """Is this used anymore?"""
+
     branch_sets: List[BranchSetSpec] = field(default_factory=list)
 
     @property
     def fault_systems(self):
         """
-        API alias for branch_sets
+        API alias for branch_sets (deprecated)
         """
         warnings.warn("Please use branch_sets property instead", DeprecationWarning)
         return self.branch_sets
@@ -67,19 +111,11 @@ class SourceLogicTreeSpec:
 
 @dataclass
 class SourceLogicTree(LogicTree):
-    """The summary line for a class docstring should fit on one line.
-
-    If the class has public attributes, they may be documented here
-    in an ``Attributes`` section and follow the same formatting as a
-    function's ``Args`` section. Alternatively, attributes may be documented
-    inline with the attribute's declaration (see __init__ method below).
-
-    Properties created with the ``@property`` decorator should be documented
-    in the property's getter method.
+    """A dataclass representing a source logic tree
 
     Attributes:
-        branch_sets: Description of `attr1`.
-        logic_tree_version: Description of `attr2`.
+        branch_sets: list of branch sets in this tree
+        logic_tree_version: constant = 2
 
     """
 
@@ -98,7 +134,12 @@ class SourceLogicTree(LogicTree):
         # return slt_spec
 
     @classmethod
-    def from_dict(cls, data: Dict):
+    def from_dict(cls, data: Dict) -> 'LogicTree':
+        """build a new instance from a dict represention.
+
+        Arguments:
+            data: a dictionary of the SourceLogicTree properties.
+        """
         ltv = data.get("logic_tree_version")
         if not ltv == 2:
             raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
@@ -107,7 +148,10 @@ class SourceLogicTree(LogicTree):
     @staticmethod
     def from_source_logic_tree(original_slt: "SourceLogicTreeV1") -> "SourceLogicTree":
         """
-        Migrate from old version slt.
+        Migrate from old version one of slt.
+
+        Arguments:
+            original_slt: a v1 SourceLogicTree instance.
         """
         if not isinstance(original_slt, SourceLogicTreeV1):
             raise ValueError(f"supplied object of {type(original_slt)} is not supported.")
@@ -134,7 +178,7 @@ class SourceLogicTree(LogicTree):
     @property
     def fault_system_lts(self):
         """
-        API alias for branch_sets
+        API alias for branch_sets (deprecated)
         """
         warnings.warn("Please use branch_sets property instead", DeprecationWarning)
         return self.branch_sets
@@ -142,32 +186,38 @@ class SourceLogicTree(LogicTree):
     @property
     def fault_systems(self):
         """
-        API alias for branch_sets
+        API alias for branch_sets (deprecated)
         """
         warnings.warn("Please use branch_sets property instead", DeprecationWarning)
         return self.branch_sets
 
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
+    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
+        """get a PSHA adapter for this instance.
+
+        Arguments:
+            provider: the adapter class
+            **kwargs: additional arguments required by the provide class
+        """
         return provider(source_logic_tree=self)
 
 
 @dataclass
 class SourceFilteredBranch(FilteredBranch, SourceBranch):
-    logic_tree: 'SourceLogicTree' = SourceLogicTree()
-    branch_set: 'SourceBranchSet' = SourceBranchSet()
+    logic_tree: 'LogicTree' = SourceLogicTree()
+    branch_set: 'BranchSet' = SourceBranchSet()
 
     @property
-    def fslt(self) -> SourceBranchSet:
+    def fslt(self) -> 'BranchSet':
         """
-        API alias for branch_set
+        API alias for branch_set (Deprecated)
         """
         warnings.warn("Please use branch_set property instead", DeprecationWarning)
         return self.branch_set
 
     @property
-    def slt(self) -> SourceLogicTree:
+    def slt(self) -> 'LogicTree':
         """
-        API alias for slt
+        API alias for slt (Deprecated)
         """
         warnings.warn("Please use logic_tree property instead", DeprecationWarning)
         return self.logic_tree

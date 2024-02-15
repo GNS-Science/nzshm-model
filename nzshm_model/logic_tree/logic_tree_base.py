@@ -17,7 +17,7 @@ class Branch(ABC):
     weight: float = 1.0
 
     @abstractclassmethod
-    def filtered_branch(self):
+    def filtered_branch(self, logic_tree: 'LogicTree', branch_set: 'BranchSet'):
         """
         Produce a new filtered branch with the properties of the branch
         """

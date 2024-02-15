@@ -2,16 +2,22 @@ import pytest
 
 import nzshm_model as nm
 
+CURRENT_MODEL = 'NSHM_v1.0.4'
+
 
 @pytest.fixture(scope="module")
 def model_104():
-    yield nm.model.NshmModel.get_model_version('NSHM_v1.0.4')
-    # yield nm.get_model_version("NSHM_v1.0.4")
+    # yield nm.model.NshmModel.get_model_version(CURRENT_MODEL)
+    yield nm.get_model_version(CURRENT_MODEL)
+
+
+def test_list_all_models():
+    assert CURRENT_MODEL in nm.all_model_versions()
 
 
 class TestLoadModel:
     def test_load_model_104(self):
-        model = nm.model.NshmModel.get_model_version("NSHM_v1.0.4")
+        model = nm.model.NshmModel.get_model_version(CURRENT_MODEL)
         assert model
 
     def test_model_104_title(self, model_104):

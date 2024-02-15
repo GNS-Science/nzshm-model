@@ -5,8 +5,25 @@ Attributes:
     versions (Dict[str, str]): a mapping from model version string to its module name
 
 """
+from typing import List
 
-versions = {
-    "NSHM_v1.0.0": 'nzshm_model.nshm_v1_0_0',
-    "NSHM_v1.0.4": 'nzshm_model.nshm_v1_0_4',
-}
+from .model import NshmModel, versions
+
+CURRENT_VERSION = "NSHM_v1.0.4"
+
+
+def all_model_versions() -> List[str]:
+    """
+    get the list of available model versions
+    """
+    return list(versions.keys())
+
+
+def get_model_version(version: str = CURRENT_VERSION) -> 'NshmModel':
+    """
+    A simple wrapper for the underlying NshmModel static method
+
+    Returns:
+        the model instance.
+    """
+    return NshmModel.get_model_version(version)

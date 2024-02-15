@@ -1,3 +1,6 @@
+"""
+NshmModel class describes a complete National Seismic Hazard Model.
+"""
 import json
 import warnings
 from pathlib import Path
@@ -5,7 +8,6 @@ from typing import TYPE_CHECKING, Iterator, List, Union, cast
 
 from nzshm_model.logic_tree import SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
-from nzshm_model.model_version import versions
 from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
 
 if TYPE_CHECKING:
@@ -14,6 +16,11 @@ if TYPE_CHECKING:
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
 GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
+
+versions = {
+    "NSHM_v1.0.0": 'nzshm_model.nshm_v1_0_0',
+    "NSHM_v1.0.4": 'nzshm_model.nshm_v1_0_4',
+}
 
 
 # https://stackoverflow.com/questions/48976499/mypy-importlib-module-functions
@@ -37,7 +44,7 @@ class NshmModel:
         Create a new NshmModel instance.
 
         NB library users will typically never use this, rather they will obtain a model instance
-        using static :meth:`get_model_version`.
+        using static method: `get_model_version`.
         """
         self.version = version
         self.title = title
