@@ -3,6 +3,9 @@ site_url: https://GNS-Science.github.io/nzshm-model
 repo_url: https://github.com/GNS-Science/nzshm-model
 repo_name: GNS-Science/nzshm-model
 #strict: true
+watch:
+  - nzshm_model
+  - docs
 nav:
   - Home: index.md
   - Installation: installation.md
@@ -30,8 +33,10 @@ theme:
     - navigation.tabs.sticky
 markdown_extensions:
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      # emoji_index: !!python/name:materialx.emoji.twemoji
+      # emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.critic
   - pymdownx.caret
   - pymdownx.mark
@@ -49,15 +54,14 @@ markdown_extensions:
   - toc:
       baselevel: 2
       permalink: true
-      slugify: !!python/name:pymdownx.slugs.uslugify
+      slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}
+      # permalink: "\ue157"
   - meta
 plugins:
   - include-markdown
   - search:
       lang: en
   - mkdocstrings:
-      watch:
-        - nzshm_model
       default_handler: python
       handlers:
         python:
