@@ -11,12 +11,12 @@ nav:
   - Installation: installation.md
   - Usage: usage.md
   - API Reference:
-    - nzshm_model: nzshm_model_api.md
-    - NshmModel (class): model_api.md
+    - nzshm_model: api/nzshm_model.md
+    - NshmModel (class): api/model.NshmModel.md
     - logic_tree (package):
         - logic_tree_base: api/logic_tree/logic_tree_base.md
         - source_logic_tree: api/logic_tree/source_logic_tree.md
-    - psha_adapter: psha_adapter_api.md
+    - psha_adapter: api/psha_adapter.md
   - Contributing: contributing.md
   - Changelog: changelog.md
 theme:
