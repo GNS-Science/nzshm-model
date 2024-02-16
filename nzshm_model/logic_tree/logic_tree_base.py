@@ -53,6 +53,7 @@ def list_of_lists():
     return  [[]]
 
 # TODO: don't like that correlations = LogicTreeCorrelations(); correlations.correlations, feels like an awkward API
+# does this need to be abstract?
 @dataclass(frozen=True)
 class LogicTreeCorrelations(Sequence, metaclass=ABCMeta):
     correlations: List[List[Branch]] = field(default_factory=list_of_lists)
@@ -63,7 +64,7 @@ class LogicTreeCorrelations(Sequence, metaclass=ABCMeta):
         self.check_correlations()
 
         # check that the number of weights supplied matches the number of correlations
-        if (self.weights) and (len(self.weights) != len(self._correlations)):
+        if (self.weights) and (len(self.weights) != len(self.correlations)):
             raise ValueError("length of weights must equal the number of correlations")
 
     def primary_branches(self) -> Generator[Branch, None, None]:
@@ -76,15 +77,6 @@ class LogicTreeCorrelations(Sequence, metaclass=ABCMeta):
         prim_branches = [cor[0] for cor in self.correlations if cor]
         if [branch for branch in prim_branches if prim_branches.count(branch)>1]:
             raise ValueError("there is a repeated branch in the 0th element of the correlations")
-
-    # @property
-    # def correlations(self) -> List[List[Branch]]:
-    #     return self._correlations
-    
-    # @correlations.setter
-    # def correlations(self, value: List[List[Branch]]) -> None:
-    #     self.check_correlations(value)
-    #     self._correlations = value
 
     def __getitem__(self, i: int) -> List[Branch]:
         return self.correlations[i]
@@ -122,15 +114,13 @@ class LogicTree(ABC):
     def __post_init__(self) -> None:
         self.check_correlations()
 
-    # def __setattr__(self, __name: str, __value: Any) -> None:
-    #     if __name == "correlations":
-    #         raise AttributeError("correlations cannot be set for calss LogicTree")
-    #     return super().__setattr__(__name, __value)
+    def __setattr__(self, __name: str, __value: Any) -> None:
+        super().__setattr__(__name, __value)
+        if __name == "correlations":
+            # self.correlations = __value
+            self.check_correlations()
+        # else:
 
-    # def __delattr__(self, __name: str) -> None:
-    #     if __name == "correlations":
-    #         raise AttributeError("correlations cannot be deleted for calss LogicTree")
-    #     return super().__delattr__(__name)
 
     def check_correlations(self) -> None:
         # check that the weights total 1.0
@@ -163,19 +153,11 @@ class LogicTree(ABC):
                 else:
                     # set the weight
                     if self.correlations.weights:
-                        combined_branch.weight = self.correlations.weight[i_cor]
+                        combined_branch.weight = self.correlations.weights[i_cor]
                     else:
                         combined_branch.weight = self.correlations[i_cor][0].weight  # weight of primary branch of relevent correlation
             yield combined_branch
             
-    # @property
-    # def correlations(self) -> LogicTreeCorrelations:
-    #     return self.correlations
-    
-    # @correlations.setter
-    # def correlations(self, value: LogicTreeCorrelations) -> None:
-    #     self.correlations = value  # this feels a bit out of order, but an exception will be raised if the correlations don't result in sum(weights) == 1.0
-    #     self.check_correlations()
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
