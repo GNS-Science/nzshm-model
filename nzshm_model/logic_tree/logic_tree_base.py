@@ -5,7 +5,7 @@ This module contains abstract base classes common to both **Source** and
 import copy
 import json
 import math
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
@@ -269,7 +269,7 @@ class LogicTree(ABC):
 
 # this should never be serialised, only used for filtering
 @dataclass
-class FilteredBranch(Branch, metaclass=ABCMeta):
+class FilteredBranch(Branch):
     logic_tree: LogicTree = field(default_factory=LogicTree)
     branch_set: BranchSet = field(default_factory=BranchSet)
 
