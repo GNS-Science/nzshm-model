@@ -1,12 +1,14 @@
 # Changelog
 
-## [0.9.0] 2024-02-
+## [0.8.0] 2024-02-16
 
 ### Changed
- - default model version is now NSHM_v.1.0.4
- - code refactoring to improve docs and tests
- - NshmModel gmm_logic_treee and source_logic_tree are not propterties
- - get_model_version in nzshm_model is now a wrapper for the underlying NzshmModel implementation
+- default model version is now NSHM_v.1.0.4
+- code refactoring to improve docs and tests
+- NshmModel gmm_logic_treee and source_logic_tree are now properties not functions()
+- get_model_version in nzshm_model is now a wrapper for the underlying NzshmModel implementation
+- added mkdocs-click for cli docs
+- removed stale code from scripts
 
 ### Added
 - documentation setup
@@ -14,12 +16,8 @@
   - get_model_version
   - get_source_branch_sets
 - more test coverage
-
-## [0.8.0] 2024-01-26
-
-### Added
-
-- documentation
+- API documentation
+- scripts documentation
 
 ## [0.7.0] 2024-01-11
 
