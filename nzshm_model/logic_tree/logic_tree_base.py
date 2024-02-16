@@ -66,29 +66,38 @@ class Correlation:
 
 
 # TODO: don't like that correlations = LogicTreeCorrelations(); correlations.correlations, feels like an awkward API
-# does this need to be abstract?
 @dataclass(frozen=True)
 class LogicTreeCorrelations(Sequence):
     correlations: List[Correlation] = field(default_factory=list)
     weights: List[float] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        # check that the list of correlations is correct
-        self.check_correlations()
-
-        # check that the number of weights supplied matches the number of correlations
-        if (self.weights) and (len(self.weights) != len(self.correlations)):
+        """
+        check that the list of correlations is correct
+        """
+        if not self.validate_correlations():
+            raise ValueError("there is a repeated branch in the 0th element of the correlations")
+        if not self.validate_weights():
             raise ValueError("length of weights must equal the number of correlations")
+
+    def validate_weights(self) -> bool:
+        """
+        check that the number of weights supplied matches the number of correlations
+        """
+        if self.weights:
+            return len(self.weights) == len(self.correlations)
+        return True
+
+    def validate_correlations(self) -> bool:
+        """
+        check that there are no repeats in the 0th element of each correlation
+        """
+        prim_branches = list(self.primary_branches())
+        return len([branch for branch in prim_branches if prim_branches.count(branch) > 1]) == 0
 
     def primary_branches(self) -> Generator[Branch, None, None]:
         for cor in self.correlations:
             yield cor.primary_branch
-
-    def check_correlations(self) -> None:
-        # check that there are no repeats in the 0th element of each correlation
-        prim_branches = list(self.primary_branches())
-        if [branch for branch in prim_branches if prim_branches.count(branch) > 1]:
-            raise ValueError("there is a repeated branch in the 0th element of the correlations")
 
     @overload
     def __getitem__(self, i: int) -> Correlation:

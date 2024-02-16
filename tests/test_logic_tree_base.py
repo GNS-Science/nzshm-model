@@ -50,16 +50,21 @@ def test_branchset(fixtures: Fixtures):
 def test_correlation(fixtures: Fixtures):
     assert len(fixtures.correlation1.all_branches) == 2
 
+    with pytest.raises(ValueError):
+        LogicTreeCorrelations(
+            correlations=[fixtures.correlation1, fixtures.correlation2],
+            weights=[0.2, 0.2, 0.4],
+        )
+
 
 def test_check_correlations(fixtures: Fixtures):
     # should not raise exeption
-    correlations = LogicTreeCorrelations(correlations=[fixtures.correlation1, fixtures.correlation2])
+    LogicTreeCorrelations(correlations=[fixtures.correlation1, fixtures.correlation2])
 
     # should raise exception
     with pytest.raises(ValueError):
         correlation2x = Correlation(primary_branch=fixtures.branchA1, associated_branches=[fixtures.branchB2])
-        correlations = LogicTreeCorrelations(correlations=[fixtures.correlation1, correlation2x])
-        print(correlations)
+        LogicTreeCorrelations(correlations=[fixtures.correlation1, correlation2x])
 
 
 def test__combined_branches_nocorr(fixtures: Fixtures):
