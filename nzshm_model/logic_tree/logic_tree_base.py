@@ -23,7 +23,7 @@ from nzshm_model.psha_adapter import PshaAdapterInterface
 # no default value for weight out of convenience since the subclasses have default values for their own members.
 # What do we think?
 @dataclass
-class Branch():
+class Branch(ABC):
     name: str = ""
     weight: float = 1.0
 
@@ -49,17 +49,20 @@ class BranchSet(ABC):
             weight += b.weight
         return weight == 1.0
 
+
 def list_of_lists():
-    return  [[]]
+    return [[]]
+
 
 @dataclass
 class Correlation:
-    primary_branch: Branch = field(default_factory=Branch())
+    primary_branch: Branch = field(default_factory=Branch)
     associated_branches: List[Branch] = field(default_factory=list)
 
     @property
     def all_branches(self) -> List[Branch]:
         return [self.primary_branch] + self.associated_branches
+
 
 # TODO: don't like that correlations = LogicTreeCorrelations(); correlations.correlations, feels like an awkward API
 # does this need to be abstract?
@@ -83,7 +86,7 @@ class LogicTreeCorrelations(Sequence, metaclass=ABCMeta):
     def check_correlations(self) -> None:
         # check that there are no repeats in the 0th element of each correlation
         prim_branches = list(self.primary_branches())
-        if [branch for branch in prim_branches if prim_branches.count(branch)>1]:
+        if [branch for branch in prim_branches if prim_branches.count(branch) > 1]:
             raise ValueError("there is a repeated branch in the 0th element of the correlations")
 
     def __getitem__(self, i: int) -> List[Branch]:
@@ -94,7 +97,7 @@ class LogicTreeCorrelations(Sequence, metaclass=ABCMeta):
 
 
 @dataclass
-class CompositeBranch():
+class CompositeBranch:
     branches: List[Branch] = field(default_factory=list)
     weight: float = 1.0
 
@@ -111,6 +114,7 @@ class CompositeBranch():
         else:
             self.__counter += 1
             return self.branches[self.__counter - 1]
+
 
 @dataclass
 class LogicTree(ABC):
@@ -129,7 +133,6 @@ class LogicTree(ABC):
             self.check_correlations()
         # else:
 
-
     def check_correlations(self) -> None:
         # check that the weights total 1.0
         weight_total = 0.0
@@ -145,7 +148,6 @@ class LogicTree(ABC):
         for branches in product(*[branch_set.branches for branch_set in self.branch_sets]):
             yield CompositeBranch(branches=branches)
 
-
     @property
     def combined_branches(self) -> Generator[CompositeBranch, None, None]:
         """
@@ -155,7 +157,9 @@ class LogicTree(ABC):
             # if the comp_branch contains a branch listed as the 0th element of the correlations, only yeild if the other branches are present
             correlation_match = [branch_pri in combined_branch for branch_pri in self.correlations.primary_branches()]
             if any(correlation_match):
-                i_cor = correlation_match.index(True)  # index of the correlation that matches a branch in _combined_branches()
+                i_cor = correlation_match.index(
+                    True
+                )  # index of the correlation that matches a branch in _combined_branches()
                 if not all(compbr in self.correlations[i_cor].all_branches for compbr in combined_branch):
                     continue
                 else:
@@ -163,9 +167,10 @@ class LogicTree(ABC):
                     if self.correlations.weights:
                         combined_branch.weight = self.correlations.weights[i_cor]
                     else:
-                        combined_branch.weight = self.correlations[i_cor].primary_branch.weight  # weight of primary branch of relevent correlation
+                        combined_branch.weight = self.correlations[
+                            i_cor
+                        ].primary_branch.weight  # weight of primary branch of relevent correlation
             yield combined_branch
-            
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':

@@ -9,6 +9,7 @@ Fixtures = namedtuple("Fixtures", "correlation1 correlation2 branchA1 branchB2 b
 @pytest.fixture(scope='module')
 @patch.multiple(LogicTree, __abstractmethods__=set())
 @patch.multiple(LogicTreeCorrelations, __abstractmethods__=set())
+@patch.multiple(Branch, __abstractmethods__=set())
 def fixtures():
     branchA1 = Branch(name="branchA1", weight=0.2)
     branchA2 = Branch(name="branchA2", weight=0.2)
