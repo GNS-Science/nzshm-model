@@ -27,7 +27,7 @@ def geodetic_filter(obj):
 
 @pytest.fixture(scope='module')
 def full_slt():
-    yield nzshm_model.get_model_version('NSHM_v1.0.4').source_logic_tree()
+    yield nzshm_model.get_model_version('NSHM_v1.0.4').source_logic_tree
 
 
 def test_filter_fn_on_logic_tree_branches(full_slt):

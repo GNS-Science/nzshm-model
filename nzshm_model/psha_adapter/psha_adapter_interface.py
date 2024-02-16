@@ -23,6 +23,11 @@ class PshaAdapterInterface(ABC):
         pass
 
     @abstractmethod
+    def config(self):
+        """Get the PSHA config file"""
+        pass
+
+    @abstractmethod
     def write_config(
         self,
         cache_folder: Union[pathlib.Path, str],

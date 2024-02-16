@@ -1,5 +1,3 @@
-"""Script to build an SLT dict/json for K-API from a source_logic_tree model."""
-
 import dataclasses
 import json
 import logging
@@ -8,9 +6,7 @@ import sys
 import click
 
 import nzshm_model
-from nzshm_model import get_model_version
-from nzshm_model.source_logic_tree.logic_tree import SourceLogicTree
-from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids
+from nzshm_model import all_model_versions, get_model_version
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.WARN)
@@ -31,65 +27,63 @@ log.addHandler(file_handler)
 
 @click.group()
 def slt():
+    """Inspect and produce model source_logic_trees."""
     pass
 
 
 @slt.command(name='ls')
-@click.option('-l', '--long', is_flag=True)
+@click.option('-l', '--long', is_flag=True, help="also print the model title.")
 def cli_ls(long):
     """List the available model versions."""
 
-    for version in nzshm_model.versions.keys():
+    for version in all_model_versions():
         if not long:
             click.echo(version)
             continue
         model = nzshm_model.get_model_version(version)
-        click.echo(f"{model.version} `{model.source_logic_tree().title}`")
+        click.echo(f"{model.version} `{model.title}`")
 
 
-@slt.command(name='model')
+@slt.command(name='to_json')
 @click.argument('model_id')
-@click.option('-B', '--build', is_flag=True)
-def cli_model(model_id, build):
-    """Get a model by MODEL_ID."""
+def cli_model_as_json(model_id: str):
+    """Get the model in json form."""
     model = get_model_version(model_id)
-    slt = (
-        SourceLogicTree(version="0", title="", fault_system_lts=[model.build_crustal_branches()])
-        if build
-        else model.source_logic_tree()
-    )
-    j = json.dumps(dataclasses.asdict(slt), indent=4)
+    j = json.dumps(dataclasses.asdict(model.source_logic_tree), indent=4)
     click.echo(j)
 
 
-@slt.command(name='from_config')
-@click.argument('config_path')
-@click.argument('version')
-@click.argument('title')
-@click.option('-R', '--resolve_toshi_ids', is_flag=True)
-def cli_from_config(config_path, version, title, resolve_toshi_ids):
-    """Convert a python config file at CONFIG_PATH to an SLT model. Both VERSION and TITLE are required."""
+# @slt.command(name='from_config')
+# @click.argument('config_path')
+# @click.argument('version')
+# @click.argument('title')
+# @click.option('-R', '--resolve_toshi_ids', is_flag=True)
+# def cli_from_config(config_path, version, title, resolve_toshi_ids):
+#     """Convert a python config file at CONFIG_PATH to an SLT model. Both VERSION and TITLE are required.
 
-    slt = from_config(config_path, version, title)
+#     is this still required? Looks like it relates to old v1 SLTs
+#     """
 
-    if resolve_toshi_ids:
-        slt = resolve_toshi_source_ids(slt)  # get new slt with toshi_ids
-    j = json.dumps(dataclasses.asdict(slt), indent=4)
-    click.echo(j)
+#     slt = from_config(config_path, version, title)
+
+#     if resolve_toshi_ids:
+#         slt = resolve_toshi_source_ids(slt)  # get new slt with toshi_ids
+#     j = json.dumps(dataclasses.asdict(slt), indent=4)
+#     click.echo(j)
 
 
-@slt.command(name='spec')
-@click.argument('model_id')
-@click.option('-B', '--build', is_flag=True)
-def cli_model_spec(model_id, build):
-    """Get a model specification by MODEL_ID."""
-    model = get_model_version(model_id)
-    if not model:
-        click.echo(f'Oops, the model "{model_id}" was not found', err=True)
-        return False
-    slt = model.source_logic_tree()
-    j = json.dumps(dataclasses.asdict(slt.derive_spec()), indent=4)
-    click.echo(j)
+# @slt.command(name='spec')
+# @click.argument('model_id')
+# @click.option('-B', '--build', is_flag=True)
+# def cli_model_spec(model_id, build):
+#     """Get a model specification by MODEL_ID."""
+#     model = get_model_version(model_id)
+#     if not model:
+#         click.echo(f'Oops, the model "{model_id}" was not found', err=True)
+#         return False
+#     slt = model.source_logic_tree()
+#     j = json.dumps(dataclasses.asdict(slt.derive_spec()), indent=4)
+#     click.echo(j)
 
 
 if __name__ == '__main__':
