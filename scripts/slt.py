@@ -6,9 +6,7 @@ import sys
 import click
 
 import nzshm_model
-from nzshm_model import get_model_version, all_model_versions
-from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree
-# from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids
+from nzshm_model import all_model_versions, get_model_version
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.WARN)
@@ -48,36 +46,30 @@ def cli_ls(long):
 
 @slt.command(name='to_json')
 @click.argument('model_id')
-@click.option('-B', '--build', is_flag=True, help="No build help yet")
-def cli_model_as_json(model_id: str, build: bool):
+def cli_model_as_json(model_id: str):
     """Get the model in json form."""
     model = get_model_version(model_id)
-    slt = (
-        SourceLogicTree(version="0", title="", fault_system_lts=[model.build_crustal_branches()])
-        if build
-        else model.source_logic_tree
-    )
-    j = json.dumps(dataclasses.asdict(slt), indent=4)
+    j = json.dumps(dataclasses.asdict(model.source_logic_tree), indent=4)
     click.echo(j)
 
 
-@slt.command(name='from_config')
-@click.argument('config_path')
-@click.argument('version')
-@click.argument('title')
-@click.option('-R', '--resolve_toshi_ids', is_flag=True)
-def cli_from_config(config_path, version, title, resolve_toshi_ids):
-    """Convert a python config file at CONFIG_PATH to an SLT model. Both VERSION and TITLE are required.
+# @slt.command(name='from_config')
+# @click.argument('config_path')
+# @click.argument('version')
+# @click.argument('title')
+# @click.option('-R', '--resolve_toshi_ids', is_flag=True)
+# def cli_from_config(config_path, version, title, resolve_toshi_ids):
+#     """Convert a python config file at CONFIG_PATH to an SLT model. Both VERSION and TITLE are required.
 
-    is this still required?
-    """
+#     is this still required? Looks like it relates to old v1 SLTs
+#     """
 
-    slt = from_config(config_path, version, title)
+#     slt = from_config(config_path, version, title)
 
-    if resolve_toshi_ids:
-        slt = resolve_toshi_source_ids(slt)  # get new slt with toshi_ids
-    j = json.dumps(dataclasses.asdict(slt), indent=4)
-    click.echo(j)
+#     if resolve_toshi_ids:
+#         slt = resolve_toshi_source_ids(slt)  # get new slt with toshi_ids
+#     j = json.dumps(dataclasses.asdict(slt), indent=4)
+#     click.echo(j)
 
 
 # @slt.command(name='spec')
