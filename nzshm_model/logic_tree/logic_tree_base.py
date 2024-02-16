@@ -42,11 +42,17 @@ class BranchSet:
     long_name: str = ''
     branches: Sequence[Any] = field(default_factory=list)
 
+    def __post_init__(self):
+        if not self.validate_weights():
+            raise ValueError("weights of BranchSet must sum to 1.0")
+
     def validate_weights(self) -> bool:
         weight = 0.0
+        if not self.branches:  # empty BranchSet
+            return True
         for b in self.branches:
             weight += b.weight
-        return weight == 1.0
+        return math.isclose(weight, 1.0)
 
 
 @dataclass
