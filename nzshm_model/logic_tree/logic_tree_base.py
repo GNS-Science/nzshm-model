@@ -5,15 +5,14 @@ This module contains abstract base classes common to both **Source** and
 import copy
 import json
 import math
-from operator import mul
-from functools import reduce
 from abc import ABC, ABCMeta, abstractclassmethod
-from itertools import product
-from dataclasses import asdict, dataclass, field, fields
-from pathlib import Path
-from typing import Any, Dict, Iterator, List, Type, Union, Generator
 from collections.abc import Sequence
-
+from dataclasses import asdict, dataclass, field, fields
+from functools import reduce
+from itertools import product
+from operator import mul
+from pathlib import Path
+from typing import Any, Dict, Generator, Iterator, List, Type, Union
 
 import dacite
 
@@ -154,7 +153,8 @@ class LogicTree(ABC):
         yields all composite (combined) branches of the branch_sets enforcing correlations
         """
         for combined_branch in self._combined_branches():
-            # if the comp_branch contains a branch listed as the 0th element of the correlations, only yeild if the other branches are present
+            # if the comp_branch contains a branch listed as the 0th element of the correlations, only
+            # yeild if the other branches are present
             correlation_match = [branch_pri in combined_branch for branch_pri in self.correlations.primary_branches()]
             if any(correlation_match):
                 i_cor = correlation_match.index(

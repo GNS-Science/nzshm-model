@@ -1,10 +1,12 @@
-import pytest
-from unittest.mock import patch, Mock  # TODO: use pytest to patch?
 from collections import namedtuple
+from unittest.mock import patch  # TODO: use pytest to patch?
 
-from nzshm_model.logic_tree.logic_tree_base import LogicTree, LogicTreeCorrelations, Branch, BranchSet, Correlation
+import pytest
+
+from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, Correlation, LogicTree, LogicTreeCorrelations
 
 Fixtures = namedtuple("Fixtures", "correlation1 correlation2 branchA1 branchB2 branchsetA branchsetB logic_tree")
+
 
 @pytest.fixture(scope='module')
 @patch.multiple(LogicTree, __abstractmethods__=set())
@@ -18,8 +20,8 @@ def fixtures():
     branchB1 = Branch(name="branchB1", weight=0.25)
     branchB2 = Branch(name="branchB2", weight=0.75)
 
-    branchsetA = BranchSet(short_name="A", long_name="branchsetA", branches = [branchA1, branchA2, branchA3, branchA4])
-    branchsetB = BranchSet(short_name="B", long_name="branchsetB", branches = [branchB1, branchB2])
+    branchsetA = BranchSet(short_name="A", long_name="branchsetA", branches=[branchA1, branchA2, branchA3, branchA4])
+    branchsetB = BranchSet(short_name="B", long_name="branchsetB", branches=[branchB1, branchB2])
 
     correlation1 = Correlation(primary_branch=branchA1, associated_branches=[branchB1])
     correlation2 = Correlation(primary_branch=branchA2, associated_branches=[branchB2])
@@ -36,8 +38,9 @@ def fixtures():
         branchB2=branchB2,
         branchsetA=branchsetA,
         branchsetB=branchsetB,
-        logic_tree=logic_tree
+        logic_tree=logic_tree,
     )
+
 
 # @patch.multiple(LogicTreeCorrelations, __abstractmethods__=set())
 # @patch.multiple(LogicTree, __abstractmethods__=set())
@@ -47,17 +50,21 @@ def test_check_correlations(fixtures: Fixtures):
     correlations = LogicTreeCorrelations(correlations=[fixtures.correlation1, fixtures.correlation2])
 
     # should raise exception
-    with pytest.raises(ValueError) as value_error:
+    with pytest.raises(ValueError):
         correlation2x = Correlation(primary_branch=fixtures.branchA1, associated_branches=[fixtures.branchB2])
         correlations = LogicTreeCorrelations(correlations=[fixtures.correlation1, correlation2x])
+        print(correlations)
+
 
 def test__combined_branches_nocorr(fixtures: Fixtures):
     # branches not filtered by correlation
-    assert len(list(fixtures.logic_tree._combined_branches())) == 4*2
+    assert len(list(fixtures.logic_tree._combined_branches())) == 4 * 2
+
 
 def test_combined_branches(fixtures: Fixtures):
     # branches are filtered by correlation
     assert len(list(fixtures.logic_tree.combined_branches)) == 4
+
 
 def test_correlation_weights(fixtures: Fixtures):
     # weights sum to 1.0
@@ -67,10 +74,14 @@ def test_correlation_weights(fixtures: Fixtures):
 def test_correlation_mutability(fixtures: Fixtures):
 
     # should not raise an execption
-    correlations = LogicTreeCorrelations(correlations=[fixtures.correlation1, fixtures.correlation2], weights=[0.2, 0.2])
+    correlations = LogicTreeCorrelations(
+        correlations=[fixtures.correlation1, fixtures.correlation2], weights=[0.2, 0.2]
+    )
     fixtures.logic_tree.correlations = correlations
 
     # should not be able to set correlations that do not work
-    correlations = LogicTreeCorrelations(correlations=[fixtures.correlation1, fixtures.correlation2], weights=[1.0, 1.0])
-    with pytest.raises(ValueError) as value_error:
+    correlations = LogicTreeCorrelations(
+        correlations=[fixtures.correlation1, fixtures.correlation2], weights=[1.0, 1.0]
+    )
+    with pytest.raises(ValueError):
         fixtures.logic_tree.correlations = correlations
