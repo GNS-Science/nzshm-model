@@ -42,10 +42,16 @@ def fixtures():
     )
 
 
-# @patch.multiple(LogicTreeCorrelations, __abstractmethods__=set())
-# @patch.multiple(LogicTree, __abstractmethods__=set())
-def test_check_correlations(fixtures: Fixtures):
+def test_branchset(fixtures: Fixtures):
+    with pytest.raises(ValueError):
+        BranchSet(branches=[fixtures.branchA1, fixtures.branchB2])
 
+
+def test_correlation(fixtures: Fixtures):
+    assert len(fixtures.correlation1.all_branches) == 2
+
+
+def test_check_correlations(fixtures: Fixtures):
     # should not raise exeption
     correlations = LogicTreeCorrelations(correlations=[fixtures.correlation1, fixtures.correlation2])
 
@@ -72,7 +78,6 @@ def test_correlation_weights(fixtures: Fixtures):
 
 
 def test_correlation_mutability(fixtures: Fixtures):
-
     # should not raise an execption
     correlations = LogicTreeCorrelations(
         correlations=[fixtures.correlation1, fixtures.correlation2], weights=[0.2, 0.2]
