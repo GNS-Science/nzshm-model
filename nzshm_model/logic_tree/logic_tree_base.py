@@ -5,7 +5,7 @@ This module contains abstract base classes common to both **Source** and
 import copy
 import json
 import math
-from abc import ABC, ABCMeta, abstractclassmethod
+from abc import ABC, ABCMeta, abstractmethod
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
@@ -37,7 +37,7 @@ class Branch(ABC):
 # should we have long and short names in the base class?
 # should the type for branches be List[Any]?
 @dataclass
-class BranchSet(ABC):
+class BranchSet:
     short_name: str = ''
     long_name: str = ''
     branches: Sequence[Any] = field(default_factory=list)
@@ -66,7 +66,7 @@ class Correlation:
 # TODO: don't like that correlations = LogicTreeCorrelations(); correlations.correlations, feels like an awkward API
 # does this need to be abstract?
 @dataclass(frozen=True)
-class LogicTreeCorrelations(Sequence, metaclass=ABCMeta):
+class LogicTreeCorrelations(Sequence):
     correlations: List[Correlation] = field(default_factory=list)
     weights: List[float] = field(default_factory=list)
 
@@ -195,7 +195,7 @@ class LogicTree(ABC):
 
     # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
-    @abstractclassmethod
+    @abstractmethod
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         pass
 
