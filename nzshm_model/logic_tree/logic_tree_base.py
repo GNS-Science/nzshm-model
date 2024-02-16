@@ -12,7 +12,7 @@ from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Type, Union
+from typing import Any, Dict, Generator, Iterator, List, Type, Union, overload
 
 import dacite
 
@@ -40,7 +40,7 @@ class Branch(ABC):
 class BranchSet(ABC):
     short_name: str = ''
     long_name: str = ''
-    branches: List[Any] = field(default_factory=list)
+    branches: Sequence[Any] = field(default_factory=list)
 
     def validate_weights(self) -> bool:
         weight = 0.0
@@ -88,7 +88,15 @@ class LogicTreeCorrelations(Sequence, metaclass=ABCMeta):
         if [branch for branch in prim_branches if prim_branches.count(branch) > 1]:
             raise ValueError("there is a repeated branch in the 0th element of the correlations")
 
-    def __getitem__(self, i: int) -> List[Branch]:
+    @overload
+    def __getitem__(self, i: int) -> Correlation:
+        ...
+
+    @overload
+    def __getitem__(self, i: slice) -> Sequence[Correlation]:
+        ...
+
+    def __getitem__(self, i):
         return self.correlations[i]
 
     def __len__(self) -> int:
@@ -97,7 +105,7 @@ class LogicTreeCorrelations(Sequence, metaclass=ABCMeta):
 
 @dataclass
 class CompositeBranch:
-    branches: List[Branch] = field(default_factory=list)
+    branches: Sequence[Branch] = field(default_factory=list)
     weight: float = 1.0
 
     def __post_init__(self) -> None:
