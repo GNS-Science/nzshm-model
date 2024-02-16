@@ -51,6 +51,7 @@ mkdocs-material  = "^9.1.21"
 mkdocs-material-extensions  = "^1.1.1"
 mkdocs-pymdownx-material-extras = "^2.0.3"
 mkdocstrings  = "^0.22.0"
+mkdocs-click = "^0.8.1"
 
 
 [tool.black]

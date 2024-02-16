@@ -9,7 +9,8 @@ import nzshm_model
 
 # from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids  # noqa
 from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter
-from nzshm_model.source_logic_tree import SourceLogicTree
+# from nzshm_model.source_logic_tree import SourceLogicTree
+from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.DEBUG)
@@ -32,7 +33,7 @@ log.info('INFO message')
 # |_| |_| |_|\__,_|_|_| |_|
 @click.group()
 def cli():
-    """Nzshm-model tasks."""
+    """Nzshm-model helpers for model consumers."""
 
 
 @cli.command()
@@ -71,10 +72,14 @@ def unpack(cache_folder, output_folder, model_id):
 @click.option('--output_folder', '-o', default=lambda: os.getcwd())
 @click.option('--model_id', '-m', default="NSHM_v1.0.4")
 def config(cache_folder, output_folder, model_id):
-    """write a psha config"""
+    """Write an openquake hazard configuration
+
+    This is a work in progress, as it only handles the Source LT, and not GMM LT
+    or general configuration.
+    """
 
     model = nzshm_model.get_model_version(model_id)
-    slt = model.source_logic_tree()  # always version 2
+    slt = model.source_logic_tree  # always version 2
 
     ## example filter functions
     def unscaled_filter(obj):

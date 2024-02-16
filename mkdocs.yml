@@ -6,10 +6,14 @@ repo_name: GNS-Science/nzshm-model
 watch:
   - nzshm_model
   - docs
+  - scripts
 nav:
   - Home: index.md
   - Installation: installation.md
   - Usage: usage.md
+  - Scripts:
+     - cli script: scripts/cli.md
+     - slt script: scripts/slt.md
   - API Reference:
     - nzshm_model: api/nzshm_model.md
     - NshmModel (class): api/model.NshmModel.md
@@ -32,6 +36,7 @@ theme:
     - navigation.instant
     - navigation.tabs.sticky
 markdown_extensions:
+  - mkdocs-click
   - pymdownx.emoji:
       # emoji_index: !!python/name:materialx.emoji.twemoji
       # emoji_generator: !!python/name:materialx.emoji.to_svg
