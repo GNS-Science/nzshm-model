@@ -49,10 +49,6 @@ class BranchSet:
         return weight == 1.0
 
 
-def list_of_lists():
-    return [[]]
-
-
 @dataclass
 class Correlation:
     primary_branch: Branch = field(default_factory=Branch)
@@ -97,6 +93,8 @@ class LogicTreeCorrelations(Sequence):
         ...
 
     def __getitem__(self, i):
+        if isinstance(i, slice):
+            raise TypeError("LogicTreeCorrelations does not support slicing")
         return self.correlations[i]
 
     def __len__(self) -> int:
