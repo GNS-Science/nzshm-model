@@ -68,7 +68,7 @@ class Correlation:
 # TODO: don't like that correlations = LogicTreeCorrelations(); correlations.correlations, feels like an awkward API
 @dataclass(frozen=True)
 class LogicTreeCorrelations(Sequence):
-    correlations: List[Correlation] = field(default_factory=list)
+    correlation_groups: List[Correlation] = field(default_factory=list)
     weights: List[float] = field(default_factory=list)
 
     def __post_init__(self) -> None:
@@ -85,7 +85,7 @@ class LogicTreeCorrelations(Sequence):
         check that the number of weights supplied matches the number of correlations
         """
         if self.weights:
-            return len(self.weights) == len(self.correlations)
+            return len(self.weights) == len(self.correlation_groups)
         return True
 
     def validate_correlations(self) -> bool:
@@ -96,7 +96,7 @@ class LogicTreeCorrelations(Sequence):
         return len([branch for branch in prim_branches if prim_branches.count(branch) > 1]) == 0
 
     def primary_branches(self) -> Generator[Branch, None, None]:
-        for cor in self.correlations:
+        for cor in self.correlation_groups:
             yield cor.primary_branch
 
     @overload
@@ -110,10 +110,10 @@ class LogicTreeCorrelations(Sequence):
     def __getitem__(self, i):
         if isinstance(i, slice):
             raise TypeError("LogicTreeCorrelations does not support slicing")
-        return self.correlations[i]
+        return self.correlation_groups[i]
 
     def __len__(self) -> int:
-        return len(self.correlations)
+        return len(self.correlation_groups)
 
 
 @dataclass

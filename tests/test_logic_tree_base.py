@@ -27,7 +27,7 @@ def fixtures():
     correlation2 = Correlation(primary_branch=branchA2, associated_branches=[branchB2])
     correlation3 = Correlation(primary_branch=branchA3, associated_branches=[branchB1])
     correlation4 = Correlation(primary_branch=branchA4, associated_branches=[branchB2])
-    correlations = LogicTreeCorrelations(correlations=[correlation1, correlation2, correlation3, correlation4])
+    correlations = LogicTreeCorrelations(correlation_groups=[correlation1, correlation2, correlation3, correlation4])
 
     logic_tree = LogicTree(title='logic_tree', branch_sets=[branchsetA, branchsetB], correlations=correlations)
 
@@ -55,19 +55,19 @@ def test_correlation(fixtures: Fixtures):
 
 def test_check_correlations_validation(fixtures: Fixtures):
     # should not raise exeption
-    LogicTreeCorrelations(correlations=[fixtures.correlation1, fixtures.correlation2])
+    LogicTreeCorrelations(correlation_groups=[fixtures.correlation1, fixtures.correlation2])
 
     # cannot create correlations with incorrect number of weights
     with pytest.raises(ValueError):
         LogicTreeCorrelations(
-            correlations=[fixtures.correlation1, fixtures.correlation2],
+            correlation_groups=[fixtures.correlation1, fixtures.correlation2],
             weights=[0.2, 0.2, 0.4],
         )
 
     # should raise exception same entry used twice
     with pytest.raises(ValueError):
         correlation2x = Correlation(primary_branch=fixtures.branchA1, associated_branches=[fixtures.branchB2])
-        LogicTreeCorrelations(correlations=[fixtures.correlation1, correlation2x])
+        LogicTreeCorrelations(correlation_groups=[fixtures.correlation1, correlation2x])
 
 
 def test__combined_branches(fixtures: Fixtures):
@@ -86,13 +86,13 @@ def test_correlation_weights(fixtures: Fixtures):
 def test_logic_tree_validation_of_corr(fixtures: Fixtures):
     # should not raise an execption
     correlations = LogicTreeCorrelations(
-        correlations=[fixtures.correlation1, fixtures.correlation2], weights=[0.2, 0.2]
+        correlation_groups=[fixtures.correlation1, fixtures.correlation2], weights=[0.2, 0.2]
     )
     fixtures.logic_tree.correlations = correlations
 
     # should not be able to set correlations with incorrect weights
     correlations = LogicTreeCorrelations(
-        correlations=[fixtures.correlation1, fixtures.correlation2], weights=[1.0, 1.0]
+        correlation_groups=[fixtures.correlation1, fixtures.correlation2], weights=[1.0, 1.0]
     )
     with pytest.raises(ValueError):
         fixtures.logic_tree.correlations = correlations
