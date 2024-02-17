@@ -1,0 +1,187 @@
+{   
+    "logic_tree_version" : 2,
+    "title": "a SRM logic tree",
+    "version": "SLT_v9p0p0",
+    "branch_sets": [
+        {
+            "short_name": "PUY",
+            "long_name" : "Puysegur",           
+            "branches": [
+                {
+                    "values": [
+                        {
+                            "name": "dm",
+                            "long_name": "deformation model",
+                            "value": "0.7"
+                        },
+                        {
+                            "name": "bN",
+                            "long_name": "bN pair",
+                            "value": [
+                                0.902,
+                                4.6
+                            ]
+                        },
+                        {
+                            "name": "C",
+                            "long_name": "area-magnitude scaling",
+                            "value": 4.0
+                        },
+                        {
+                            "name": "s",
+                            "long_name": "moment rate scaling",
+                            "value": 0.28
+                        }
+                    ], 
+                    "rupture_rate_scaling": 0.28,
+                    "weight": 0.5,
+                    "sources": [
+                        {
+                            "type":"inversion",
+                            "nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcxNw==",
+                            "rupture_set_id": "RmlsZToxNzU3My4wQUYzU1o=",
+                            "rupture_rate_scaling": 0.9
+                        },
+                        {
+                            "type":"distributed", 
+                            "nrml_id": "RmlsZToxMzA3NTM=", 
+                            "rupture_rate_scaling": 1.1
+                        }
+                    ]
+                },
+                {
+                    "values": [
+                        {
+                            "name": "dm",
+                            "long_name": "deformation model",
+                            "value": "0.7"
+                        },
+                        {
+                            "name": "bN",
+                            "long_name": "bN pair",
+                            "value": [
+                                1.0,
+                                5.0
+                            ]
+                        },
+                        {
+                            "name": "C",
+                            "long_name": "area-magnitude scaling",
+                            "value": 4.1
+                        },
+                        {
+                            "name": "s",
+                            "long_name": "moment rate scaling",
+                            "value": 0.28
+                        }
+                    ], 
+                    "rupture_rate_scaling": 0.28,
+                    "weight": 0.5,
+                    "sources": [
+                        {
+                            "type":"inversion",
+                            "nrml_id": "ABCD",
+                            "rupture_set_id": "RmlsZToxNzU3My4wQUYzU1o=",
+                            "rupture_rate_scaling": 0.9
+                        },
+                        {
+                            "type":"distributed", 
+                            "nrml_id": "EFGH", 
+                            "rupture_rate_scaling": 1.1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "short_name": "HIK",
+            "long_name" : "Hikurangi",           
+            "branches": [
+                {
+                    "values": [
+                        {
+                            "name": "dm",
+                            "long_name": "deformation model",
+                            "value": "locked"
+                        },
+                        {
+                            "name": "bN",
+                            "long_name": "bN pair",
+                            "value": [
+                                1.1,
+                                10.0
+                            ]
+                        },
+                        {
+                            "name": "C",
+                            "long_name": "area-magnitude scaling",
+                            "value": 4.0
+                        },
+                        {
+                            "name": "s",
+                            "long_name": "moment rate scaling",
+                            "value": 0.28
+                        }
+                    ], 
+                    "rupture_rate_scaling": 0.28,
+                    "weight": 0.2,
+                    "sources": [
+                        {
+                            "type":"inversion",
+                            "nrml_id": "LMNOP",
+                            "rupture_set_id": "RmlsZToxNzU3My4wQUYzU1o=",
+                            "rupture_rate_scaling": 0.9
+                        },
+                        {
+                            "type":"distributed", 
+                            "nrml_id": "XYZ", 
+                            "rupture_rate_scaling": 1.1
+                        }
+                    ]
+                },
+                {
+                    "values": [
+                        {
+                            "name": "dm",
+                            "long_name": "deformation model",
+                            "value": "locked"
+                        },
+                        {
+                            "name": "bN",
+                            "long_name": "bN pair",
+                            "value": [
+                                1.1,
+                                9.9 
+                            ]
+                        },
+                        {
+                            "name": "C",
+                            "long_name": "area-magnitude scaling",
+                            "value": 4.1
+                        },
+                        {
+                            "name": "s",
+                            "long_name": "moment rate scaling",
+                            "value": 0.28
+                        }
+                    ], 
+                    "rupture_rate_scaling": 0.28,
+                    "weight": 0.8,
+                    "sources": [
+                        {
+                            "type":"inversion",
+                            "nrml_id": "EFGHIJ",
+                            "rupture_set_id": "RmlsZToxNzU3My4wQUYzU1o=",
+                            "rupture_rate_scaling": 0.9
+                        },
+                        {
+                            "type":"distributed", 
+                            "nrml_id": "QWERTY", 
+                            "rupture_rate_scaling": 1.1
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
