@@ -43,37 +43,38 @@ def fixtures():
 
 
 def test_branchset(fixtures: Fixtures):
+    # cannot create BranchSet if weights do not sum to 1.0
     with pytest.raises(ValueError):
         BranchSet(branches=[fixtures.branchA1, fixtures.branchB2])
 
 
 def test_correlation(fixtures: Fixtures):
+    # we get the correct nubmer of total branches in a correlation
     assert len(fixtures.correlation1.all_branches) == 2
 
+
+def test_check_correlations_validation(fixtures: Fixtures):
+    # should not raise exeption
+    LogicTreeCorrelations(correlations=[fixtures.correlation1, fixtures.correlation2])
+
+    # cannot create correlations with incorrect number of weights
     with pytest.raises(ValueError):
         LogicTreeCorrelations(
             correlations=[fixtures.correlation1, fixtures.correlation2],
             weights=[0.2, 0.2, 0.4],
         )
 
-
-def test_check_correlations(fixtures: Fixtures):
-    # should not raise exeption
-    LogicTreeCorrelations(correlations=[fixtures.correlation1, fixtures.correlation2])
-
-    # should raise exception
+    # should raise exception same entry used twice
     with pytest.raises(ValueError):
         correlation2x = Correlation(primary_branch=fixtures.branchA1, associated_branches=[fixtures.branchB2])
         LogicTreeCorrelations(correlations=[fixtures.correlation1, correlation2x])
 
 
-def test__combined_branches_nocorr(fixtures: Fixtures):
+def test__combined_branches(fixtures: Fixtures):
     # branches not filtered by correlation
     assert len(list(fixtures.logic_tree._combined_branches())) == 4 * 2
 
-
-def test_combined_branches(fixtures: Fixtures):
-    # branches are filtered by correlation
+    # branches filtered by correlation
     assert len(list(fixtures.logic_tree.combined_branches)) == 4
 
 
@@ -82,14 +83,14 @@ def test_correlation_weights(fixtures: Fixtures):
     assert sum([branch.weight for branch in fixtures.logic_tree.combined_branches]) == pytest.approx(1.0)
 
 
-def test_correlation_mutability(fixtures: Fixtures):
+def test_logic_tree_validation_of_corr(fixtures: Fixtures):
     # should not raise an execption
     correlations = LogicTreeCorrelations(
         correlations=[fixtures.correlation1, fixtures.correlation2], weights=[0.2, 0.2]
     )
     fixtures.logic_tree.correlations = correlations
 
-    # should not be able to set correlations that do not work
+    # should not be able to set correlations with incorrect weights
     correlations = LogicTreeCorrelations(
         correlations=[fixtures.correlation1, fixtures.correlation2], weights=[1.0, 1.0]
     )
