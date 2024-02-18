@@ -6,7 +6,8 @@ import pytest
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, Correlation, LogicTree, LogicTreeCorrelations
 
 Fixtures = namedtuple(
-    "Fixtures", "correlation1 correlation2 branchA1 branchA2 branchB1 branchB2 branchsetA branchsetB logic_tree"
+    "Fixtures",
+    "correlation1 correlation2 branchA1 branchA2 branchB1 branchB2 branchsetA branchsetB logic_tree logic_tree_nocor logic_tree2",
 )
 
 
@@ -21,9 +22,12 @@ def fixtures():
     branchA4 = Branch(name="branchA4", weight=0.3)
     branchB1 = Branch(name="branchB1", weight=0.25)
     branchB2 = Branch(name="branchB2", weight=0.75)
+    branchC1 = Branch(name="branchC1", weight=0.2)
+    branchC2 = Branch(name="branchC2", weight=0.8)
 
     branchsetA = BranchSet(short_name="A", long_name="branchsetA", branches=[branchA1, branchA2, branchA3, branchA4])
     branchsetB = BranchSet(short_name="B", long_name="branchsetB", branches=[branchB1, branchB2])
+    branchsetC = BranchSet(short_name="C", long_name="branchsetC", branches=[branchC1, branchC2])
 
     correlation1 = Correlation(primary_branch=branchA1, associated_branches=[branchB1])
     correlation2 = Correlation(primary_branch=branchA2, associated_branches=[branchB2])
@@ -31,7 +35,11 @@ def fixtures():
     correlation4 = Correlation(primary_branch=branchA4, associated_branches=[branchB2])
     correlations = LogicTreeCorrelations(correlation_groups=[correlation1, correlation2, correlation3, correlation4])
 
+    logic_tree_nocor = LogicTree(title='logic_tree', branch_sets=[branchsetA, branchsetB, branchsetC])
     logic_tree = LogicTree(title='logic_tree', branch_sets=[branchsetA, branchsetB], correlations=correlations)
+    logic_tree2 = LogicTree(
+        title='logic_tree', branch_sets=[branchsetA, branchsetB, branchsetC], correlations=correlations
+    )
 
     return Fixtures(
         correlation1=correlation1,
@@ -43,6 +51,8 @@ def fixtures():
         branchsetA=branchsetA,
         branchsetB=branchsetB,
         logic_tree=logic_tree,
+        logic_tree_nocor=logic_tree_nocor,
+        logic_tree2=logic_tree2,
     )
 
 
@@ -61,13 +71,6 @@ def test_check_correlations_validation(fixtures: Fixtures):
     # should not raise exeption
     LogicTreeCorrelations(correlation_groups=[fixtures.correlation1, fixtures.correlation2])
 
-    # # cannot create correlations with incorrect number of weights
-    # with pytest.raises(ValueError):
-    #     LogicTreeCorrelations(
-    #         correlation_groups=[fixtures.correlation1, fixtures.correlation2],
-    #         weights=[0.2, 0.2, 0.4],
-    #     )
-
     # should raise exception same entry used twice
     with pytest.raises(ValueError):
         correlation2x = Correlation(primary_branch=fixtures.branchA1, associated_branches=[fixtures.branchB2])
@@ -75,16 +78,25 @@ def test_check_correlations_validation(fixtures: Fixtures):
 
 
 def test__combined_branches(fixtures: Fixtures):
+
+    assert len(list(fixtures.logic_tree_nocor.combined_branches)) == 4 * 2 * 2
+
     # branches not filtered by correlation
     assert len(list(fixtures.logic_tree._combined_branches())) == 4 * 2
 
     # branches filtered by correlation
     assert len(list(fixtures.logic_tree.combined_branches)) == 4
 
+    # can correlate a subset of BranchSets
+    assert len(list(fixtures.logic_tree2._combined_branches())) == 4 * 2 * 2
 
-def test_correlation_weights(fixtures: Fixtures):
+    assert len(list(fixtures.logic_tree2.combined_branches)) == 4 * 2
+
+
+def test_combined_weights(fixtures: Fixtures):
     # weights sum to 1.0
     assert sum([branch.weight for branch in fixtures.logic_tree.combined_branches]) == pytest.approx(1.0)
+    assert sum([branch.weight for branch in fixtures.logic_tree_nocor.combined_branches]) == pytest.approx(1.0)
 
     # weights are default from the primary branch
     for cg in fixtures.logic_tree.correlations.correlation_groups:
@@ -104,6 +116,3 @@ def test_logic_tree_validation_of_corr(fixtures: Fixtures):
     correlations = LogicTreeCorrelations(correlation_groups=[correlation1, correlation2])
     with pytest.raises(ValueError):
         fixtures.logic_tree.correlations = correlations
-
-
-# TODO: test that you can make correlations like A1-B1-C1, A1-B1-C2

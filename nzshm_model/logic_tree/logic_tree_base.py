@@ -18,8 +18,11 @@ import dacite
 
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
-
-# should we move values to the base class?
+# TODO:
+# - should we move values to the base class?
+# - should we move logic for creating light branchSet and LogicTree when creating FilteredBranchs to the initializer of FilteredBranch?
+# - FilteredBranch doesn't need to be a data class as it should not be serialized and doesn't contain many arguments
+# - should we use FilteredBranch for correlation so the branches can be traced back to the BranchSet?
 @dataclass
 class Branch(ABC):
     """
@@ -126,7 +129,6 @@ class LogicTreeCorrelations(Sequence):
     """
 
     correlation_groups: List[Correlation] = field(default_factory=list)
-    # weights: List[float] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self._validate_correlations()
@@ -239,14 +241,18 @@ class LogicTree(ABC):
         for combined_branch in self._combined_branches():
             # if the comp_branch contains a branch listed as the 0th element of the correlations, only
             # yeild if the other branches are present
+            # weight is automatically calculated by CompositeBranch if not explicitly assigned (as we would with correlations)
             correlation_match = [branch_pri in combined_branch for branch_pri in self.correlations.primary_branches()]
             if any(correlation_match):
                 i_cor = correlation_match.index(
                     True
                 )  # index of the correlation that matches a branch in _combined_branches()
-                if not all(compbr in self.correlations[i_cor].all_branches for compbr in combined_branch):
+                if not all(br in combined_branch for br in self.correlations[i_cor].all_branches):
                     continue
-                combined_branch.weight = self.correlations[i_cor].weight  # type: ignore
+                weights = [self.correlations[i_cor].weight] + [
+                    branch.weight for branch in combined_branch if branch not in self.correlations[i_cor].all_branches
+                ]
+                combined_branch.weight = reduce(mul, weights, 1.0)
             yield combined_branch
 
     @classmethod
@@ -284,7 +290,7 @@ class LogicTree(ABC):
         """
         pass
 
-    def __all_branches__(self):
+    def __all_branches__(self) -> Generator['FilteredBranch', None, None]:
         """
         Yield all branches from all BranchSets, each with a shallow copy of its LogicTree and BranchSet parents
         for use in filtering.
