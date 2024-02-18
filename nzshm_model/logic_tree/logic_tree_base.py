@@ -19,10 +19,17 @@ import dacite
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 
-# no default value for weight out of convenience since the subclasses have default values for their own members.
-# What do we think?
+# should we move values to the base class?
 @dataclass
 class Branch(ABC):
+    """
+    Abstract baseclass for logic tree branches
+
+    Arguments:
+        name: a name for the branch
+        weight: a weight for the branch
+    """
+
     name: str = ""
     weight: float = 1.0
 
@@ -44,22 +51,27 @@ class Branch(ABC):
 @dataclass
 class BranchSet:
     """
-    A group of branches that comprise their own sub-logic tree. Also known as a fault system logic tree (for source logic trees).
+    A group of branches that comprise their own sub-logic tree. Also known as a fault system logic
+    tree (for source logic trees).
 
     Arguments:
         short_name:
         long_name:
         branches: the branches that make up the branch set
     """
+
     short_name: str = ''
     long_name: str = ''
     branches: Sequence[Any] = field(default_factory=list)
 
     def __post_init__(self):
-        if not self.validate_weights():
+        if not self._validate_weights():
             raise ValueError("weights of BranchSet must sum to 1.0")
 
-    def validate_weights(self) -> bool:
+    def _validate_weights(self) -> bool:
+        """
+        verify that weighs sum to 1.0
+        """
         weight = 0.0
         if not self.branches:  # empty BranchSet
             return True
@@ -76,15 +88,16 @@ class Correlation:
 
     For example, if a logic tree contains branchets A and B each with branches A1, A2 and B1, B2, respectivly, then
     a correlation A1, B1 will only allow A1-B1 not A1-B2 as valid composite branches.
-    
+
     The primary_brach will not appear in combination with any branches except those identified in associated_branches
     for the relevent **BranchSet**s
 
     Arguments:
-        primary_branch: the branch that **MUST** be correlated with the associated brances. 
+        primary_branch: the branch that **MUST** be correlated with the associated brances.
         associated_branches: list of branches that the primary_branch must always be coupled with.
         weight: weight used for composite branch formed by correlation. Defaults to weight of primary_branch
     """
+
     primary_branch: Branch = field(default_factory=Branch)
     associated_branches: List[Branch] = field(default_factory=list)
     weight: Optional[float] = None
@@ -102,30 +115,24 @@ class Correlation:
         """
         return [self.primary_branch] + self.associated_branches
 
-    
-
 
 @dataclass(frozen=True)
 class LogicTreeCorrelations(Sequence):
     """
     All correlations for a logic tree.
 
-    If weight is not provided defaults to using the weight of the primary branch for each composite branch
-
     Arguments:
         correlation_groups: list of correlations to be applied to the logic tree branch sets.
     """
+
     correlation_groups: List[Correlation] = field(default_factory=list)
-    #weights: List[float] = field(default_factory=list)
+    # weights: List[float] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        """
-        check that the list of correlations is correct
-        """
-        if not self.validate_correlations():
+        if not self._validate_correlations():
             raise ValueError("there is a repeated branch in the 0th element of the correlations")
 
-    def validate_correlations(self) -> bool:
+    def _validate_correlations(self) -> bool:
         """
         check that there are no repeats in the 0th element of each correlation
         """
@@ -157,11 +164,12 @@ class LogicTreeCorrelations(Sequence):
 class CompositeBranch:
     """
     A logic tree branch comprised of combinations of branches from one or more branch sets.
-    
+
     Arguments:
         branches: the component branches (branches from branch sets) in the composite branch
         weight: the weight of the composite branch
     """
+
     branches: Sequence[Branch] = field(default_factory=list)
     weight: float = 1.0
 
@@ -182,6 +190,19 @@ class CompositeBranch:
 
 @dataclass
 class LogicTree(ABC):
+    """
+    Logic tree baseclass. Contains information about branch sets and correlations between branches of the branch sets.
+
+    The correlations are enforced when forming composite branches (combinations of branches from different branch sets).
+
+    Arguments:
+        title: title of the logic tree
+        version: version string
+        branch_sets: list of branch sets that make up the logic tree
+        correlations: any correlations between branches of the branch_sets
+
+    """
+
     title: str = ''
     version: str = ''
     branch_sets: List[Any] = field(default_factory=list)
@@ -227,17 +248,23 @@ class LogicTree(ABC):
                 )  # index of the correlation that matches a branch in _combined_branches()
                 if not all(compbr in self.correlations[i_cor].all_branches for compbr in combined_branch):
                     continue
-                combined_branch.weight = self.correlations[i_cor].weight
+                combined_branch.weight = self.correlations[i_cor].weight  # type: ignore
             yield combined_branch
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
+        """
+        Create LogicTree object from json file or string
+        """
         with Path(json_path).open() as jsonfile:
             data = json.load(jsonfile)
         return cls.from_dict(data)
 
     @classmethod
     def from_dict(cls, data: Dict) -> 'LogicTree':
+        """
+        Create LogicTree object from dict
+        """
         return dacite.from_dict(data_class=cls, data=data, config=dacite.Config(strict=True))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -247,6 +274,16 @@ class LogicTree(ABC):
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
     @abstractmethod
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
+        """
+        Provide an adapter object for translating LogicTrees to/from specific formats
+
+        Parameters:
+            provider: the interface object that defines a specific implimenation
+            **kwargs:
+
+        Returns:
+            An adapter object
+        """
         pass
 
     def __all_branches__(self):
@@ -282,6 +319,9 @@ class LogicTree(ABC):
         Build a complete LogicTree from a iterable of branches.
 
         We expect that all the branches have come from a single LogicTree.
+
+        Parameters:
+            branches: the branches used to build the LogicTree
         """
 
         def match_branch_set(slt: LogicTree, fb):
