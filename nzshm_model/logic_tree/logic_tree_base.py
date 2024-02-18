@@ -12,7 +12,7 @@ from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Type, Union, overload, Optional
+from typing import Any, Dict, Generator, Iterator, List, Optional, Type, Union, overload
 
 import dacite
 
@@ -131,7 +131,7 @@ class LogicTreeCorrelations(Sequence):
     def __post_init__(self) -> None:
         self._validate_correlations()
 
-    def _validate_correlations(self) -> bool:
+    def _validate_correlations(self) -> None:
         """
         check that there are no repeats in the 0th element of each correlation
         """

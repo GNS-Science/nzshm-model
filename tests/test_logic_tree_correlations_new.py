@@ -4,7 +4,7 @@
 # import itertools
 from pathlib import Path
 
-from nzshm_model.logic_tree import SourceLogicTree, Correlation, LogicTreeCorrelations
+from nzshm_model.logic_tree import Correlation, LogicTreeCorrelations, SourceLogicTree
 
 # import pytest
 
