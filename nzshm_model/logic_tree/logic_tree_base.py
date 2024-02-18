@@ -129,15 +129,15 @@ class LogicTreeCorrelations(Sequence):
     # weights: List[float] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        if not self._validate_correlations():
-            raise ValueError("there is a repeated branch in the 0th element of the correlations")
+        self._validate_correlations()
 
     def _validate_correlations(self) -> bool:
         """
         check that there are no repeats in the 0th element of each correlation
         """
         prim_branches = list(self.primary_branches())
-        return len([branch for branch in prim_branches if prim_branches.count(branch) > 1]) == 0
+        if len([branch for branch in prim_branches if prim_branches.count(branch) > 1]) != 0:
+            raise ValueError("there is a repeated branch in the 0th element of the correlations")
 
     def primary_branches(self) -> Generator[Branch, None, None]:
         for cor in self.correlation_groups:
@@ -209,16 +209,14 @@ class LogicTree(ABC):
     correlations: LogicTreeCorrelations = field(default_factory=LogicTreeCorrelations)
 
     def __post_init__(self) -> None:
-        self.check_correlations()
+        self._validate_correlations()
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         super().__setattr__(__name, __value)
         if __name == "correlations":
-            # self.correlations = __value
-            self.check_correlations()
-        # else:
+            self._validate_correlations()
 
-    def check_correlations(self) -> None:
+    def _validate_correlations(self) -> None:
         # check that the weights total 1.0
         weight_total = 0.0
         for branch in self.combined_branches:
