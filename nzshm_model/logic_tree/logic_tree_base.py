@@ -1,5 +1,5 @@
 """
-This module contains abstract base classes common to both **Source** and
+This module contains base classes (some of which are abstract) common to both **Source** and
 **Ground Motion Model (GMM)** logic trees.
 """
 import copy
@@ -12,7 +12,7 @@ from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Type, Union, overload
+from typing import Any, Dict, Generator, Iterator, List, Type, Union, overload, Optional
 
 import dacite
 
@@ -27,17 +27,30 @@ class Branch(ABC):
     weight: float = 1.0
 
     @abstractmethod
-    def filtered_branch(self, logic_tree: 'LogicTree', branch_set: 'BranchSet'):
+    def filtered_branch(self, logic_tree: 'LogicTree', branch_set: 'BranchSet') -> 'FilteredBranch':
         """
         Produce a new filtered branch with the properties of the branch
+
+        Parameters:
+            logic_tree: The logic tree that the branch belongs to
+            branch_set: The branch est that the branch belongs to
+
+        Returns:
+            a filtered branch
         """
         pass
 
 
-# should we have long and short names in the base class?
-# should the type for branches be List[Any]?
 @dataclass
 class BranchSet:
+    """
+    A group of branches that comprise their own sub-logic tree. Also known as a fault system logic tree (for source logic trees).
+
+    Arguments:
+        short_name:
+        long_name:
+        branches: the branches that make up the branch set
+    """
     short_name: str = ''
     long_name: str = ''
     branches: Sequence[Any] = field(default_factory=list)
@@ -57,19 +70,53 @@ class BranchSet:
 
 @dataclass
 class Correlation:
+    """
+    A correlation between **BranchSet**s of a logic tree. Correlations are used when buiding combinations of branches
+    from differnt **BranchSet**s.
+
+    For example, if a logic tree contains branchets A and B each with branches A1, A2 and B1, B2, respectivly, then
+    a correlation A1, B1 will only allow A1-B1 not A1-B2 as valid composite branches.
+    
+    The primary_brach will not appear in combination with any branches except those identified in associated_branches
+    for the relevent **BranchSet**s
+
+    Arguments:
+        primary_branch: the branch that **MUST** be correlated with the associated brances. 
+        associated_branches: list of branches that the primary_branch must always be coupled with.
+        weight: weight used for composite branch formed by correlation. Defaults to weight of primary_branch
+    """
     primary_branch: Branch = field(default_factory=Branch)
     associated_branches: List[Branch] = field(default_factory=list)
+    weight: Optional[float] = None
+
+    def __post_init__(self):
+        self.weight = self.primary_branch.weight if not self.weight else self.weight
 
     @property
     def all_branches(self) -> List[Branch]:
+        """
+        list of all branches in a correlation; both the primary branch and the assiciated branches
+
+        Returns:
+            list of branches in correlation
+        """
         return [self.primary_branch] + self.associated_branches
 
+    
 
-# TODO: don't like that correlations = LogicTreeCorrelations(); correlations.correlations, feels like an awkward API
+
 @dataclass(frozen=True)
 class LogicTreeCorrelations(Sequence):
+    """
+    All correlations for a logic tree.
+
+    If weight is not provided defaults to using the weight of the primary branch for each composite branch
+
+    Arguments:
+        correlation_groups: list of correlations to be applied to the logic tree branch sets.
+    """
     correlation_groups: List[Correlation] = field(default_factory=list)
-    weights: List[float] = field(default_factory=list)
+    #weights: List[float] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         """
@@ -77,16 +124,6 @@ class LogicTreeCorrelations(Sequence):
         """
         if not self.validate_correlations():
             raise ValueError("there is a repeated branch in the 0th element of the correlations")
-        if not self.validate_weights():
-            raise ValueError("length of weights must equal the number of correlations")
-
-    def validate_weights(self) -> bool:
-        """
-        check that the number of weights supplied matches the number of correlations
-        """
-        if self.weights:
-            return len(self.weights) == len(self.correlation_groups)
-        return True
 
     def validate_correlations(self) -> bool:
         """
@@ -118,6 +155,13 @@ class LogicTreeCorrelations(Sequence):
 
 @dataclass
 class CompositeBranch:
+    """
+    A logic tree branch comprised of combinations of branches from one or more branch sets.
+    
+    Arguments:
+        branches: the component branches (branches from branch sets) in the composite branch
+        weight: the weight of the composite branch
+    """
     branches: Sequence[Branch] = field(default_factory=list)
     weight: float = 1.0
 
@@ -183,14 +227,7 @@ class LogicTree(ABC):
                 )  # index of the correlation that matches a branch in _combined_branches()
                 if not all(compbr in self.correlations[i_cor].all_branches for compbr in combined_branch):
                     continue
-                else:
-                    # set the weight
-                    if self.correlations.weights:
-                        combined_branch.weight = self.correlations.weights[i_cor]
-                    else:
-                        combined_branch.weight = self.correlations[
-                            i_cor
-                        ].primary_branch.weight  # weight of primary branch of relevent correlation
+                combined_branch.weight = self.correlations[i_cor].weight
             yield combined_branch
 
     @classmethod
