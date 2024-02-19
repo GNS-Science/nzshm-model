@@ -20,9 +20,9 @@ from nzshm_model.psha_adapter import PshaAdapterInterface
 
 
 # TODO:
-# - should we move values to the base class?
-# - should we move logic for creating light branchSet and LogicTree when creating FilteredBranchs to
-#      the initializer of FilteredBranch?
+# - move values to the base class?
+# - move logic for creating light branchSet and LogicTree when creating FilteredBranchs to
+#    the initializer of FilteredBranch?
 # - FilteredBranch doesn't need to be a data class as it should not be serialized and doesn't contain many arguments
 # - should we use FilteredBranch for correlation so the branches can be traced back to the BranchSet?
 @dataclass
