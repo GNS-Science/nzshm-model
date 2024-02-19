@@ -7,7 +7,8 @@ from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, Correlatio
 
 Fixtures = namedtuple(
     "Fixtures",
-    "correlation1 correlation2 branchA1 branchA2 branchB1 branchB2 branchsetA branchsetB logic_tree logic_tree_nocor logic_tree2",
+    """correlation1 correlation2 branchA1 branchA2 branchB1 branchB2
+    branchsetA branchsetB logic_tree logic_tree_nocor logic_tree2""",
 )
 
 

@@ -18,9 +18,11 @@ import dacite
 
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
+
 # TODO:
 # - should we move values to the base class?
-# - should we move logic for creating light branchSet and LogicTree when creating FilteredBranchs to the initializer of FilteredBranch?
+# - should we move logic for creating light branchSet and LogicTree when creating FilteredBranchs to
+#      the initializer of FilteredBranch?
 # - FilteredBranch doesn't need to be a data class as it should not be serialized and doesn't contain many arguments
 # - should we use FilteredBranch for correlation so the branches can be traced back to the BranchSet?
 @dataclass
@@ -142,6 +144,12 @@ class LogicTreeCorrelations(Sequence):
             raise ValueError("there is a repeated branch in the 0th element of the correlations")
 
     def primary_branches(self) -> Generator[Branch, None, None]:
+        """
+        Yield the primary branches of all correlation_groups
+
+        Returns:
+            branches
+        """
         for cor in self.correlation_groups:
             yield cor.primary_branch
 
@@ -241,7 +249,8 @@ class LogicTree(ABC):
         for combined_branch in self._combined_branches():
             # if the comp_branch contains a branch listed as the 0th element of the correlations, only
             # yeild if the other branches are present
-            # weight is automatically calculated by CompositeBranch if not explicitly assigned (as we would with correlations)
+            # weight is automatically calculated by CompositeBranch if not explicitly assigned
+            # (as we would with correlations)
             correlation_match = [branch_pri in combined_branch for branch_pri in self.correlations.primary_branches()]
             if any(correlation_match):
                 i_cor = correlation_match.index(
@@ -259,6 +268,12 @@ class LogicTree(ABC):
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
         """
         Create LogicTree object from json file or string
+
+        Parameters:
+            json_path: path to json file
+
+        Returns:
+            logic_tree
         """
         with Path(json_path).open() as jsonfile:
             data = json.load(jsonfile)
@@ -268,6 +283,12 @@ class LogicTree(ABC):
     def from_dict(cls, data: Dict) -> 'LogicTree':
         """
         Create LogicTree object from dict
+
+        Parameters:
+            data: dict representation of LogicTree object
+
+        Returns:
+            logic_tree
         """
         return dacite.from_dict(data_class=cls, data=data, config=dacite.Config(strict=True))
 
@@ -363,12 +384,22 @@ class LogicTree(ABC):
             return self.__branch_list[self.__current_branch - 1]
 
 
-# this should never be serialised, only used for filtering
 @dataclass
 class FilteredBranch(Branch):
+    """
+    A branch type that points back to it's logic tree and branch set. Should never be serialized, only
+    used for filtering
+    """
+
     logic_tree: LogicTree = field(default_factory=LogicTree)
     branch_set: BranchSet = field(default_factory=BranchSet)
 
     def to_branch(self) -> Branch:
+        """
+        Produce the Branch object (does not point back to it's logic tree and branch set)
+
+        Returns:
+            branch: the Branch object
+        """
         branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('branch_set', 'logic_tree')}
         return type(self.branch_set.branches[0])(**branch_attributes)
