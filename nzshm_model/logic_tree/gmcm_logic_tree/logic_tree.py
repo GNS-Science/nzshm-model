@@ -48,5 +48,5 @@ class GMCMLogicTree(LogicTree):
 
 @dataclass
 class GMCMFilteredBranch(FilteredBranch, GMCMBranch):
-    logic_tree: 'GMCMLogicTree' = GMCMLogicTree()
-    branch_set: 'GMCMBranchSet' = GMCMBranchSet()
+    logic_tree: 'GMCMLogicTree' = field(default_factory=GMCMLogicTree)
+    branch_set: 'GMCMBranchSet' = field(default_factory=GMCMBranchSet)
