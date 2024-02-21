@@ -3,8 +3,7 @@
 ## [0.9.0] 2024-02-21
 
 ### Added
- - classes to enforce correlation between logic tree branches
-
+ - classes and methods to enforce correlation between logic tree branches
 
 ### Changed
  - test matrix includes python3.10, 3.11, windows, macOS
