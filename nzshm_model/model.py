@@ -25,13 +25,16 @@ versions = {
 
 # https://stackoverflow.com/questions/48976499/mypy-importlib-module-functions
 class ModuleInterface:
-    @staticmethod
-    def model() -> 'NshmModel':
-        ...
+    """a type interface for this module
+
+    it doesn't have to be instantiated, it'll just help mypy figure things out)
+    """
+
+    model: 'NshmModel'
 
 
 def import_module_with_interface(modname: str) -> ModuleInterface:
-    return __import__(modname, fromlist=['_trash'])
+    return __import__(modname, fromlist=['_trash'])  # type: ignore
 
 
 class NshmModel:
