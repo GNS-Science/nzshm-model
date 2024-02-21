@@ -19,6 +19,8 @@ nav:
     - NshmModel (class): api/model.NshmModel.md
     - logic_tree (package):
         - logic_tree_base: api/logic_tree/logic_tree_base.md
+        - branch: api/logic_tree/branch.md
+        - correlation: api/logic_tree/correlation.md
         - source_logic_tree: api/logic_tree/source_logic_tree.md
     - psha_adapter: api/psha_adapter.md
   - Contributing: contributing.md

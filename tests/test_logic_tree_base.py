@@ -3,7 +3,9 @@ from unittest.mock import patch  # TODO: use pytest to patch?
 
 import pytest
 
-from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, Correlation, LogicTree, LogicTreeCorrelations
+from nzshm_model.logic_tree.branch import Branch
+from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
+from nzshm_model.logic_tree.logic_tree_base import BranchSet, LogicTree
 
 Fixtures = namedtuple(
     "Fixtures",
