@@ -12,8 +12,8 @@ jobs:
 
     strategy:
       matrix:
-        python-versions: [3.9]
-        os: [ubuntu-latest]
+        python-versions: [3.9, '3.10', '3.11']
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it

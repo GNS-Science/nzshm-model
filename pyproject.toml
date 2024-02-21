@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nzshm-model"
-version = "0.8.0"
+version = "0.9.0"
 description = "The logic tree definitions, final configurations, and versioning of the New Zealand | Aotearoa National Seismic Hazard Model"
 authors = ["Chris DiCaprio <c.dicaprio@gns.cri.nz>", "Chris Chamberlain <chrisbc@artisan.co.nz>"]
 license = "AGPL3"
@@ -39,10 +39,10 @@ bump2version = "^1.0.1"
 isort  = { version = "^5.8.0"}
 flake8  = { version = "^3.9.2"}
 flake8-docstrings = { version = "^1.6.0", optional = true }
-mypy = {version = "^0.900"}
 pytest = { version = "^6.2.4"}
 pytest-cov  = { version = "^2.12.0"}
 tox = "^4.2.8"
+mypy = "^1.8.0"
 
 mkdocs = "^1.5.3"
 mkdocs-autorefs = {version = "^0.3.1"}

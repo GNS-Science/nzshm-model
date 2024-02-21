@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0] 2024-02-21
+
+### Added
+ - classes and methods to enforce correlation between logic tree branches
+
+### Changed
+ - test matrix includes python3.10, 3.11, windows, macOS
+
+### Fixed
+ - python3.11 dataclass compatibility
+
+
 ## [0.8.0] 2024-02-16
 
 ### Changed

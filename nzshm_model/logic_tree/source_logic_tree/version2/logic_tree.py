@@ -237,8 +237,8 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
 
     """
 
-    logic_tree: 'LogicTree' = SourceLogicTree()
-    branch_set: 'BranchSet' = SourceBranchSet()
+    logic_tree: 'LogicTree' = field(default_factory=SourceLogicTree)
+    branch_set: 'BranchSet' = field(default_factory=SourceBranchSet)
 
     @property
     def fslt(self) -> 'BranchSet':
