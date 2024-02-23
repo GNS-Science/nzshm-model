@@ -6,6 +6,7 @@ import warnings
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Type, Union
 
+from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
@@ -172,6 +173,14 @@ class SourceLogicTree(LogicTree):
         Returns:
             a new SourceLogicTree instance
         """
+
+        def index_branch(slt_v1, fslt_name, values):
+            fslt_names = [fslt.short_name for fslt in slt_v1.fault_system_lts]
+            ind_fslt = fslt_names.index(fslt_name)
+            fslt_values = [branch.values for branch in original_slt.fault_system_lts[ind_fslt].branches]
+            ind_branch = fslt_values.index(values)
+            return ind_fslt, ind_branch
+
         if not isinstance(original_slt, SourceLogicTreeV1):
             raise ValueError(f"supplied object of {type(original_slt)} is not supported.")
         slt = SourceLogicTree(version=original_slt.version, title=original_slt.title)
@@ -192,6 +201,24 @@ class SourceLogicTree(LogicTree):
                     new_branch.sources.append(DistributedSource(nrml_id=branch.distributed_nrml_id))
                 new_fslt.branches.append(new_branch)
             slt.branch_sets.append(new_fslt)
+
+        if original_slt.correlations:
+            correlations = []
+            for orig_correlation in original_slt.correlations:
+                ind_fslt0, ind_branch0 = index_branch(
+                    original_slt, orig_correlation.primary_short_name, orig_correlation.primary_values
+                )
+                ind_fslt1, ind_branch1 = index_branch(
+                    original_slt, orig_correlation.secondary_short_name, orig_correlation.secondary_values
+                )
+                correlations.append(
+                    Correlation(
+                        primary_branch=slt.branch_sets[ind_fslt0].branches[ind_branch0],
+                        associated_branches=[slt.branch_sets[ind_fslt1].branches[ind_branch1]],
+                    )
+                )
+            slt.correlations = LogicTreeCorrelations(correlations)
+
         return slt
 
     @property
