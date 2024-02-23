@@ -5,7 +5,7 @@ This module contains base classes (some of which are abstract) common to both **
 import copy
 import json
 import math
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractclassmethod
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
@@ -126,6 +126,19 @@ class LogicTree(ABC):
                 ]
                 combined_branch.weight = reduce(mul, weights, 1.0)
             yield combined_branch
+
+    @abstractclassmethod
+    def from_user_config(cls, config_path: Union[Path, str]) -> 'LogicTree':
+        """
+        Create a LogicTree object from a config file
+
+        Parameters:
+            config_path: path to configuration file
+
+        Returns:
+            logic_tree
+        """
+        pass
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':

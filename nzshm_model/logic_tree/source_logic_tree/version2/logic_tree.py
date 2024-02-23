@@ -5,6 +5,7 @@ import copy
 import warnings
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Type, Union
+from pathlib import Path
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
@@ -146,6 +147,17 @@ class SourceLogicTree(LogicTree):
         # for fslt in self.fault_systems:
         #     slt_spec.fault_systems.append(FaultSystemLogicTree.derive_spec(fslt))
         # return slt_spec
+
+    @classmethod
+    def from_user_config(cls, config_path: Union[Path, str]) -> 'SourceLogicTree':
+        """Create a new SourceLogicTree from a config file
+
+        Examples:
+            
+        """
+        return cls()
+
+
 
     @classmethod
     def from_dict(cls, data: Dict) -> 'LogicTree':
