@@ -20,3 +20,4 @@ def test_v2_correlations():
         values_v1 = [b.values for b in branch_v1.branches]
         values_v2 = [b.values for b in branch_v2.branches]
         assert values_v1 == values_v2
+        assert branch_v1.weight == branch_v2.weight
