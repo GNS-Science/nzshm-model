@@ -22,6 +22,7 @@ nav:
         - branch: api/logic_tree/branch.md
         - correlation: api/logic_tree/correlation.md
         - source_logic_tree: api/logic_tree/source_logic_tree.md
+        - defining a source logic tree: api/logic_tree/source_logic_tree_config_format.md
     - psha_adapter: api/psha_adapter.md
   - Contributing: contributing.md
   - Changelog: changelog.md
