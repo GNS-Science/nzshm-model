@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.1] 2024-02-26
+
+### Changed
+ - correlations are ported when converting from version1 to version2 of source logic tree
+
 ## [0.9.0] 2024-02-21
 
 ### Added
