@@ -67,37 +67,54 @@
             "branches": [
                 {
                     "name": "HIK1",
-                    "weight": 0.6,
+                    "weight": 0.3,
                     "sources": [
                         {
-                            "nrml_id": "GHI"
+                            "nrml_id": "GHI",
+                            "type": "inversion"
                         }
                     ]
                 },
                 {
                     "name": "HIK2",
-                    "weight": 0.4,
+                    "weight": 0.2,
                     "sources": [
                         {
-                            "nrml_id": "JKL"
+                            "nrml_id": "JKL",
+                            "type": "inversion"
                         }
                     ]
                 },
                 {
                     "name": "HIK3",
-                    "weight": 0.4,
+                    "weight": 0.25,
                     "sources": [
                         {
-                            "nrml_id": "MNO"
+                            "nrml_id": "MNO",
+                            "type": "inversion"
                         }
                     ]
                 },
                 {
                     "name": "HIK4",
-                    "weight": 0.4,
+                    "weight": 0.25,
                     "sources": [
                         {
-                            "nrml_id": "PQR"
+                            "nrml_id": "PQR",
+                            "type": "inversion"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "branches": [
+                {
+                    "weight": 1.0,
+                    "sources" : [
+                        {
+                            "nrml_id": "FOOBAR",
+                            "type": "inversion"
                         }
                     ]
                 }

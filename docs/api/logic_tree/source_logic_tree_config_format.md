@@ -14,7 +14,7 @@ Most of the entries are optional, but without including at least some of them, y
             "long_name": "Puysegur",
             "branches": [
                 {
-                    // A name is only necessary if correlations are specified. If so, the name of
+                    // A branch name is only necessary if correlations are specified. If so, the name of
                     // every branch (even between branch_sets must be unique).
                     "name": "PUY1",
 
@@ -46,11 +46,11 @@ Most of the entries are optional, but without including at least some of them, y
 
                     // A branch can have multiple sets of earthquake sources.
                     // Each source (rupture definitions and rates) is identified by a nrml_id.
-                    // This can be any unique identifier string. Type can be "inversion" or
-                    // "distributed"; it is not used here, but can be useful to understand how a
-                    // set of sources was generated. If type is not specified, it is set to
-                    // "inversion" by default. Each type has additional parameters that are useful
-                    // in understanding how the source was generated, though they are not used here.
+                    // This can be any unique identifier string. Type must be specified and can be
+                    // "inversion" or "distributed"; it is not used here, but can be useful to
+                    // understand how a set of sources was generated. Each type has additional
+                    // parameters that are useful in understanding how the source was generated,
+                    // though they are not used here.
                     "sources": [ 
                         {
                             "nrml_id": "ABC",
@@ -93,37 +93,41 @@ Most of the entries are optional, but without including at least some of them, y
             "branches": [
                 {
                     "name": "HIK1",
-                    "weight": 0.6,
+                    "weight": 0.3,
                     "sources": [
                         {
-                            "nrml_id": "GHI"
+                            "nrml_id": "GHI",
+                            "type": "inversion"
                         }
                     ]
                 },
                 {
                     "name": "HIK2",
-                    "weight": 0.4,
+                    "weight": 0.2,
                     "sources": [
                         {
-                            "nrml_id": "JKL"
+                            "nrml_id": "JKL",
+                            "type": "inversion"
                         }
                     ]
                 },
                 {
                     "name": "HIK3",
-                    "weight": 0.4,
+                    "weight": 0.25,
                     "sources": [
                         {
-                            "nrml_id": "MNO"
+                            "nrml_id": "MNO",
+                            "type": "inversion"
                         }
                     ]
                 },
                 {
                     "name": "HIK4",
-                    "weight": 0.4,
+                    "weight": 0.25,
                     "sources": [
                         {
-                            "nrml_id": "PQR"
+                            "nrml_id": "PQR",
+                            "type": "inversion"
                         }
                     ]
                 }

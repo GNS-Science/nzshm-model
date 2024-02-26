@@ -2,10 +2,13 @@
 Defines source logic tree structures used in NSHM.
 """
 import copy
+import json
 import warnings
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Type, Union
 from pathlib import Path
+
+import dacite
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
@@ -152,11 +155,39 @@ class SourceLogicTree(LogicTree):
     def from_user_config(cls, config_path: Union[Path, str]) -> 'SourceLogicTree':
         """Create a new SourceLogicTree from a config file
 
-        Examples:
-            
-        """
-        return cls()
+        See docs/api/logic_tree/source_logic_tree_config_format.md
 
+        Arguments:
+            config_path: path to configuration file
+
+        Returns:
+            logic_tree: a new SourceLogicTree instance
+        """
+
+        with Path(config_path).open() as config_file:
+            data = json.load(config_file)
+        
+        data['logic_tree_version'] = 2
+
+        if not data.get('correlations'):
+            return cls.from_dict(data)
+
+        correlations = data.pop('correlations')
+        slt = cls.from_dict(data)
+        fbranches = [fbranch for fbranch in slt]
+        branch_names = [fbranch.name for fbranch in fbranches]
+        correlation_groups =  []
+        for correlation in correlations:
+            primary_branch = fbranches[branch_names.index(correlation[0])].to_branch()
+            assoc_branches = [fbranches[branch_names.index(b)].to_branch() for b in correlation[1:]]
+            correlation_groups.append(
+                Correlation(
+                    primary_branch=primary_branch,
+                    associated_branches=assoc_branches,
+                ))
+        slt.correlations = LogicTreeCorrelations(correlation_groups)
+
+        return slt
 
 
     @classmethod
@@ -167,7 +198,7 @@ class SourceLogicTree(LogicTree):
             data: a dictionary of the SourceLogicTree properties.
 
         Returns:
-            a new SourceLogicTree instance
+            logic_tree: a new SourceLogicTree instance
         """
         ltv = data.get("logic_tree_version")
         if not ltv == 2:
