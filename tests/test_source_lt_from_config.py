@@ -7,7 +7,7 @@ def test_slt_from_config():
     slt = SourceLogicTree.from_user_config(slt_config_path)
 
     assert len(list(slt.combined_branches)) == 4
-    assert len(list(slt._combined_branches())) == 4*2
+    assert len(list(slt._combined_branches())) == 4 * 2
 
     assert slt.branch_sets[2].branches[0].name == ""
     assert slt.branch_sets[2].short_name == ""

@@ -46,7 +46,7 @@ class GMCMLogicTree(LogicTree):
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
         return provider(gmcm_logic_tree=self)
 
-    @classmethod 
+    @classmethod
     def from_user_config(cls, config_path: Union[Path, str]) -> 'GMCMLogicTree':
         raise NotImplementedError("from_user_config not implimented for GMCMLogicTree")
 

@@ -166,7 +166,7 @@ class SourceLogicTree(LogicTree):
 
         with Path(config_path).open() as config_file:
             data = json.load(config_file)
-        
+
         data['logic_tree_version'] = 2
 
         if not data.get('correlations'):
@@ -176,7 +176,7 @@ class SourceLogicTree(LogicTree):
         slt = cls.from_dict(data)
         fbranches = [fbranch for fbranch in slt]
         branch_names = [fbranch.name for fbranch in fbranches]
-        correlation_groups =  []
+        correlation_groups = []
         for correlation in correlations:
             primary_branch = fbranches[branch_names.index(correlation[0])].to_branch()
             assoc_branches = [fbranches[branch_names.index(b)].to_branch() for b in correlation[1:]]
@@ -184,11 +184,11 @@ class SourceLogicTree(LogicTree):
                 Correlation(
                     primary_branch=primary_branch,
                     associated_branches=assoc_branches,
-                ))
+                )
+            )
         slt.correlations = LogicTreeCorrelations(correlation_groups)
 
         return slt
-
 
     @classmethod
     def from_dict(cls, data: Dict) -> 'LogicTree':
