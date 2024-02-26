@@ -29,7 +29,7 @@ from .correlation import LogicTreeCorrelations
 # - should we use FilteredBranch for correlation so the branches can be traced back to the BranchSet?
 
 # https://github.com/python/mypy/issues/8495
-_TLogicTree = TypeVar("_TLogicTree", bound="LogicTree")
+LogicTreeType = TypeVar("LogicTreeType", bound="LogicTree")
 
 
 @dataclass
@@ -132,7 +132,7 @@ class LogicTree(ABC):
 
     @classmethod
     @abstractmethod
-    def from_user_config(cls: Type[_TLogicTree], config_path: Union[Path, str]) -> _TLogicTree:
+    def from_user_config(cls: Type[LogicTreeType], config_path: Union[Path, str]) -> LogicTreeType:
         """
         Create a LogicTree object from a config file
 
@@ -160,7 +160,7 @@ class LogicTree(ABC):
         return cls.from_dict(data)
 
     @classmethod
-    def from_dict(cls: Type[_TLogicTree], data: Dict) -> _TLogicTree:
+    def from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
         """
         Create LogicTree object from dict
 
