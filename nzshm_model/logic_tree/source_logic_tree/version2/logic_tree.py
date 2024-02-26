@@ -328,7 +328,7 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
         return self.logic_tree
 
 
-def _check_sources(slt: SourceLogicTree) -> None:
+def _check_sources(slt: LogicTreeType) -> None:
     for branch in slt:
         if not branch.sources:
             raise ValueError("every branch must have at least one source")
