@@ -5,14 +5,14 @@ This module contains base classes (some of which are abstract) common to both **
 import copy
 import json
 import math
-from abc import ABC, abstractmethod, abstractclassmethod
+from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Type, Union
+from typing import Any, Dict, Generator, Iterator, List, Type, TypeVar, Union
 
 import dacite
 
@@ -27,6 +27,9 @@ from .correlation import LogicTreeCorrelations
 #    the initializer of FilteredBranch?
 # - FilteredBranch doesn't need to be a data class as it should not be serialized and doesn't contain many arguments
 # - should we use FilteredBranch for correlation so the branches can be traced back to the BranchSet?
+
+# https://github.com/python/mypy/issues/8495
+_TLogicTree = TypeVar("_TLogicTree", bound="LogicTree")
 
 
 @dataclass
@@ -127,8 +130,9 @@ class LogicTree(ABC):
                 combined_branch.weight = reduce(mul, weights, 1.0)
             yield combined_branch
 
-    @abstractclassmethod
-    def from_user_config(cls, config_path: Union[Path, str]) -> 'LogicTree':
+    @classmethod
+    @abstractmethod
+    def from_user_config(cls: Type[_TLogicTree], config_path: Union[Path, str]) -> _TLogicTree:
         """
         Create a LogicTree object from a config file
 
@@ -156,7 +160,7 @@ class LogicTree(ABC):
         return cls.from_dict(data)
 
     @classmethod
-    def from_dict(cls, data: Dict) -> 'LogicTree':
+    def from_dict(cls: Type[_TLogicTree], data: Dict) -> _TLogicTree:
         """
         Create LogicTree object from dict
 

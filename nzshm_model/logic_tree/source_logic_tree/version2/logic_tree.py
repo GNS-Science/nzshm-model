@@ -5,13 +5,11 @@ import copy
 import json
 import warnings
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Type, Union
 from pathlib import Path
-
-import dacite
+from typing import Dict, List, Optional, Type, Union
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
-from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
+from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree, _TLogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .. import BranchAttributeValue
@@ -152,7 +150,7 @@ class SourceLogicTree(LogicTree):
         # return slt_spec
 
     @classmethod
-    def from_user_config(cls, config_path: Union[Path, str]) -> 'SourceLogicTree':
+    def from_user_config(cls: Type[_TLogicTree], config_path: Union[Path, str]) -> _TLogicTree:
         """Create a new SourceLogicTree from a config file
 
         See docs/api/logic_tree/source_logic_tree_config_format.md
@@ -191,7 +189,7 @@ class SourceLogicTree(LogicTree):
         return slt
 
     @classmethod
-    def from_dict(cls, data: Dict) -> 'LogicTree':
+    def from_dict(cls: Type[_TLogicTree], data: Dict) -> _TLogicTree:
         """build a new instance from a dict represention.
 
         Arguments:

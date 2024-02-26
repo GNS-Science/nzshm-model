@@ -1,5 +1,6 @@
 from pathlib import Path
-from nzshm_model.logic_tree import SourceLogicTree, InversionSource
+
+from nzshm_model.logic_tree import InversionSource, SourceLogicTree
 
 
 def test_slt_from_config():
