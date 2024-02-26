@@ -8,7 +8,6 @@
             "branches": [
                 {
                     "name": "PUY1",
-                    "weight": 0.2,
                     "rupture_rate_scaling": 1.1,
                     "values": [
                         {
@@ -27,21 +26,25 @@
                     ],
                     "sources": [ 
                         {
-                            "nrml_id": "ABC"
+                            "nrml_id": "ABC",
+                            "type": "inversion"
                         },
                         {
-                            "nrml_id": "XYZ"
+                            "nrml_id": "XYZ",
+                            "type": "distributed"
                         },
                         {
                             "nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2NjE=",
                             "rupture_rate_scaling": null,
                             "inversion_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTI5MTM4Mg==",
                             "rupture_set_id": "RmlsZToxMjkwOTg0",
-                            "inversion_solution_type": ""
+                            "inversion_solution_type": "",
+                            "type": "inversion"
                         },
                         {
                             "nrml_id": "RmlsZToxMzA3NTQ=",
-                            "rupture_rate_scaling": null
+                            "rupture_rate_scaling": null,
+                            "type": "distributed"
                         }
                     ]
                 },
@@ -50,7 +53,8 @@
                     "weight": 0.8,
                     "sources": [ 
                         {
-                            "nrml_id": "DEF"
+                            "nrml_id": "DEF",
+                            "type": "inversion"
                         }
                     ]
                 }
@@ -65,7 +69,8 @@
                     "weight": 0.3,
                     "sources": [
                         {
-                            "nrml_id": "GHI"
+                            "nrml_id": "GHI",
+                            "type": "inversion"
                         }
                     ]
                 },
@@ -74,7 +79,8 @@
                     "weight": 0.2,
                     "sources": [
                         {
-                            "nrml_id": "JKL"
+                            "nrml_id": "JKL",
+                            "type": "inversion"
                         }
                     ]
                 },
@@ -83,7 +89,8 @@
                     "weight": 0.25,
                     "sources": [
                         {
-                            "nrml_id": "MNO"
+                            "nrml_id": "MNO",
+                            "type": "inversion"
                         }
                     ]
                 },
@@ -92,7 +99,8 @@
                     "weight": 0.25,
                     "sources": [
                         {
-                            "nrml_id": "PQR"
+                            "nrml_id": "PQR",
+                            "type": "inversion"
                         }
                     ]
                 }
@@ -104,7 +112,8 @@
                     "weight": 1.0,
                     "sources" : [
                         {
-                            "nrml_id": "FOOBAR"
+                            "nrml_id": "FOOBAR",
+                            "type": "inversion"
                         }
                     ]
                 }

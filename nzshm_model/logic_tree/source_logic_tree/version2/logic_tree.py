@@ -168,7 +168,9 @@ class SourceLogicTree(LogicTree):
         data['logic_tree_version'] = 2
 
         if not data.get('correlations'):
-            return cls.from_dict(data)
+            slt = cls.from_dict(data)
+            _check_sources(slt)
+            return slt
 
         correlations = data.pop('correlations')
         slt = cls.from_dict(data)
@@ -185,6 +187,7 @@ class SourceLogicTree(LogicTree):
                 )
             )
         slt.correlations = LogicTreeCorrelations(correlation_groups)
+        _check_sources(slt)
 
         return slt
 
@@ -323,3 +326,14 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
         """
         warnings.warn("Please use logic_tree property instead", DeprecationWarning)
         return self.logic_tree
+
+
+def _check_sources(slt: SourceLogicTree) -> None:
+    for branch in slt:
+        if not branch.sources:
+            raise ValueError("every branch must have at least one source")
+        for source in branch.sources:
+            if isinstance(source, DistributedSource) and source.type != "distributed":
+                raise ValueError("source type DistributedSource does not match type member")
+            if isinstance(source, InversionSource) and source.type != "inversion":
+                raise ValueError("source type DistributedSource does not match type member")
