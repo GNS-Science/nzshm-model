@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.2] 2024-02-26
+
+### Added
+ - create SourceLogicTree can from hand-built json
+
 ## [0.9.1] 2024-02-26
 
 ### Changed
