@@ -169,7 +169,7 @@ class SourceLogicTree(LogicTree):
 
         if not data.get('correlations'):
             slt = cls.from_dict(data)
-            _check_sources(slt)
+            _check_branches_and_sources(slt)
             return slt
 
         correlations = data.pop('correlations')
@@ -187,7 +187,7 @@ class SourceLogicTree(LogicTree):
                 )
             )
         slt.correlations = LogicTreeCorrelations(correlation_groups)
-        _check_sources(slt)
+        _check_branches_and_sources(slt)
 
         return slt
 
@@ -328,7 +328,22 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
         return self.logic_tree
 
 
-def _check_sources(slt: LogicTreeType) -> None:
+def _check_branches_and_sources(slt: LogicTreeType) -> None:
+
+    # do not allow duplicate branch or branch set names
+    branch_names = [branch.name for branch in slt]
+    if len(set(branch_names)) != len(branch_names):
+        raise ValueError("branch names must be unique")
+
+    bs_short_names = [bs.short_name for bs in slt.branch_sets]
+    if len(set(bs_short_names)) != len(bs_short_names):
+        raise ValueError("branch set short names must be unique")
+
+    bs_long_names = [bs.long_name for bs in slt.branch_sets]
+    if len(set(bs_long_names)) != len(bs_long_names):
+        raise ValueError("branch names must be unique")
+
+    # check that sources are defined correctly
     for branch in slt:
         if not branch.sources:
             raise ValueError("every branch must have at least one source")

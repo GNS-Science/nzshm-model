@@ -61,3 +61,14 @@ def test_slt_from_config_errors():
     with pytest.raises(ValueError) as value_error:
         SourceLogicTree.from_user_config(slt_config_path)
     print(value_error.value)
+
+    # don't accept duplicate branch names or branch set names
+    slt_config_path = Path(__file__).parent / 'fixtures' / 'slt_config_sample_error7.json'
+    with pytest.raises(ValueError) as value_error:
+        SourceLogicTree.from_user_config(slt_config_path)
+    print(value_error.value)
+
+    slt_config_path = Path(__file__).parent / 'fixtures' / 'slt_config_sample_error8.json'
+    with pytest.raises(ValueError) as value_error:
+        SourceLogicTree.from_user_config(slt_config_path)
+    print(value_error.value)
