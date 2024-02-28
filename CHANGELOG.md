@@ -3,7 +3,7 @@
 ## [0.9.2] 2024-02-26
 
 ### Added
- - create SourceLogicTree from hand-built json
+ - create LogicTree objects from hand-built json
 
 ## [0.9.1] 2024-02-26
 
