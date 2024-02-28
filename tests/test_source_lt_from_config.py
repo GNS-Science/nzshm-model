@@ -4,6 +4,7 @@ import pytest
 
 from nzshm_model.logic_tree import InversionSource, SourceLogicTree
 
+
 @pytest.fixture()
 def slt_dict():
     slt_json_path = Path(__file__).parent / 'fixtures' / 'slt_config_sample.json'
@@ -35,6 +36,7 @@ def test_slt_from_config_errors0(slt_dict):
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
 
+
 def test_slt_from_config_errors1(slt_dict):
     # source type and member type should match
     # NB: the type member is not in the documentation, but a user could set it to the wrong value mistakenly
@@ -43,6 +45,7 @@ def test_slt_from_config_errors1(slt_dict):
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
 
+
 def test_slt_from_config_errors2(slt_dict):
     # branches named in correlations must exist in the logic tree
     slt_dict["correlations"][0][0] = ["HIK:HIK10"]
@@ -50,12 +53,14 @@ def test_slt_from_config_errors2(slt_dict):
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
 
+
 def test_slt_from_config_errors3(slt_dict):
     # cannot repeat primary branch in correlations
     slt_dict["correlations"][1][0] = slt_dict["correlations"][0][0]
     with pytest.raises(ValueError) as value_error:
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
+
 
 def test_slt_from_config_errors4(slt_dict):
     # every branch must have at least one source
@@ -65,6 +70,7 @@ def test_slt_from_config_errors4(slt_dict):
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
 
+
 def test_slt_from_config_errors5(slt_dict):
     # don't accept duplicate branch_set.short_name:branch.name
     slt_dict["branch_sets"][1]["short_name"] = "PUY"
@@ -73,12 +79,14 @@ def test_slt_from_config_errors5(slt_dict):
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
 
+
 def test_slt_from_config_errors6(slt_dict):
     # correlations must name branches in the LT
     slt_dict["correlations"][0][0] = "HIK:HIK10"
     with pytest.raises(ValueError) as value_error:
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
+
 
 def test_slt_from_config_errors7(slt_dict):
     # correlations must name branches in the LT
@@ -87,10 +95,10 @@ def test_slt_from_config_errors7(slt_dict):
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
 
+
 def test_slt_from_config_errors8(slt_dict):
     # correlations must name branches in the LT
     slt_dict["correlations"][0][0] = "HIKHIK1"
     with pytest.raises(ValueError) as value_error:
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
-

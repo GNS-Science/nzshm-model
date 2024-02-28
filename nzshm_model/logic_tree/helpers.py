@@ -4,29 +4,31 @@ import math
 from .correlation import Correlation, LogicTreeCorrelations
 
 if TYPE_CHECKING:
-    from .logic_tree_base import LogicTree, BranchSet
+    from .logic_tree_base import LogicTree, BranchSet, LogicTreeType
 
 
 ##############################
 # VALIDATORS
 ##############################
 def _validate_branchset_weights(branch_set: 'BranchSet') -> None:
-        """
-        verify that weighs sum to 1.0
-        """
-        weight = 0.0
-        if not branch_set.branches:  # empty BranchSet
-            return True
-        for b in branch_set.branches:
-            weight += b.weight
-        if not math.isclose(weight, 1.0):
-            raise ValueError("weights of BranchSet must sum to 1.0")
+    """
+    verify that weighs sum to 1.0
+    """
+    weight = 0.0
+    if not branch_set.branches:  # empty BranchSet
+        return
+    for b in branch_set.branches:
+        weight += b.weight
+    if not math.isclose(weight, 1.0):
+        raise ValueError("weights of BranchSet must sum to 1.0")
+
 
 def _validate_names(logic_tree: 'LogicTree') -> None:
     # do not allow duplicate branch_set.shortname:branch.name
     branch_names = [f"{branch.branch_set.short_name}:{branch.name}" for branch in logic_tree]
     if len(set(branch_names)) != len(branch_names):
         raise ValueError("branch_set.shortname:branch.name must be unique")
+
 
 def _validate_correlation_weights(logic_tree: 'LogicTree') -> None:
     # check that the weights total 1.0
@@ -35,6 +37,7 @@ def _validate_correlation_weights(logic_tree: 'LogicTree') -> None:
         weight_total += branch.weight
     if not math.isclose(weight_total, 1.0):
         raise ValueError("the weights of the logic tree do not sum to 1.0 when correlations are applied")
+
 
 def _validate_correlations_format(correlations: List[str]) -> None:
     # check that the correlations are lists of stings with ":"
@@ -45,13 +48,15 @@ def _validate_correlations_format(correlations: List[str]) -> None:
             if ":" not in branch:
                 raise ValueError("names in correlations must be 'branch_set.shortname:branch.name' format")
 
+
 ##############################
 # SERIALIZE / DESERIALIZE
 ##############################
 def _correlation_encoding(branch_set, branch):
     return f"{branch_set.short_name}:{branch.name}"
 
-def _add_corellations(logic_tree: 'LogicTree', correlations: List[str]) -> 'LogicTree':
+
+def _add_corellations(logic_tree: 'LogicTree', correlations: List[str]) -> LogicTreeType:
 
     branches = [branch for branch in logic_tree]
     # branch_names = [f"{fbranch.branch_set.short_name}:{fbranch.name}" for fbranch in branches]
@@ -70,8 +75,8 @@ def _add_corellations(logic_tree: 'LogicTree', correlations: List[str]) -> 'Logi
 
     return logic_tree
 
-def _serialize_correlations(logic_tree: 'LogicTree') -> List[List[str]]:
 
+def _serialize_correlations(logic_tree: 'LogicTree') -> List[List[str]]:
     def find_branch_set(logic_tree, branch):
         for fbranch in logic_tree:
             if fbranch.to_branch() == branch:
@@ -80,15 +85,8 @@ def _serialize_correlations(logic_tree: 'LogicTree') -> List[List[str]]:
     correlations = []
     for cor in logic_tree.correlations.correlation_groups:
         correlation = []
-        correlation.append(_correlation_encoding(
-                find_branch_set(logic_tree, cor.primary_branch),
-                cor.primary_branch
-            ))
+        correlation.append(_correlation_encoding(find_branch_set(logic_tree, cor.primary_branch), cor.primary_branch))
         for branch in cor.associated_branches:
-            correlation.append(_correlation_encoding(
-                    find_branch_set(logic_tree, branch),
-                    branch
-                ))
+            correlation.append(_correlation_encoding(find_branch_set(logic_tree, branch), branch))
         correlations.append(correlation)
     return correlations
-

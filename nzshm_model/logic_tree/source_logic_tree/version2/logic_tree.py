@@ -2,10 +2,8 @@
 Defines source logic tree structures used in NSHM.
 """
 import copy
-import json
 import warnings
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Dict, List, Optional, Type, Union
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
@@ -142,7 +140,6 @@ class SourceLogicTree(LogicTree):
     #     default_factory=list
     # )  # to use for selecting branches and re-weighting when logic trees are correlated
 
-
     def __post_init__(self) -> None:
 
         # check that sources are defined correctly
@@ -150,7 +147,7 @@ class SourceLogicTree(LogicTree):
         super().__post_init__()
 
     def _check_sources(self):
-         for branch in self:
+        for branch in self:
             if not branch.sources:
                 raise ValueError("every branch must have at least one source")
             for source in branch.sources:
@@ -343,4 +340,3 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
         """
         warnings.warn("Please use logic_tree property instead", DeprecationWarning)
         return self.logic_tree
-

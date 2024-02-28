@@ -4,7 +4,6 @@ This module contains base classes (some of which are abstract) common to both **
 """
 import copy
 import json
-import math
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
@@ -21,7 +20,7 @@ from nzshm_model.psha_adapter import PshaAdapterInterface
 
 import nzshm_model.logic_tree.helpers as helpers
 from .branch import Branch, CompositeBranch
-from .correlation import LogicTreeCorrelations, Correlation
+from .correlation import LogicTreeCorrelations
 
 # TODO:
 # - move values to the base class?
@@ -54,7 +53,6 @@ class BranchSet:
         helpers._validate_branchset_weights(self)
 
 
-
 @dataclass
 class LogicTree(ABC):
     """
@@ -80,10 +78,8 @@ class LogicTree(ABC):
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         super().__setattr__(__name, __value)
-        if (__name == "correlations"):
+        if __name == "correlations":
             helpers._validate_correlation_weights(self)
-
-    
 
     def _combined_branches(self) -> Generator[CompositeBranch, None, None]:
         """
@@ -146,13 +142,13 @@ class LogicTree(ABC):
         with Path(json_path).open() as jsonfile:
             data = json.load(jsonfile)
         return cls.from_dict(data)
-        
 
     @classmethod
     def from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
         """
-        Create LogicTree object from dict. This function does not de-serialze direct dict representation of a LogicTree, instead it works on a simlified representation of correaltations meant for user-built logic trees.
-        
+        Create LogicTree object from dict. This function does not de-serialze direct dict representation of a LogicTree,
+        instead it works on a simlified representation of correaltations meant for user-built logic trees.
+
         See docs/api/logic_tree/source_logic_tree_config_format.md and
         api/logic_tree/gmcm_logic_tree_config_format.md
 
@@ -171,10 +167,9 @@ class LogicTree(ABC):
         helpers._validate_correlations_format(correlations)
         logic_tree = cls._from_dict(data)
         helpers._validate_names(logic_tree)
-        logic_tree = helpers._add_corellations(logic_tree, correlations)  
+        logic_tree = helpers._add_corellations(logic_tree, correlations)
 
         return logic_tree
-
 
     @classmethod
     def _from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
@@ -196,10 +191,11 @@ class LogicTree(ABC):
             dict:
         """
         return asdict(self)
-    
+
     def to_dict(self) -> Dict[str, Any]:
-        """Create dictionary representation of logic tree used for serializtion. The dictionary is not an exact representation of the class as it simplifies the defintion of correlations
-        
+        """Create dictionary representation of logic tree used for serializtion. The dictionary is not an exact
+        representation of the class as it simplifies the defintion of correlations
+
         Returns:
             logic_tree_dict: dictionary representaion of logic tree
         """
@@ -209,23 +205,20 @@ class LogicTree(ABC):
         if not self.correlations:
             del data["correlations"]
             return data
-        
+
         helpers._validate_names(self)
         data["correlations"] = helpers._serialize_correlations(self)
         return data
 
-        
-
     def to_json(self, file_path: Union[Path, str]) -> None:
         """Serialze logic tree as json file.
-        
+
         Parameters:
             file_path: path to json file to be written
         """
         file_path = Path(file_path)
         with file_path.open('w') as jsonfile:
             json.dump(self.to_dict(), jsonfile)
-
 
     # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
@@ -335,4 +328,3 @@ class FilteredBranch(Branch):
         """
         branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('branch_set', 'logic_tree')}
         return type(self.branch_set.branches[0])(**branch_attributes)
-
