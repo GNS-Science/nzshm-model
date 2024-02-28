@@ -3,7 +3,9 @@ For use by `SourceLogicTree.from_user_config()`
 
 The config for a `SourceLogicTree` uses the [json file format](https://www.json.org/). It approximates the dict representation of the `SourceLogicTree` dataclass with some simplifications to make it easer to create one manually.
 
-Most of the entries are optional, but without including at least some of them, you will not have a useful `SourceLogicTree`. Comments (`//`) have been included in the example here, but are not compatible with an actual json file:
+Most of the entries are optional, but without including at least some of them, you will not have a useful `SourceLogicTree`. Comments (`//`) have been included in the example here, but are not compatible with an actual json file.
+
+The branch set `short_name` and branch `name` are used to define correlations. Therefore, if correlations are specified each branch must have a unique `branch_set.short_name:branch.name` combination. Otherwise, branch set `short_name` and branch `name` are optional, as is branch_set `long_name`.
 ```
 {
     "title": "A sample SRM logic tree definition", 
