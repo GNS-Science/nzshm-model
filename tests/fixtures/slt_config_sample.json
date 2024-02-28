@@ -112,9 +112,9 @@
         }
     ],
     "correlations": [
-        ["HIK1", "PUY1"],
-        ["HIK2", "PUY2"],
-        ["HIK3", "PUY1"],
-        ["HIK4", "PUY2"]
+        ["HIK:HIK1", "PUY:PUY1"],
+        ["HIK:HIK2", "PUY:PUY2"],
+        ["HIK:HIK3", "PUY:PUY1"],
+        ["HIK:HIK4", "PUY:PUY2"]
     ]
 }

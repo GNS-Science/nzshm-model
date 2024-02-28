@@ -142,6 +142,23 @@ class SourceLogicTree(LogicTree):
     #     default_factory=list
     # )  # to use for selecting branches and re-weighting when logic trees are correlated
 
+
+    def __post_init__(self) -> None:
+
+        # check that sources are defined correctly
+        self._check_sources()
+        super().__post_init__()
+
+    def _check_sources(self):
+         for branch in self:
+            if not branch.sources:
+                raise ValueError("every branch must have at least one source")
+            for source in branch.sources:
+                if isinstance(source, DistributedSource) and source.type != "distributed":
+                    raise ValueError("source type DistributedSource does not match type member")
+                if isinstance(source, InversionSource) and source.type != "inversion":
+                    raise ValueError("source type DistributedSource does not match type member")
+
     def derive_spec(self) -> SourceLogicTreeSpec:
         raise NotImplementedError()
         # slt_spec = SourceLogicTreeSpec()
@@ -149,62 +166,62 @@ class SourceLogicTree(LogicTree):
         #     slt_spec.fault_systems.append(FaultSystemLogicTree.derive_spec(fslt))
         # return slt_spec
 
-    @classmethod
-    def from_user_config(cls: Type[LogicTreeType], config_path: Union[Path, str]) -> LogicTreeType:
-        """Create a new SourceLogicTree from a config file
+    # @classmethod
+    # def from_user_config(cls: Type[LogicTreeType], config_path: Union[Path, str]) -> LogicTreeType:
+    #     """Create a new SourceLogicTree from a config file
 
-        See docs/api/logic_tree/source_logic_tree_config_format.md
+    #     See docs/api/logic_tree/source_logic_tree_config_format.md
 
-        Arguments:
-            config_path: path to configuration file
+    #     Arguments:
+    #         config_path: path to configuration file
 
-        Returns:
-            logic_tree: a new SourceLogicTree instance
-        """
+    #     Returns:
+    #         logic_tree: a new SourceLogicTree instance
+    #     """
 
-        with Path(config_path).open() as config_file:
-            data = json.load(config_file)
+    #     with Path(config_path).open() as config_file:
+    #         data = json.load(config_file)
 
-        data['logic_tree_version'] = 2
+    #     data['logic_tree_version'] = 2
 
-        if not data.get('correlations'):
-            slt = cls.from_dict(data)
-            _check_branches_and_sources(slt)
-            return slt
+    #     if not data.get('correlations'):
+    #         slt = cls.from_dict(data)
+    #         _check_branches_and_sources(slt)
+    #         return slt
 
-        correlations = data.pop('correlations')
-        slt = cls.from_dict(data)
-        fbranches = [fbranch for fbranch in slt]
-        branch_names = [fbranch.name for fbranch in fbranches]
-        correlation_groups = []
-        for correlation in correlations:
-            primary_branch = fbranches[branch_names.index(correlation[0])].to_branch()
-            assoc_branches = [fbranches[branch_names.index(b)].to_branch() for b in correlation[1:]]
-            correlation_groups.append(
-                Correlation(
-                    primary_branch=primary_branch,
-                    associated_branches=assoc_branches,
-                )
-            )
-        slt.correlations = LogicTreeCorrelations(correlation_groups)
-        _check_branches_and_sources(slt)
+    #     correlations = data.pop('correlations')
+    #     slt = cls.from_dict(data)
+    #     fbranches = [fbranch for fbranch in slt]
+    #     branch_names = [fbranch.name for fbranch in fbranches]
+    #     correlation_groups = []
+    #     for correlation in correlations:
+    #         primary_branch = fbranches[branch_names.index(correlation[0])].to_branch()
+    #         assoc_branches = [fbranches[branch_names.index(b)].to_branch() for b in correlation[1:]]
+    #         correlation_groups.append(
+    #             Correlation(
+    #                 primary_branch=primary_branch,
+    #                 associated_branches=assoc_branches,
+    #             )
+    #         )
+    #     slt.correlations = LogicTreeCorrelations(correlation_groups)
+    #     _check_branches_and_sources(slt)
 
-        return slt
+    #     return slt
 
-    @classmethod
-    def from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
-        """build a new instance from a dict represention.
+    # @classmethod
+    # def from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
+    #     """build a new instance from a dict represention.
 
-        Arguments:
-            data: a dictionary of the SourceLogicTree properties.
+    #     Arguments:
+    #         data: a dictionary of the SourceLogicTree properties.
 
-        Returns:
-            logic_tree: a new SourceLogicTree instance
-        """
-        ltv = data.get("logic_tree_version")
-        if not ltv == 2:
-            raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
-        return super(SourceLogicTree, cls).from_dict(data)
+    #     Returns:
+    #         logic_tree: a new SourceLogicTree instance
+    #     """
+    #     ltv = data.get("logic_tree_version")
+    #     if not ltv == 2:
+    #         raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
+    #     return super(SourceLogicTree, cls).from_dict(data)
 
     @staticmethod
     def from_source_logic_tree(original_slt: "SourceLogicTreeV1") -> "SourceLogicTree":
@@ -327,28 +344,3 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
         warnings.warn("Please use logic_tree property instead", DeprecationWarning)
         return self.logic_tree
 
-
-def _check_branches_and_sources(slt: LogicTreeType) -> None:
-
-    # do not allow duplicate branch or branch set names
-    branch_names = [branch.name for branch in slt]
-    if len(set(branch_names)) != len(branch_names):
-        raise ValueError("branch names must be unique")
-
-    bs_short_names = [bs.short_name for bs in slt.branch_sets]
-    if len(set(bs_short_names)) != len(bs_short_names):
-        raise ValueError("branch set short names must be unique")
-
-    bs_long_names = [bs.long_name for bs in slt.branch_sets]
-    if len(set(bs_long_names)) != len(bs_long_names):
-        raise ValueError("branch names must be unique")
-
-    # check that sources are defined correctly
-    for branch in slt:
-        if not branch.sources:
-            raise ValueError("every branch must have at least one source")
-        for source in branch.sources:
-            if isinstance(source, DistributedSource) and source.type != "distributed":
-                raise ValueError("source type DistributedSource does not match type member")
-            if isinstance(source, InversionSource) and source.type != "inversion":
-                raise ValueError("source type DistributedSource does not match type member")

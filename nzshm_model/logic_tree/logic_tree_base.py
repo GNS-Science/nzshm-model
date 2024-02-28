@@ -16,10 +16,12 @@ from typing import Any, Dict, Generator, Iterator, List, Type, TypeVar, Union
 
 import dacite
 
+
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
+import nzshm_model.logic_tree.helpers as helpers
 from .branch import Branch, CompositeBranch
-from .correlation import LogicTreeCorrelations
+from .correlation import LogicTreeCorrelations, Correlation
 
 # TODO:
 # - move values to the base class?
@@ -49,19 +51,8 @@ class BranchSet:
     branches: Sequence[Any] = field(default_factory=list)
 
     def __post_init__(self):
-        if not self._validate_weights():
-            raise ValueError("weights of BranchSet must sum to 1.0")
+        helpers._validate_branchset_weights(self)
 
-    def _validate_weights(self) -> bool:
-        """
-        verify that weighs sum to 1.0
-        """
-        weight = 0.0
-        if not self.branches:  # empty BranchSet
-            return True
-        for b in self.branches:
-            weight += b.weight
-        return math.isclose(weight, 1.0)
 
 
 @dataclass
@@ -85,20 +76,14 @@ class LogicTree(ABC):
     correlations: LogicTreeCorrelations = field(default_factory=LogicTreeCorrelations)
 
     def __post_init__(self) -> None:
-        self._validate_correlations()
+        helpers._validate_correlation_weights(self)
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         super().__setattr__(__name, __value)
-        if __name == "correlations":
-            self._validate_correlations()
+        if (__name == "correlations"):
+            helpers._validate_correlation_weights(self)
 
-    def _validate_correlations(self) -> None:
-        # check that the weights total 1.0
-        weight_total = 0.0
-        for branch in self.combined_branches:
-            weight_total += branch.weight
-        if not math.isclose(weight_total, 1.0):
-            raise ValueError("the weights of the logic tree do not sum to 1.0 when correlations are applied")
+    
 
     def _combined_branches(self) -> Generator[CompositeBranch, None, None]:
         """
@@ -130,24 +115,27 @@ class LogicTree(ABC):
                 combined_branch.weight = reduce(mul, weights, 1.0)
             yield combined_branch
 
-    @classmethod
-    @abstractmethod
-    def from_user_config(cls: Type[LogicTreeType], config_path: Union[Path, str]) -> LogicTreeType:
-        """
-        Create a LogicTree object from a config file
+    # @classmethod
+    # @abstractmethod
+    # def from_user_config(cls: Type[LogicTreeType], config_path: Union[Path, str]) -> LogicTreeType:
+    #     """
+    #     Create a LogicTree object from a config file
 
-        Parameters:
-            config_path: path to configuration file
+    #     Parameters:
+    #         config_path: path to configuration file
 
-        Returns:
-            logic_tree
-        """
-        pass
+    #     Returns:
+    #         logic_tree
+    #     """
+    #     pass
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
         """
-        Create LogicTree object from json file or string
+        Create LogicTree object from json file
+
+        See docs/api/logic_tree/source_logic_tree_config_format.md and
+        api/logic_tree/gmcm_logic_tree_config_format.md
 
         Parameters:
             json_path: path to json file
@@ -158,11 +146,40 @@ class LogicTree(ABC):
         with Path(json_path).open() as jsonfile:
             data = json.load(jsonfile)
         return cls.from_dict(data)
+        
 
     @classmethod
     def from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
         """
-        Create LogicTree object from dict
+        Create LogicTree object from dict. This function does not de-serialze direct dict representation of a LogicTree, instead it works on a simlified representation of correaltations meant for user-built logic trees.
+        
+        See docs/api/logic_tree/source_logic_tree_config_format.md and
+        api/logic_tree/gmcm_logic_tree_config_format.md
+
+        Parameters:
+            data: dict representation of LogicTree object
+
+        Returns:
+            logic_tree
+        """
+        if not data.get('correlations'):
+            logic_tree = cls._from_dict(data)
+            # do not need to validate names as that is only necessary if there are correlations
+            return logic_tree
+
+        correlations = data.pop('correlations')
+        helpers._validate_correlations_format(correlations)
+        logic_tree = cls._from_dict(data)
+        helpers._validate_names(logic_tree)
+        logic_tree = helpers._add_corellations(logic_tree, correlations)  
+
+        return logic_tree
+
+
+    @classmethod
+    def _from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
+        """
+        Create LogicTree object from dict. Input dict must be a direct asdict() serialization of the LogicTree object
 
         Parameters:
             data: dict representation of LogicTree object
@@ -172,8 +189,43 @@ class LogicTree(ABC):
         """
         return dacite.from_dict(data_class=cls, data=data, config=dacite.Config(strict=True))
 
-    def to_dict(self) -> Dict[str, Any]:
+    def _to_dict(self) -> Dict[str, Any]:
+        """Create dict representation of logic tree. This creates an exact dict of the class and is not used for serialization.
+
+        Returns:
+            dict:
+        """
         return asdict(self)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Create dictionary representation of logic tree used for serializtion. The dictionary is not an exact representation of the class as it simplifies the defintion of correlations
+        
+        Returns:
+            logic_tree_dict: dictionary representaion of logic tree
+        """
+
+        # do not need to validate names as that is only necessary if there are correlations
+        data = self._to_dict()
+        if not self.correlations:
+            del data["correlations"]
+            return data
+        
+        helpers._validate_names(self)
+        data["correlations"] = helpers._serialize_correlations(self)
+        return data
+
+        
+
+    def to_json(self, file_path: Union[Path, str]) -> None:
+        """Serialze logic tree as json file.
+        
+        Parameters:
+            file_path: path to json file to be written
+        """
+        file_path = Path(file_path)
+        with file_path.open('w') as jsonfile:
+            json.dump(self.to_dict(), jsonfile)
+
 
     # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
@@ -283,3 +335,4 @@ class FilteredBranch(Branch):
         """
         branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('branch_set', 'logic_tree')}
         return type(self.branch_set.branches[0])(**branch_attributes)
+

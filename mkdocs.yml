@@ -23,6 +23,7 @@ nav:
         - correlation: api/logic_tree/correlation.md
         - source_logic_tree: api/logic_tree/source_logic_tree.md
         - defining a source logic tree: api/logic_tree/source_logic_tree_config_format.md
+        - defining a gmcm logic tree: api/logic_tree/gmcm_logic_tree_config_format.md
     - psha_adapter: api/psha_adapter.md
   - Contributing: contributing.md
   - Changelog: changelog.md

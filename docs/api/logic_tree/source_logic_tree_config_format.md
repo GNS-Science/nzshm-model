@@ -128,17 +128,17 @@ Most of the entries are optional, but without including at least some of them, y
     ],
 
     // Correlations are used to make branches always be paired with others when forming all
-    // combinations of the branch_set branches. Branches are identified by name. The first entry
-    // identifies the "primary" branch. The primary branch will only be paired with the other
-    // branches in it's list (e.g. "HIK1" will only be combined with "PUY1" not "PUY2"). However,
-    // it is possible for the non-primary branches to be combined with more than one branch from
-    // the primary list, as shown below. The correlations are not limited to two branches, you can
-    // have as many entries as there are branch sets.
+    // combinations of the branch_set branches. Branches are identified by branch name and branch
+    // set short name. The first entry identifies the "primary" branch. The primary branch will only
+    // be paired with the other branches in it's list (e.g. "HIK1" will only be combined with "PUY1"
+    // not "PUY2"). However, it is possible for the non-primary branches to be combined with more
+    // than one branch from the primary list, as shown below. The correlations are not limited to
+    // two branches, you can have as many entries as there are branch sets.
     "correlations": [
-        ["HIK1", "PUY1"],
-        ["HIK2", "PUY2"],
-        ["HIK3", "PUY1"],
-        ["HIK4", "PUY2"] 
+        ["HIK:HIK1", "PUY:PUY1"],
+        ["HIK:HIK2", "PUY:PUY2"],
+        ["HIK:HIK3", "PUY:PUY1"],
+        ["HIK:HIK4", "PUY:PUY2"] 
     ]
 }  
 ```

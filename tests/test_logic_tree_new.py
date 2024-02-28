@@ -27,3 +27,11 @@ def test_v2_source_tree_from_json_no_correlations():
     assert slt.branch_sets[0].branches[0].sources[0].type == 'inversion'
     assert slt.branch_sets[0].branches[0].sources[0].nrml_id == 'SW52ZXJzaW9uU29sdXRpb25Ocm1sOjExODcxNw=='
     assert slt.branch_sets[0].branches[0].sources[0].rupture_rate_scaling == 0.9
+
+def test_serialize_source_logic_tree():
+    slt_json_path = Path(__file__).parent / 'fixtures' / 'slt_config_sample.json'
+    slt_orig = SourceLogicTree.from_json(slt_json_path)
+    slt_dict = slt_orig.to_dict()
+    slt_from_dict = SourceLogicTree.from_dict(slt_dict)
+
+    assert slt_orig == slt_from_dict

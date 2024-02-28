@@ -55,15 +55,7 @@ class LogicTreeCorrelations(Sequence):
     correlation_groups: List[Correlation] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        self._validate_correlations()
-
-    def _validate_correlations(self) -> None:
-        """
-        check that there are no repeats in the 0th element of each correlation
-        """
-        prim_branches = list(self.primary_branches())
-        if len([branch for branch in prim_branches if prim_branches.count(branch) > 1]) != 0:
-            raise ValueError("there is a repeated branch in the 0th element of the correlations")
+        _validate_correlations(self)
 
     def primary_branches(self) -> Generator[Branch, None, None]:
         """
@@ -90,3 +82,12 @@ class LogicTreeCorrelations(Sequence):
 
     def __len__(self) -> int:
         return len(self.correlation_groups)
+
+
+def _validate_correlations(ltcs: LogicTreeCorrelations) -> None:
+    """
+    check that there are no repeats in the 0th element of each correlation
+    """
+    prim_branches = list(ltcs.primary_branches())
+    if len([branch for branch in prim_branches if prim_branches.count(branch) > 1]) != 0:
+        raise ValueError("there is a repeated branch in the 0th element of the correlations")
