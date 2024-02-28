@@ -1,10 +1,10 @@
-from typing import TYPE_CHECKING, List
 import math
+from typing import TYPE_CHECKING, List
 
 from .correlation import Correlation, LogicTreeCorrelations
 
 if TYPE_CHECKING:
-    from .logic_tree_base import LogicTree, BranchSet, LogicTreeType
+    from .logic_tree_base import BranchSet, LogicTree, LogicTreeType
 
 
 ##############################
@@ -56,7 +56,7 @@ def _correlation_encoding(branch_set, branch):
     return f"{branch_set.short_name}:{branch.name}"
 
 
-def _add_corellations(logic_tree: 'LogicTree', correlations: List[str]) -> LogicTreeType:
+def _add_corellations(logic_tree: 'LogicTreeType', correlations: List[str]) -> 'LogicTreeType':
 
     branches = [branch for branch in logic_tree]
     # branch_names = [f"{fbranch.branch_set.short_name}:{fbranch.name}" for fbranch in branches]

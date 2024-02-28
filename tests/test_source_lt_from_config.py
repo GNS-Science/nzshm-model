@@ -1,5 +1,6 @@
-from pathlib import Path
 import json
+from pathlib import Path
+
 import pytest
 
 from nzshm_model.logic_tree import InversionSource, SourceLogicTree
