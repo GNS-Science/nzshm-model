@@ -110,19 +110,6 @@ class LogicTree(ABC):
                 combined_branch.weight = reduce(mul, weights, 1.0)
             yield combined_branch
 
-    # @classmethod
-    # @abstractmethod
-    # def from_user_config(cls: Type[LogicTreeType], config_path: Union[Path, str]) -> LogicTreeType:
-    #     """
-    #     Create a LogicTree object from a config file
-
-    #     Parameters:
-    #         config_path: path to configuration file
-
-    #     Returns:
-    #         logic_tree
-    #     """
-    #     pass
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
