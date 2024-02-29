@@ -76,7 +76,7 @@ def _add_corellations(logic_tree: 'LogicTreeType', correlations: List[str]) -> '
     return logic_tree
 
 
-def _serialize_correlations(logic_tree: 'LogicTree') -> List[List[str]]:
+def _serialise_correlations(logic_tree: 'LogicTree') -> List[List[str]]:
     def find_branch_set(logic_tree, branch):
         for fbranch in logic_tree:
             if fbranch.to_branch() == branch:

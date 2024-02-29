@@ -145,8 +145,7 @@ class LogicTree(ABC):
     @classmethod
     def from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
         """
-        Create LogicTree object from dict. This function does not de-serialze direct dict representation of a LogicTree,
-        instead it works on a simlified representation of correaltations meant for user-built logic trees.
+        Create LogicTree object from dict.
 
         See docs/api/logic_tree/source_logic_tree_config_format.md and
         api/logic_tree/gmcm_logic_tree_config_format.md
@@ -173,7 +172,7 @@ class LogicTree(ABC):
     @classmethod
     def _from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
         """
-        Create LogicTree object from dict. Input dict must be a direct asdict() serialization of the LogicTree object
+        Create LogicTree object from dict. Input dict must be a direct asdict() serialisation of the LogicTree object
 
         Parameters:
             data: dict representation of LogicTree object
@@ -184,7 +183,7 @@ class LogicTree(ABC):
         return dacite.from_dict(data_class=cls, data=data, config=dacite.Config(strict=True))
 
     def _to_dict(self) -> Dict[str, Any]:
-        """Create dict representation of logic tree. This creates an exact dict of the class and is not used for serialization.
+        """Create dict representation of logic tree. This creates an exact dict of the class and is not used for serialisation.
 
         Returns:
             dict:
@@ -192,8 +191,7 @@ class LogicTree(ABC):
         return asdict(self)
 
     def to_dict(self) -> Dict[str, Any]:
-        """Create dictionary representation of logic tree used for serializtion. The dictionary is not an exact
-        representation of the class as it simplifies the defintion of correlations
+        """Create dictionary representation of logic tree used for serialisation.
 
         Returns:
             logic_tree_dict: dictionary representaion of logic tree
@@ -206,7 +204,7 @@ class LogicTree(ABC):
             return data
 
         helpers._validate_names(self)
-        data["correlations"] = helpers._serialize_correlations(self)
+        data["correlations"] = helpers._serialise_correlations(self)
         return data
 
     def to_json(self, file_path: Union[Path, str]) -> None:
