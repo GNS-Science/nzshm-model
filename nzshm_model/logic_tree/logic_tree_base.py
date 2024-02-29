@@ -110,7 +110,6 @@ class LogicTree(ABC):
                 combined_branch.weight = reduce(mul, weights, 1.0)
             yield combined_branch
 
-
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
         """
