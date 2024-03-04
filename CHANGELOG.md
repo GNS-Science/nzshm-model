@@ -5,6 +5,9 @@
 ### Added
  - create LogicTree objects from hand-built json
 
+### Changed
+ - alter form of serialized LogicTree object
+
 ## [0.9.1] 2024-02-26
 
 ### Changed
