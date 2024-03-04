@@ -22,7 +22,7 @@ class Branch(ABC):
         weight: a weight for the branch
     """
 
-    name: str = ""
+    branch_id: str = ""
     weight: float = 1.0
 
     @abstractmethod

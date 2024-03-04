@@ -1,0 +1,120 @@
+{
+    "title": "A sample SRM logic tree definition", 
+    "version": "10.1",                             
+    "branch_sets": [
+        {
+            "short_name": "PUY",
+            "long_name": "Puysegur",
+            "branches": [
+                {
+                    "branch_id": "PUY1",
+                    "weight": 0.2,
+                    "rupture_rate_scaling": 1.1,
+                    "values": [
+                        {
+                            "name": "dm",
+                            "long_name": "deformation model",
+                            "value": "0.7"
+                        },
+                        {
+                            "name": "bN",
+                            "long_name": "bN pair",
+                            "value": [
+                                0.902,
+                                4.6
+                            ]
+                        }
+                    ],
+                    "sources": [ 
+                        {
+                            "nrml_id": "ABC"
+                        },
+                        {
+                            "nrml_id": "XYZ"
+                        },
+                        {
+                            "nrml_id": "SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2NjE=",
+                            "rupture_rate_scaling": null,
+                            "inversion_id": "U2NhbGVkSW52ZXJzaW9uU29sdXRpb246MTI5MTM4Mg==",
+                            "rupture_set_id": "RmlsZToxMjkwOTg0",
+                            "inversion_solution_type": ""
+                        },
+                        {
+                            "nrml_id": "RmlsZToxMzA3NTQ=",
+                            "rupture_rate_scaling": null
+                        }
+                    ]
+                },
+                {
+                    "branch_id": "PUY2",
+                    "weight": 0.8,
+                    "sources": [ 
+                        {
+                            "nrml_id": "DEF"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "short_name": "HIK",
+            "long_name": "Hikurangi",
+            "branches": [
+                {
+                    "branch_id": "HIK1",
+                    "weight": 0.3,
+                    "sources": [
+                        {
+                            "nrml_id": "GHI"
+                        }
+                    ]
+                },
+                {
+                    "branch_id": "HIK2",
+                    "weight": 0.2,
+                    "sources": [
+                        {
+                            "nrml_id": "JKL"
+                        }
+                    ]
+                },
+                {
+                    "branch_id": "HIK3",
+                    "weight": 0.25,
+                    "sources": [
+                        {
+                            "nrml_id": "MNO"
+                        }
+                    ]
+                },
+                {
+                    "branch_id": "HIK4",
+                    "weight": 0.25,
+                    "sources": [
+                        {
+                            "nrml_id": "PQR"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "branches": [
+                {
+                    "weight": 1.0,
+                    "sources" : [
+                        {
+                            "nrml_id": "FOOBAR"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "correlations": [
+        ["HIK:HIK1", "PUY:PUY1"],
+        ["HIK:HIK2", "PUY:PUY2"],
+        ["HIK:HIK3", "PUY:PUY1"],
+        ["HIK:HIK4", "PUY:PUY2"]
+    ]
+}

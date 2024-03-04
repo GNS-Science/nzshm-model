@@ -136,9 +136,21 @@ class SourceLogicTree(LogicTree):
     branch_sets: List[SourceBranchSet] = field(default_factory=list)  # branch_sets for this logic tree
     logic_tree_version: Union[int, None] = 2
 
-    # correlations: List[SourceLogicTreeCorrelation] = field(
-    #     default_factory=list
-    # )  # to use for selecting branches and re-weighting when logic trees are correlated
+    def __post_init__(self) -> None:
+
+        # check that sources are defined correctly
+        self._check_sources()
+        super().__post_init__()
+
+    def _check_sources(self):
+        for branch in self:
+            if not branch.sources:
+                raise ValueError("every branch must have at least one source")
+            for source in branch.sources:
+                if isinstance(source, DistributedSource) and source.type != "distributed":
+                    raise ValueError("source type DistributedSource does not match type member")
+                if isinstance(source, InversionSource) and source.type != "inversion":
+                    raise ValueError("source type DistributedSource does not match type member")
 
     def derive_spec(self) -> SourceLogicTreeSpec:
         raise NotImplementedError()
@@ -146,21 +158,6 @@ class SourceLogicTree(LogicTree):
         # for fslt in self.fault_systems:
         #     slt_spec.fault_systems.append(FaultSystemLogicTree.derive_spec(fslt))
         # return slt_spec
-
-    @classmethod
-    def from_dict(cls, data: Dict) -> 'LogicTree':
-        """build a new instance from a dict represention.
-
-        Arguments:
-            data: a dictionary of the SourceLogicTree properties.
-
-        Returns:
-            a new SourceLogicTree instance
-        """
-        ltv = data.get("logic_tree_version")
-        if not ltv == 2:
-            raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
-        return super(SourceLogicTree, cls).from_dict(data)
 
     @staticmethod
     def from_source_logic_tree(original_slt: "SourceLogicTreeV1") -> "SourceLogicTree":
