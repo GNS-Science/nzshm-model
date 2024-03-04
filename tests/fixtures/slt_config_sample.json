@@ -7,7 +7,7 @@
             "long_name": "Puysegur",
             "branches": [
                 {
-                    "name": "PUY1",
+                    "branch_id": "PUY1",
                     "weight": 0.2,
                     "rupture_rate_scaling": 1.1,
                     "values": [
@@ -46,7 +46,7 @@
                     ]
                 },
                 {
-                    "name": "PUY2",
+                    "branch_id": "PUY2",
                     "weight": 0.8,
                     "sources": [ 
                         {
@@ -61,7 +61,7 @@
             "long_name": "Hikurangi",
             "branches": [
                 {
-                    "name": "HIK1",
+                    "branch_id": "HIK1",
                     "weight": 0.3,
                     "sources": [
                         {
@@ -70,7 +70,7 @@
                     ]
                 },
                 {
-                    "name": "HIK2",
+                    "branch_id": "HIK2",
                     "weight": 0.2,
                     "sources": [
                         {
@@ -79,7 +79,7 @@
                     ]
                 },
                 {
-                    "name": "HIK3",
+                    "branch_id": "HIK3",
                     "weight": 0.25,
                     "sources": [
                         {
@@ -88,7 +88,7 @@
                     ]
                 },
                 {
-                    "name": "HIK4",
+                    "branch_id": "HIK4",
                     "weight": 0.25,
                     "sources": [
                         {

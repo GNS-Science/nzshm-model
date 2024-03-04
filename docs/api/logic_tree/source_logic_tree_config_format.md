@@ -5,7 +5,7 @@ The config for a `SourceLogicTree` uses the [json file format](https://www.json.
 
 Most of the entries are optional, but without including at least some of them, you will not have a useful `SourceLogicTree`. Comments (`//`) have been included in the example here, but are not compatible with an actual json file.
 
-The branch set `short_name` and branch `name` are used to define correlations. Therefore, if correlations are specified each branch must have a unique `branch_set.short_name:branch.name` combination. Otherwise, branch set `short_name` and branch `name` are optional, as is branch_set `long_name`.
+The branch set `short_name` and branch `branch_id` are used to define correlations. Therefore, if correlations are specified each branch must have a unique `branch_set.short_name:branch.branch_id` combination. Otherwise, branch set `short_name` and branch `branch_id` are optional, as is branch_set `long_name`.
 ```
 {
     "title": "A sample SRM logic tree definition", 
@@ -16,9 +16,9 @@ The branch set `short_name` and branch `name` are used to define correlations. T
             "long_name": "Puysegur",
             "branches": [
                 {
-                    // A branch name is only necessary if correlations are specified. If so, the name of
+                    // A branch branch_id is only necessary if correlations are specified. If so, the branch_id of
                     // every branch (even between branch_sets must be unique).
-                    "name": "PUY1",
+                    "branch_id": "PUY1",
 
                     // the weights of the branches in a branch_set must sum to 1.0
                     "weight": 0.2,
@@ -75,7 +75,7 @@ The branch set `short_name` and branch `name` are used to define correlations. T
                     ]
                 },
                 {
-                    "name": "PUY2",
+                    "branch_id": "PUY2",
                     "weight": 0.8,
                     "sources": [ 
                         {
@@ -90,7 +90,7 @@ The branch set `short_name` and branch `name` are used to define correlations. T
             "long_name": "Hikurangi",
             "branches": [
                 {
-                    "name": "HIK1",
+                    "branch_id": "HIK1",
                     "weight": 0.3,
                     "sources": [
                         {
@@ -99,7 +99,7 @@ The branch set `short_name` and branch `name` are used to define correlations. T
                     ]
                 },
                 {
-                    "name": "HIK2",
+                    "branch_id": "HIK2",
                     "weight": 0.2,
                     "sources": [
                         {
@@ -108,7 +108,7 @@ The branch set `short_name` and branch `name` are used to define correlations. T
                     ]
                 },
                 {
-                    "name": "HIK3",
+                    "branch_id": "HIK3",
                     "weight": 0.25,
                     "sources": [
                         {
@@ -117,7 +117,7 @@ The branch set `short_name` and branch `name` are used to define correlations. T
                     ]
                 },
                 {
-                    "name": "HIK4",
+                    "branch_id": "HIK4",
                     "weight": 0.25,
                     "sources": [
                         {
@@ -130,8 +130,8 @@ The branch set `short_name` and branch `name` are used to define correlations. T
     ],
 
     // Correlations are used to make branches always be paired with others when forming all
-    // combinations of the branch_set branches. Branches are identified by branch name and branch
-    // set short name. The first entry identifies the "primary" branch. The primary branch will only
+    // combinations of the branch_set branches. Branches are identified by branch branch_id and branch
+    // set short_name. The first entry identifies the "primary" branch. The primary branch will only
     // be paired with the other branches in it's list (e.g. "HIK1" will only be combined with "PUY1"
     // not "PUY2"). However, it is possible for the non-primary branches to be combined with more
     // than one branch from the primary list, as shown below. The correlations are not limited to

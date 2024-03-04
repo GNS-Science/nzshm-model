@@ -18,9 +18,9 @@ def test_slt_from_config(slt_dict):
     assert len(list(slt.combined_branches)) == 4
     assert len(list(slt._combined_branches())) == 4 * 2
 
-    assert slt.branch_sets[2].branches[0].name == ""
+    assert slt.branch_sets[2].branches[0].branch_id == ""
     assert slt.branch_sets[2].short_name == ""
-    assert slt.branch_sets[0].branches[0].name == "PUY1"
+    assert slt.branch_sets[0].branches[0].branch_id == "PUY1"
     assert slt.branch_sets[1].short_name == "HIK"
     assert slt.branch_sets[0].branches[1].weight == 0.8
     assert len(slt.branch_sets[0].branches[0].sources) == 4
@@ -73,9 +73,9 @@ def test_slt_from_config_errors4(slt_dict):
 
 
 def test_slt_from_config_errors5(slt_dict):
-    # don't accept duplicate branch_set.short_name:branch.name
+    # don't accept duplicate branch_set.short_name:branch.branch_id
     slt_dict["branch_sets"][1]["short_name"] = "PUY"
-    slt_dict["branch_sets"][1]["branches"][1]["name"] = "PUY1"
+    slt_dict["branch_sets"][1]["branches"][1]["branch_id"] = "PUY1"
     with pytest.raises(ValueError) as value_error:
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)

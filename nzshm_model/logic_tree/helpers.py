@@ -25,7 +25,7 @@ def _validate_branchset_weights(branch_set: 'BranchSet') -> None:
 
 def _validate_names(logic_tree: 'LogicTree') -> None:
     # do not allow duplicate branch_set.shortname:branch.name
-    branch_names = [f"{branch.branch_set.short_name}:{branch.name}" for branch in logic_tree]
+    branch_names = [f"{branch.branch_set.short_name}:{branch.branch_id}" for branch in logic_tree]
     if len(set(branch_names)) != len(branch_names):
         raise ValueError("branch_set.shortname:branch.name must be unique")
 
@@ -53,7 +53,7 @@ def _validate_correlations_format(correlations: List[str]) -> None:
 # SERIALIZE / DESERIALIZE
 ##############################
 def _correlation_encoding(branch_set, branch):
-    return f"{branch_set.short_name}:{branch.name}"
+    return f"{branch_set.short_name}:{branch.branch_id}"
 
 
 def _add_corellations(logic_tree: 'LogicTreeType', correlations: List[str]) -> 'LogicTreeType':
