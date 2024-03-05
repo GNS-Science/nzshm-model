@@ -33,6 +33,16 @@ scripts = [
     "click"
 ]
 
+doc = [
+    "mkdocs",
+    "mkdocs-include-markdown-plugin",
+    "mkdocs-material",
+    "mkdocstrings",
+    "mkdocs-material-extension",
+    "mkdocs-autorefs"
+    ]
+
+
 [tool.poetry.group.dev.dependencies]
 black  = { version = "^22.3"}
 bump2version = "^1.0.1"
