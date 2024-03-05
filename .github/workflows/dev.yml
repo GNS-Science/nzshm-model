@@ -1,6 +1,8 @@
 name: Dev workflow
 
 on:
+  push:
+    branches: [main, deploy-test]
   pull_request:
     branches: [main, deploy-test]
 

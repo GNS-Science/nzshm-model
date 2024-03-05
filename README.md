@@ -1,9 +1,9 @@
 # New Zealand | Aotearoa National Seismic Hazard Model
 
-[![pypi](https://img.shields.io/pypi/v/toshi-hazard-store.svg)](https://pypi.org/project/toshi-hazard-store/)
-[![python](https://img.shields.io/pypi/pyversions/toshi-hazard-store.svg)](https://pypi.org/project/toshi-hazard-store/)
-[![Build Status](https://github.com/GNS-Science/toshi-hazard-store/actions/workflows/dev.yml/badge.svg)](https://github.com/GNS-Science/toshi-hazard-store/actions/workflows/dev.yml)
-[![codecov](https://codecov.io/gh/GNS-Science/toshi-hazard-store/branch/main/graphs/badge.svg)](https://codecov.io/github/GNS-Science/toshi-hazard-store)
+[![pypi](https://img.shields.io/pypi/v/nzshm-model.svg)](https://pypi.org/project/nzshm-model/)
+[![python](https://img.shields.io/pypi/pyversions/nzshm-model.svg)](https://pypi.org/project/nzshm-model/)
+[![Build Status](https://github.com/GNS-Science/nzshm-model/actions/workflows/dev.yml/badge.svg)](https://github.com/GNS-Science/nzshm-model/actions/workflows/dev.yml)
+[![codecov](https://codecov.io/gh/GNS-Science/nzshm-model/branch/main/graphs/badge.svg)](https://codecov.io/github/GNS-Science/nzshm-model)
 
 The logic tree definitions, final configurations, and versioning of the New Zealand | Aotearoa National Seismic Hazard Model are stored here
 
