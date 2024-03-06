@@ -8,7 +8,6 @@
 * Documentation: <https://GNS-Science.github.io/nzshm-model>
 * GitHub: <https://github.com/GNS-Science/nzshm-model>
 * PyPI: <https://pypi.org/project/nzshm-model/>
-* Free software: GPL-3.0-only
 
 The logic tree definitions, final configurations, and versioning of the New Zealand | Aotearoa National Seismic Hazard Model are stored here
 
