@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1] 2024-03-12
+### Added
+ - python3.11
+
+### Fixed
+ - python3.11 compatibility for dataclasses
+
 ## [0.6.0] 2023-12-21
 ### Added
  - GMCM logic tree classes for ground motion model serialization and deserialization (as json or xml)
