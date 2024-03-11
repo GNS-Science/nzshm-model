@@ -192,8 +192,8 @@ class SourceLogicTree:
 # this should never be serialised, only used for filtering
 @dataclass
 class FilteredBranch(Branch):
-    fslt: 'FaultSystemLogicTree' = FaultSystemLogicTree('shortname', 'longname')
-    slt: 'SourceLogicTree' = SourceLogicTree('version', 'title')
+    fslt: 'FaultSystemLogicTree' = field(default_factory=FaultSystemLogicTree)  # type:ignore
+    slt: 'SourceLogicTree' = field(default_factory=SourceLogicTree)  # type:ignore
 
     def to_branch(self) -> Branch:
         branch_attributes = {k: v for k, v in self.__dict__.items() if k not in ('fslt', 'slt')}
