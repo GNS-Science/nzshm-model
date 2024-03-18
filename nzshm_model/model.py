@@ -70,7 +70,7 @@ class NshmModel:
         the source logic tree for this model.
 
         Returns:
-            a source_logic_tree.
+            a source_logic_tree
 
         """
         data = self._data
@@ -80,6 +80,12 @@ class NshmModel:
         raise ValueError("Unsupported logic_tree_version.")
 
     def source_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
+        """
+        the Source logic tree for this model as a OpenQuake nrml compatiable type.
+
+        Returns:
+            a source_logic_tree
+        """
         warnings.warn("use NshmModel.source_logic_tree().psha_adapter().config() instead", DeprecationWarning)
         slt = self.source_logic_tree
         return slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
@@ -90,7 +96,7 @@ class NshmModel:
         the ground motion logic tree for this model.
 
         Returns:
-            a gmcm_logic_tree.
+            a gmcm_logic_tree
 
         """
         adapter = GMCMLogicTree().psha_adapter(OpenquakeSimplePshaAdapter)
@@ -98,7 +104,7 @@ class NshmModel:
 
     def gmm_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
         """
-        the Ground Motion Model (gmm) logic tree for this model.
+        the ground motion characterisation model (gmcm) logic tree for this model as a OpenQuake nrml compatiable type.
 
         Returns:
             a gmm_logic_tree.
