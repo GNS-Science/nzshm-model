@@ -6,7 +6,7 @@ import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator, List, Union, cast
 
-from nzshm_model.logic_tree import SourceBranchSet, SourceLogicTree, GMCMLogicTree
+from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
 
