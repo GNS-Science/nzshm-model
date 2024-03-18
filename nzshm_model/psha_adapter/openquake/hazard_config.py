@@ -8,82 +8,32 @@ Class to manage openquake configuration files
 """
 import logging
 import configparser
+import copy
 
-import io
-import difflib
-from pprint import pprint
-
-from typing import TextIO, Optional
+from typing import TextIO, Union, Dict
 
 from openquake.hazardlib.site import calculate_z1pt0, calculate_z2pt5
+from .hazard_config_compat import check_invariants, compatible_hash_digest, DEFAULT_HAZARD_CONFIG
 
 log = logging.getLogger(__name__)
 
 
-DEFAULT_HAZARD_CONFIG = dict(
-    general=dict(
-        random_seed=25,
-        calculation_mode='classical',
-        ps_grid_spacing=30,
-    ),
-    logic_tree=dict(
-        number_of_logic_tree_samples=0,
-    ),
-    erf=dict(
-        rupture_mesh_spacing=4,
-        width_of_mfd_bin=0.1,
-        complex_fault_mesh_spacing=10.0,
-        area_source_discretization=10.0,
-    ),
-    site_params=dict(
-        reference_vs30_type='measured',
-    ),
-    calculation=dict(
-        investigation_time=1.0,
-        truncation_level=4,
-        maximum_distance={
-            'Active Shallow Crust': [(4.0, 0), (5.0, 100.0), (6.0, 200.0), (9.5, 300.0)],
-            'Subduction Interface': [(5.0, 0), (6.0, 200.0), (10, 500.0)],
-            'Subduction Intraslab': [(5.0, 0), (6.0, 200.0), (10, 500.0)]
-        }
-    ),
-    output=dict(
-        individual_curves='true',
-    ),
-)
-
 class OpenquakeConfig():
+    """Help class to manage openquake configuration files"""
 
-    def __init__(self, default_config: Optional[configparser.ConfigParser] = None):
-        if default_config:
-            self.config = default_config
-        else:
-            self.config = configparser.ConfigParser()
-            self.config.read_dict(DEFAULT_HAZARD_CONFIG)
+    def __init__(self, default_config: Union[configparser.ConfigParser, Dict, None] = None):
+        if isinstance(default_config, configparser.ConfigParser):
+            self.config = copy.deepcopy(default_config)
+            return
+
+        self.config = configparser.ConfigParser()
+        if isinstance(default_config, dict):
+            self.config.read_dict(default_config)
+        return
 
     def __eq__(self, other: 'OpenquakeConfig') -> bool:
         if isinstance(other, OpenquakeConfig):
             return self.config == other.config
-            """
-            assert 0
-            io1 = io.StringIO()
-            io2 = io.StringIO()
-            self.config.write(io1)
-            other.config.write(io2)
-
-
-            # return tomli.loads(io1.getvalue()) == tomli.loads(io2.getvalue())
-            # print('io1', len(io1.getvalue()), io1.getvalue()[:10], f'|{io1.getvalue()[-10:]}|')
-            # print('io2', len(io2.getvalue()), io2.getvalue()[:10], f'|{io2.getvalue()[-10:]}|')
-            print('io1', io1.getvalue().replace(' ', '.'))
-            print('io2', io2.getvalue().replace(' ', '.'))
-
-            d = difflib.Differ()
-            result = list(d.compare(io1.getvalue().splitlines(keepends=True), io2.getvalue().splitlines(keepends=True)))
-            pprint(result)
-
-            return io2.getvalue() == io1.getvalue()
-            """
         return NotImplemented
 
     @staticmethod
@@ -127,6 +77,7 @@ class OpenquakeConfig():
         self.set_parameter('site_params', 'site_model_file', site_model_filename)
         return self
 
+    #TODO disagg configs might warrant a separate class, and separate defaults ??
     def set_disagg_site_model(self):
         self.clear_sites()
         self.set_parameter('site_params', 'site_model_file', 'site.csv')
@@ -136,6 +87,7 @@ class OpenquakeConfig():
         self.clear_sites()
         self.set_parameter('site_params', 'sites', f'{lon} {lat}')
         return self
+
 
     def set_iml_disagg(self, imt, level):
         self.set_parameter('disagg', 'iml_disagg', str({imt: level}))
@@ -185,35 +137,7 @@ class OpenquakeConfig():
     def write(self, tofile):
         self.config.write(tofile)
 
+    def compatible_hash_digest(self):
+        check_invariants(self.config)
+        return compatible_hash_digest(self.config)
 
-# if __name__ == "__main__":
-
-#     nc = OpenquakeConfig()\
-#         .set_sites('./sites.csv')\
-#         .set_parameter("general", "ps_grid_spacing", 20)
-
-#     measures = ['PGA', 'SA(0.5)']
-#     levels0 = [
-#         0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-#         1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4, 4.5, 5.0
-#     ]
-#     levels1 = 'logscale(0.005, 4.00, 30)'
-#     _4_sites_levels = [
-#         0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-#         1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4, 4.5, 5.0
-#     ]
-#     _4_sites_measures = [
-#         'PGA', "SA(0.1)", "SA(0.2)", "SA(0.3)", "SA(0.4)", "SA(0.5)", "SA(0.7)",
-#         "SA(1.0)", "SA(1.5)", "SA(2.0)", "SA(3.0)", "SA(4.0)", "SA(5.0)"
-#     ]
-
-#     nc.set_iml(_4_sites_measures, _4_sites_levels)
-#     nc.set_vs30(250)
-#     nc.set_parameter("erf", "rupture_mesh_spacing", 42)
-
-#     out = io.StringIO()  # aother fake file
-#     nc.write(out)
-
-#     out.seek(0)
-#     for l in out:
-#         print(l)
