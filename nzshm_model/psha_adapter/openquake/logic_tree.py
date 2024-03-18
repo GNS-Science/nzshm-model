@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING, Any, Iterator, List, Union
 from lxml import objectify
 
 if TYPE_CHECKING:
-    from nzshm_model.source_logic_tree.version2 import logic_tree as slt
+    from nzshm_model.logic_tree.source_logic_tree.version2 import logic_tree as slt
 
 from .uncertainty_models import (
     GenericUncertaintyModel,
