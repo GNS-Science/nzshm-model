@@ -34,12 +34,11 @@ def test_gmm_logic_tree_from_nrml():
     assert gmm_logic_tree.branch_sets[0].branches[0].uncertainty_models[0].arguments[0] == "mu_branch = \"Upper\""
 
 
-
 def test_gmm_logic_tree():
 
     gmm_logic_tree = MODEL.gmm_logic_tree
     assert isinstance(gmm_logic_tree, GMCMLogicTree)
-    
+
     # branch set attributes
     assert gmm_logic_tree.branch_sets[0].tectonic_region_type == "Active Shallow Crust"
     assert len(gmm_logic_tree.branch_sets[0].branches) == 21

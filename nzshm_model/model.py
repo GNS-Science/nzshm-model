@@ -96,7 +96,6 @@ class NshmModel:
         adapter = GMCMLogicTree().psha_adapter(OpenquakeSimplePshaAdapter)
         return adapter.logic_tree_from_xml(self._gmm_xml)
 
-
     def gmm_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
         """
         the Ground Motion Model (gmm) logic tree for this model.
