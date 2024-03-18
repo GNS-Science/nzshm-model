@@ -6,7 +6,7 @@ import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator, List, Union, cast
 
-from nzshm_model.logic_tree import SourceBranchSet, SourceLogicTree
+from nzshm_model.logic_tree import SourceBranchSet, SourceLogicTree, GMCMLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
 
@@ -85,7 +85,19 @@ class NshmModel:
         return slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
 
     @property
-    def gmm_logic_tree(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
+    def gmm_logic_tree(self) -> "GMCMLogicTree":
+        """
+        the ground motion logic tree for this model.
+
+        Returns:
+            a gmcm_logic_tree.
+
+        """
+        adapter = GMCMLogicTree().psha_adapter(OpenquakeSimplePshaAdapter)
+        return adapter.logic_tree_from_xml(self._gmm_xml)
+
+
+    def gmm_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
         """
         the Ground Motion Model (gmm) logic tree for this model.
 
