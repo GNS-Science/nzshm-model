@@ -62,9 +62,15 @@ def cli_model_source_hashes(model_id: str):
     for branch_set in model.source_logic_tree.branch_sets:
         for branch in branch_set.branches:
             nrmls = sorted([s.nrml_id for s in branch.sources])
-            row = [ hashlib.shake_256(",".join(nrmls).encode()).hexdigest(6),
-                    branch_set.short_name, branch.tag, nrmls, branch.weight ]
+            row = [
+                hashlib.shake_256(",".join(nrmls).encode()).hexdigest(6),
+                branch_set.short_name,
+                branch.tag,
+                nrmls,
+                branch.weight,
+            ]
             click.echo(row)
+
 
 @slt.command(name='hash_gmms')
 @click.argument('model_id')
@@ -77,13 +83,20 @@ def cli_model_gmm_hashes(model_id: str):
             um_gmpe = branch.uncertainty_models[0].gmpe_name
             um_gmpe += ",".join(sorted(branch.uncertainty_models[0].arguments))
 
-            row = [ hashlib.shake_256(um_gmpe.encode()).hexdigest(6),
-                    branch_set.branchSetID, branch.branchID, um_gmpe, branch.uncertainty_weight, branch.uncertainty_models[0].arguments]
+            row = [
+                hashlib.shake_256(um_gmpe.encode()).hexdigest(6),
+                branch_set.branchSetID,
+                branch.branchID,
+                um_gmpe,
+                branch.uncertainty_weight,
+                branch.uncertainty_models[0].arguments,
+            ]
             click.echo(row)
             # nrmls = sorted([s.nrml_id for s in branch.sources])
             # row = [ hashlib.shake_256(",".join(nrmls).encode()).hexdigest(6),
             #         branch_set.short_name, branch.tag, nrmls, branch.weight ]
             # click.echo(row)
+
 
 ## gmlt.branch_sets[1].branches[-1].uncertainty_models[-1].text
 

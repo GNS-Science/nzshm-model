@@ -3,14 +3,14 @@ support for managing NSHM compatability in openquake caclulations
 """
 
 import configparser
-import hashlib
 import copy
+import hashlib
 import io
 
-DEFAULT_HAZARD_CONFIG = dict(
+DEFAULT_HAZARD_CONFIG: dict = dict(
     general=dict(
         random_seed=25,
-        calculation_mode='"classical"',
+        calculation_mode='classical',
         ps_grid_spacing=30,
     ),
     logic_tree=dict(
@@ -31,8 +31,8 @@ DEFAULT_HAZARD_CONFIG = dict(
         maximum_distance={
             'Active Shallow Crust': [(4.0, 0), (5.0, 100.0), (6.0, 200.0), (9.5, 300.0)],
             'Subduction Interface': [(5.0, 0), (6.0, 200.0), (10, 500.0)],
-            'Subduction Intraslab': [(5.0, 0), (6.0, 200.0), (10, 500.0)]
-        }
+            'Subduction Intraslab': [(5.0, 0), (6.0, 200.0), (10, 500.0)],
+        },
     ),
     output=dict(
         individual_curves='true',
@@ -46,21 +46,26 @@ ENTRIES_IGNORED = [
     ('site_params', 'sites'),
     ('site_params', 'site_model_file'),
     ('site_params', 'reference_vs30_value'),
-    ('site_params', 'reference_depth_to_1pt0km_per_sec'), # aka z1
-    ('site_params', 'reference_depth_to_2pt5km_per_sec'), # aka z2.5
+    ('site_params', 'reference_depth_to_1pt0km_per_sec'),  # aka z1
+    ('site_params', 'reference_depth_to_2pt5km_per_sec'),  # aka z2.5
     ('erf', 'concurrent_tasks'),
     ('calculation', 'source_model_logic_tree_file'),
     ('calculation', 'gsim_logic_tree_file'),
-    ('calculation', 'intensity_measure_types_and_levels')
+    ('calculation', 'intensity_measure_types_and_levels'),
 ]
 
 ENTRIES_INVARIANT = [
     ('general', 'calculation_mode', 'classical'),
     ('logic_tree', 'number_of_logic_tree_samples', '0'),
     ('site_params', 'reference_vs30_type', 'measured'),
-    ('calculation', 'investigation_time', '1.0',),
-    ('output', 'individual_curves', 'true')
+    (
+        'calculation',
+        'investigation_time',
+        '1.0',
+    ),
+    ('output', 'individual_curves', 'true'),
 ]
+
 
 def check_invariants(config: configparser.ConfigParser) -> bool:
     """check a configuration has all the expected invariant entries"""
@@ -71,7 +76,9 @@ def check_invariants(config: configparser.ConfigParser) -> bool:
             raise ValueError(f'Expected entry "[{table}]" "{key}"" with value {value} was not found.')
         if invariant == value:
             continue
-        raise ValueError(f'Expected entry "[{table}]" "{key}"" with value {value} was not found. Got {invariant} instead.')
+        raise ValueError(
+            f'Expected entry "[{table}]" "{key}"" with value {value} was not found. Got {invariant} instead.'
+        )
     return True
 
 
@@ -82,7 +89,7 @@ def compatible_config(config: configparser.ConfigParser) -> configparser.ConfigP
     return clean_config
 
 
-def compatible_hash_digest(config: configparser.ConfigParser, digest_len:int = 12) ->str:
+def compatible_hash_digest(config: configparser.ConfigParser, digest_len: int = 12) -> str:
     """return a 12 character hexdigest for the config"""
 
     if digest_len % 2 > 0:
@@ -96,6 +103,4 @@ def compatible_hash_digest(config: configparser.ConfigParser, digest_len:int = 1
     for n, line in enumerate(value.readlines()):
         print(n, line, end="")
 
-    return hashlib.shake_256(value.getvalue().encode()).hexdigest(int(digest_len/2))
-
-
+    return hashlib.shake_256(value.getvalue().encode()).hexdigest(int(digest_len / 2))

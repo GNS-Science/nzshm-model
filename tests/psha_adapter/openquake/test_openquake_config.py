@@ -1,20 +1,65 @@
 """
 tests for the OpenquakeConfiguration class
 """
+import configparser
 import io
+
 # import tomli
 import pytest
-import configparser
-from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig, DEFAULT_HAZARD_CONFIG
-from nzshm_model.psha_adapter.openquake.hazard_config_compat import check_invariants, compatible_config, compatible_hash_digest
+
+from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
+from nzshm_model.psha_adapter.openquake.hazard_config_compat import (
+    DEFAULT_HAZARD_CONFIG,
+    check_invariants,
+    compatible_config,
+    compatible_hash_digest,
+)
 
 _4_sites_levels = [
-    0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-    1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4, 4.5, 5.0
+    0.01,
+    0.02,
+    0.04,
+    0.06,
+    0.08,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0,
+    1.2,
+    1.4,
+    1.6,
+    1.8,
+    2.0,
+    2.2,
+    2.4,
+    2.6,
+    2.8,
+    3.0,
+    3.5,
+    4,
+    4.5,
+    5.0,
 ]
 _4_sites_measures = [
-    'PGA', "SA(0.1)", "SA(0.2)", "SA(0.3)", "SA(0.4)", "SA(0.5)", "SA(0.7)",
-    "SA(1.0)", "SA(1.5)", "SA(2.0)", "SA(3.0)", "SA(4.0)", "SA(5.0)"
+    'PGA',
+    "SA(0.1)",
+    "SA(0.2)",
+    "SA(0.3)",
+    "SA(0.4)",
+    "SA(0.5)",
+    "SA(0.7)",
+    "SA(1.0)",
+    "SA(1.5)",
+    "SA(2.0)",
+    "SA(3.0)",
+    "SA(4.0)",
+    "SA(5.0)",
 ]
 measures = ['PGA', 'SA(0.5)']
 
@@ -53,30 +98,36 @@ intensity_measure_types_and_levels  = {"PGA": [0.01, 0.02, 0.04, 0.06, 0.08, 0.1
 
 [output]
 individual_curves = true
-"""
+"""  # noqa
+
 
 def test_config_from_runzi():
-    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)\
-        .set_description("hello world")\
-        .set_sites("./sites.csv")\
-        .set_source_logic_tree_file("./hello.slt")\
-        .set_gsim_logic_tree_file("./gsim_model.xml")\
+    config = (
+        OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+        .set_description("hello world")
+        .set_sites("./sites.csv")
+        .set_source_logic_tree_file("./hello.slt")
+        .set_gsim_logic_tree_file("./gsim_model.xml")
         .set_vs30(750)
+    )
     config.set_iml(_4_sites_measures, _4_sites_levels)
 
     assert config.config['general']['description'] == "hello world"
 
+
 def test_configuration_round_trip():
 
-    nc = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)\
-        .set_sites('./sites.csv')\
-        .set_parameter("general", "ps_grid_spacing", 20)
+    nc = (
+        OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+        .set_sites('./sites.csv')
+        .set_parameter("general", "ps_grid_spacing", "20")
+    )
 
     # levels1 = 'logscale(0.005, 4.00, 30)'
 
     nc.set_iml(_4_sites_measures, _4_sites_levels)
     nc.set_vs30(250)
-    nc.set_parameter("erf", "rupture_mesh_spacing", 42)
+    nc.set_parameter("erf", "rupture_mesh_spacing", "42")
 
     out = io.StringIO()  # aother fake file
     nc.write(out)
@@ -85,11 +136,29 @@ def test_configuration_round_trip():
 
     assert nc == nc2
 
+    out.seek(0)
+    for n, line in enumerate(out.readlines()):
+        print(n, line, end="")
+
+    print()
+    print(str(nc))
+    print(nc.config.get('general', 'random_seed'))
+    # assert 0
+
+
 def test_default_config():
-    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG) # the default config
+    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)  # the default config
     expected = configparser.ConfigParser()
     expected.read_dict(DEFAULT_HAZARD_CONFIG)
     assert config.config == expected
+
+
+@pytest.mark.TODO('why is this a string ??')
+def test_set_maximum_distance():
+    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)  # the default config
+    dists = {'Active Shallow Crust': 300.0, 'Volcanic': 300, 'Subduction Interface': 400, 'default': 400}
+    config.set_maximum_distance(dists)
+    assert config.config.get("calculation", "maximum_distance") == str(dists)
 
 
 @pytest.fixture(scope='function')
@@ -99,7 +168,8 @@ def example_config():
     config = OpenquakeConfig(example)
     yield config
 
-class TestConfigCompatability():
+
+class TestConfigCompatability:
     def test_compatible_check_invariants(self, example_config):
         assert check_invariants(example_config.config)
 
@@ -117,7 +187,7 @@ class TestConfigCompatability():
         example_config.set_sites('./sites.csv')
         compat = compatible_config(example_config.config)
         assert compat.get('site_params', 'sites_csv', fallback=None) is None
-        assert compat.get('site_params', 'site_model_file', fallback=None ) is None
+        assert compat.get('site_params', 'site_model_file', fallback=None) is None
 
     def test_compatible_hash_digest(self, example_config):
         example_config.set_sites('./sites.csv')
@@ -131,7 +201,7 @@ class TestConfigCompatability():
 
 @pytest.mark.skip("toml is not fully compatible due to use of quoted strings. Let's check if openquake supports this")
 def test_toml_conversion():
-    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG) # the default config
+    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)  # the default config
 
     out = io.StringIO()
     config.write(out)
@@ -140,8 +210,7 @@ def test_toml_conversion():
     for n, line in enumerate(out.readlines()):
         print(n, line)
 
-
-    tc = tomli.loads(out.getvalue())
+    tc = tomli.loads(out.getvalue())  # noqa
 
     assert tc['general']['random_seed'] == 25
 
