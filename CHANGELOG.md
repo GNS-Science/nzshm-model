@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0] 2024-03
+
+### Added
+ - migrated OpenquakeConfig class from runzi
+ - added test to above
+ - added hazard_config_compat module for hashig compatible configs
+
 ## [0.9.3] 2024-03-18
 
 ### Changed
