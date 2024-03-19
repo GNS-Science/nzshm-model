@@ -78,27 +78,18 @@ def cli_model_gmm_hashes(model_id: str):
     """Dump the gmm branches with hashes."""
     model = get_model_version(model_id)
     for branch_set in model.gmm_logic_tree.branch_sets:
+        # print(dir(branch_set))
         for branch in branch_set.branches:
-            assert len(branch.uncertainty_models) == 1
-            um_gmpe = branch.uncertainty_models[0].gmpe_name
-            um_gmpe += ",".join(sorted(branch.uncertainty_models[0].arguments))
-
+            # print(dir(branch))
+            um_gmpe = branch.gsim_name
+            um_gmpe += ",".join(sorted([str(itm) for itm in branch.gsim_args.items()]))
             row = [
                 hashlib.shake_256(um_gmpe.encode()).hexdigest(6),
-                branch_set.branchSetID,
-                branch.branchID,
+                branch_set.tectonic_region_type,
                 um_gmpe,
-                branch.uncertainty_weight,
-                branch.uncertainty_models[0].arguments,
+                branch.weight,
             ]
             click.echo(row)
-            # nrmls = sorted([s.nrml_id for s in branch.sources])
-            # row = [ hashlib.shake_256(",".join(nrmls).encode()).hexdigest(6),
-            #         branch_set.short_name, branch.tag, nrmls, branch.weight ]
-            # click.echo(row)
-
-
-## gmlt.branch_sets[1].branches[-1].uncertainty_models[-1].text
 
 
 # @slt.command(name='from_config')
