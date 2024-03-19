@@ -5,15 +5,16 @@ from pathlib import Path, PurePath
 import pytest
 
 import nzshm_model
+from nzshm_model.logic_tree import GMCMLogicTree
 from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter
 
 MODEL = nzshm_model.model.NshmModel.get_model_version('NSHM_v1.0.4')
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
 
 
-def test_gmm_logic_tree():
+def test_gmm_logic_tree_from_nrml():
 
-    gmm_logic_tree = MODEL.gmm_logic_tree
+    gmm_logic_tree = MODEL.gmm_logic_tree_nrml()
 
     assert len(gmm_logic_tree.branch_sets) == 3
 
@@ -31,6 +32,23 @@ def test_gmm_logic_tree():
     assert "Stafford2022" in gmm_logic_tree.branch_sets[0].branches[0].uncertainty_models[0].text
     assert gmm_logic_tree.branch_sets[0].branches[0].uncertainty_models[0].gmpe_name == "[Stafford2022]"
     assert gmm_logic_tree.branch_sets[0].branches[0].uncertainty_models[0].arguments[0] == "mu_branch = \"Upper\""
+
+
+def test_gmm_logic_tree():
+
+    gmm_logic_tree = MODEL.gmm_logic_tree
+    assert isinstance(gmm_logic_tree, GMCMLogicTree)
+
+    # branch set attributes
+    assert gmm_logic_tree.branch_sets[0].tectonic_region_type == "Active Shallow Crust"
+    assert len(gmm_logic_tree.branch_sets[0].branches) == 21
+
+    # branch attributes
+    assert gmm_logic_tree.branch_sets[0].branches[0].weight == pytest.approx(0.117000)
+
+    # gsim attributes
+    assert gmm_logic_tree.branch_sets[0].branches[0].gsim_name == "Stafford2022"
+    assert gmm_logic_tree.branch_sets[0].branches[0].gsim_args["mu_branch"] == "Upper"
 
 
 def test_source_logic_tree():

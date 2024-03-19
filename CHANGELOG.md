@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.3] 2024-03-18
+
+### Changed
+ - NshmModel property gmm_logic_tree returns a GMCMLogicTree object rather than an OpenQuake psha_adaptor object
+
 ## [0.9.2] 2024-02-26
 
 ### Added

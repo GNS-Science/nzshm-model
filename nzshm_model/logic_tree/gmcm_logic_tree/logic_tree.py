@@ -1,3 +1,6 @@
+"""
+Defines ground motion characterisation model logic tree structures used in NSHM.
+"""
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Type
 
@@ -7,21 +10,54 @@ from nzshm_model.psha_adapter import PshaAdapterInterface
 
 @dataclass
 class GMCMBranch(Branch):
+    """
+    A branch of the GMCM logic tree
+
+    Identifies the ground motion model (gsim) and any arguments
+
+
+    Attributes:
+        gsim_name: the name of the ground motion model
+        gsim_args: a dict of argument names and values
+    """
+
     gsim_name: str = ""
     gsim_args: Dict[str, Any] = field(default_factory=dict)
 
-    def filtered_branch(self, logic_tree, branch_set):
+    def filtered_branch(self, logic_tree, branch_set) -> 'GMCMFilteredBranch':
+        """get a filtered branch containing reference to parent instances.
+
+        Arguments:
+            logic_tree: the gmcm logic tree containing the branch
+            branch_set: the branch set containing the branch
+
+        Returns:
+            a BMCMFilteredBranch instance
+        """
         return GMCMFilteredBranch(logic_tree=logic_tree, branch_set=branch_set, **self.__dict__)
 
 
 @dataclass
 class GMCMBranchSet(BranchSet):
+    """A list of GMCM branches that apply to a particular tectonic region.
+
+    Attributes:
+        tectonic_region_type: the tectonic region type TRT that the branch set applies to.
+        branches: list of branches.
+    """
+
     tectonic_region_type: str = ""  # need a default becasue base class has a memeber with a default
     branches: List[GMCMBranch] = field(default_factory=list)
 
 
 @dataclass
 class GMCMLogicTree(LogicTree):
+    """A dataclass representing the ground motion characterisation model logic tree.
+
+    Attributes:
+        branch_sets: list of GMCM branch sets that comprise the logic tree.
+    """
+
     # should we enforce that there is only one branch_set per TRT?
     branch_sets: List[GMCMBranchSet] = field(default_factory=list)
 
@@ -42,7 +78,16 @@ class GMCMLogicTree(LogicTree):
 
         return self
 
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
+    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs) -> "PshaAdapterInterface":
+        """get a PSHA adapter for this instance.
+
+        Arguments:
+            provider: the adapter class
+            **kwargs: additional arguments required by the provider class
+
+        Returns:
+            a PSHA Adapter instance
+        """
         return provider(gmcm_logic_tree=self)
 
     # @classmethod
