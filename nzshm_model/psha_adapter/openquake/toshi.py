@@ -2,8 +2,7 @@ import os
 
 try:
     from nshm_toshi_client.toshi_file import ToshiFile
-
-    from nzshm_model.source_logic_tree.toshi_api import get_secret
+    from nzshm_model.logic_tree.source_logic_tree.toshi_api import get_secret
 except (ModuleNotFoundError, ImportError):
     print("WARNING: optional `toshi` dependencies are not installed.")
     raise

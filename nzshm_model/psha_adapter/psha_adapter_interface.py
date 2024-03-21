@@ -1,3 +1,6 @@
+"""
+This module defines the interface to be provided by a PshaAdapter implementation.
+"""
 import pathlib
 from abc import ABC, abstractmethod
 from typing import Dict, Union

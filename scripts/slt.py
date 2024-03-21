@@ -1,4 +1,5 @@
 import dataclasses
+import hashlib
 import json
 import logging
 import sys
@@ -51,6 +52,44 @@ def cli_model_as_json(model_id: str):
     model = get_model_version(model_id)
     j = json.dumps(dataclasses.asdict(model.source_logic_tree), indent=4)
     click.echo(j)
+
+
+@slt.command(name='hash_sources')
+@click.argument('model_id')
+def cli_model_source_hashes(model_id: str):
+    """Dump the sources with hashes."""
+    model = get_model_version(model_id)
+    for branch_set in model.source_logic_tree.branch_sets:
+        for branch in branch_set.branches:
+            nrmls = sorted([s.nrml_id for s in branch.sources])
+            row = [
+                hashlib.shake_256(",".join(nrmls).encode()).hexdigest(6),
+                branch_set.short_name,
+                branch.tag,
+                nrmls,
+                branch.weight,
+            ]
+            click.echo(row)
+
+
+@slt.command(name='hash_gmms')
+@click.argument('model_id')
+def cli_model_gmm_hashes(model_id: str):
+    """Dump the gmm branches with hashes."""
+    model = get_model_version(model_id)
+    for branch_set in model.gmm_logic_tree.branch_sets:
+        # print(dir(branch_set))
+        for branch in branch_set.branches:
+            # print(dir(branch))
+            um_gmpe = branch.gsim_name
+            um_gmpe += ",".join(sorted([str(itm) for itm in branch.gsim_args.items()]))
+            row = [
+                hashlib.shake_256(um_gmpe.encode()).hexdigest(6),
+                branch_set.tectonic_region_type,
+                um_gmpe,
+                branch.weight,
+            ]
+            click.echo(row)
 
 
 # @slt.command(name='from_config')
