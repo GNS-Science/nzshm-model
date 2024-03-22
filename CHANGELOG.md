@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.9.4] 2024-03-22
+
+### Added
+ - tectonic_region_types member for SourceBranchSet
+
 ## [0.9.3] 2024-03-18
 
 ### Changed

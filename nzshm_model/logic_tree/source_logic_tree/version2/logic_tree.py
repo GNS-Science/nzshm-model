@@ -105,6 +105,7 @@ class SourceBranchSet(BranchSet):
         branches: list of branches.
     """
 
+    tectonic_region_types: List[str] = field(default_factory=list)
     branches: List[SourceBranch] = field(default_factory=list)
 
 
