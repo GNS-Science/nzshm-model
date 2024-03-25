@@ -284,7 +284,7 @@ class LogicTree(ABC):
         self.__branch_list = list(self.__all_branches__())
         return self
 
-    def __next__(self):
+    def __next__(self) -> 'FilteredBranch':
         if self.__current_branch >= len(self.__branch_list):
             raise StopIteration
         else:
