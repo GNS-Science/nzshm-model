@@ -80,7 +80,7 @@ class LogicTree(ABC):
         if __name == "correlations":
             helpers._validate_correlation_weights(self)
 
-    def _combined_branches(self) -> Generator[CompositeBranch, None, None]:
+    def _composite_branches(self) -> Generator[CompositeBranch, None, None]:
         """
         yields all composite (combined) branches of the branch_sets without applying correlations.
         """
@@ -88,27 +88,27 @@ class LogicTree(ABC):
             yield CompositeBranch(branches=branches)
 
     @property
-    def combined_branches(self) -> Generator[CompositeBranch, None, None]:
+    def composite_branches(self) -> Generator[CompositeBranch, None, None]:
         """
         yields all composite (combined) branches of the branch_sets enforcing correlations
         """
-        for combined_branch in self._combined_branches():
+        for composite_branch in self._composite_branches():
             # if the comp_branch contains a branch listed as the 0th element of the correlations, only
             # yeild if the other branches are present
             # weight is automatically calculated by CompositeBranch if not explicitly assigned
             # (as we would with correlations)
-            correlation_match = [branch_pri in combined_branch for branch_pri in self.correlations.primary_branches()]
+            correlation_match = [branch_pri in composite_branch for branch_pri in self.correlations.primary_branches()]
             if any(correlation_match):
                 i_cor = correlation_match.index(
                     True
-                )  # index of the correlation that matches a branch in _combined_branches()
-                if not all(br in combined_branch for br in self.correlations[i_cor].all_branches):
+                )  # index of the correlation that matches a branch in _composite_branches()
+                if not all(br in composite_branch for br in self.correlations[i_cor].all_branches):
                     continue
                 weights = [self.correlations[i_cor].weight] + [
-                    branch.weight for branch in combined_branch if branch not in self.correlations[i_cor].all_branches
+                    branch.weight for branch in composite_branch if branch not in self.correlations[i_cor].all_branches
                 ]
-                combined_branch.weight = reduce(mul, weights, 1.0)
-            yield combined_branch
+                composite_branch.weight = reduce(mul, weights, 1.0)
+            yield composite_branch
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
