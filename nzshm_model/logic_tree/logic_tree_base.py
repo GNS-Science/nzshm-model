@@ -38,6 +38,8 @@ def get_fields(obj):
         for field in fields(obj)
         if field.name not in ('branches', 'branch_sets')
     }
+
+
 @dataclass
 class BranchSet:
     """
@@ -88,18 +90,22 @@ class LogicTree(ABC):
 
     def _composite_branches(self, filtered=True) -> Generator[CompositeBranch, None, None]:
         """
-        Yields all composite (combined) branches of the branch_sets without applying correlations. The save_lt parameter is set to False during validation of correlation weights to avoid recursion issues. It is otherwise left to True.
+        Yields all composite (combined) branches of the branch_sets without applying correlations.
+        The filtered parameter is set to False during validation of correlation weights to avoid recursion issues. It
+        is otherwise left to True.
 
         Parameters:
-            save_lt: a light copy of the logic tree is saved to the filtered branches if True
-        
+            filtered: if True the FilteredBranch type is used in the composite branches, otherwise Branch type is used
+
         Returns:
             composite_branches: the CompositeBranches of the combined logic tree BranchSets
         """
         # for branches in product(*[branch_set.branches for branch_set in self.branch_sets]):
         if filtered:
             lt_fields = get_fields(self)
-            for branches_and_sets in product(*[zip(branch_set.branches, (branch_set,)*len(branch_set.branches)) for branch_set in self.branch_sets]):
+            for branches_and_sets in product(
+                *[zip(branch_set.branches, (branch_set,) * len(branch_set.branches)) for branch_set in self.branch_sets]
+            ):
                 cbranches = []
                 for branch, set in branches_and_sets:
                     bs_fields = get_fields(set)
@@ -118,11 +124,13 @@ class LogicTree(ABC):
 
     def composite_branches_fun(self, filtered=True) -> Generator[CompositeBranch, None, None]:
         """
-        Yields all composite (combined) branches of the branch_sets enforcing correlations. The save_lt parameter is set to False during validation of correlation weights to avoid recursion issues. It is otherwise left to True.
+        Yields all composite (combined) branches of the branch_sets enforcing correlations.
+        The filtered parameter is set to False during validation of correlation weights to avoid recursion issues. It
+        is otherwise left to True.
 
         Parameters:
-            save_lt: a light copy of the logic tree is saved to the filtered branches if True
-        
+            filtered: if True the FilteredBranch type is used in the composite branches, otherwise Branch type is used
+
         Returns:
             composite_branches: the CompositeBranches of the combined logic tree BranchSets
         """
@@ -132,9 +140,13 @@ class LogicTree(ABC):
             # weight is automatically calculated by CompositeBranch if not explicitly assigned
             # (as we would with correlations)
             if filtered:
-                cbranches = [branch.to_branch() for branch in composite_branch] # need to convert from a FilteredBranch back to a Branch for compairison
+                cbranches = [
+                    branch.to_branch() for branch in composite_branch
+                ]  # need to convert from a FilteredBranch back to a Branch for compairison
             else:
-                cbranches = [branch for branch in composite_branch] # need to convert from a FilteredBranch back to a Branch for compairison
+                cbranches = [
+                    branch for branch in composite_branch
+                ]  # need to convert from a FilteredBranch back to a Branch for compairison
             correlation_match = [branch_pri in cbranches for branch_pri in self.correlations.primary_branches()]
             if any(correlation_match):
                 i_cor = correlation_match.index(
@@ -147,9 +159,8 @@ class LogicTree(ABC):
                 ]
                 composite_branch.weight = reduce(mul, weights, 1.0)
             yield composite_branch
-    
-    composite_branches = property(composite_branches_fun)
 
+    composite_branches = property(composite_branches_fun)
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
@@ -267,7 +278,6 @@ class LogicTree(ABC):
 
         NB this class is never used for serialising models.
         """
-
 
         lt_fields = get_fields(self)
         for branch_set in self.branch_sets:

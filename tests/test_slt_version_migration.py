@@ -1,11 +1,11 @@
 """
 test migration from slt v1 to v2
 """
-import pytest
 import json
 from pathlib import Path
 
-import nzshm_model
+import pytest
+
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
 
 

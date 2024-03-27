@@ -6,7 +6,6 @@ import pytest
 from nzshm_model.logic_tree.branch import Branch
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import BranchSet, LogicTree
-import nzshm_model.logic_tree.logic_tree_base
 
 Fixtures = namedtuple(
     "Fixtures",
@@ -99,8 +98,12 @@ def test__composite_branches(fixtures: Fixtures):
 
 def test_composite_weights(fixtures: Fixtures):
     # weights sum to 1.0
-    assert sum([branch.weight for branch in fixtures.logic_tree.composite_branches_fun(filtered=False)]) == pytest.approx(1.0)
-    assert sum([branch.weight for branch in fixtures.logic_tree_nocor.composite_branches_fun(filtered=False)]) == pytest.approx(1.0)
+    assert sum(
+        [branch.weight for branch in fixtures.logic_tree.composite_branches_fun(filtered=False)]
+    ) == pytest.approx(1.0)
+    assert sum(
+        [branch.weight for branch in fixtures.logic_tree_nocor.composite_branches_fun(filtered=False)]
+    ) == pytest.approx(1.0)
 
     # weights are default from the primary branch
     for cg in fixtures.logic_tree.correlations.correlation_groups:
