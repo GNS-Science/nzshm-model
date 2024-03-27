@@ -6,6 +6,7 @@ import pytest
 from nzshm_model.logic_tree.branch import Branch
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import BranchSet, LogicTree
+import nzshm_model.logic_tree.logic_tree_base
 
 Fixtures = namedtuple(
     "Fixtures",
@@ -82,24 +83,24 @@ def test_check_correlations_validation(fixtures: Fixtures):
 
 def test__composite_branches(fixtures: Fixtures):
 
-    assert len(list(fixtures.logic_tree_nocor.composite_branches)) == 4 * 2 * 2
+    assert len(list(fixtures.logic_tree_nocor.composite_branches_fun(filtered=False))) == 4 * 2 * 2
 
     # branches not filtered by correlation
-    assert len(list(fixtures.logic_tree._composite_branches())) == 4 * 2
+    assert len(list(fixtures.logic_tree._composite_branches(filtered=False))) == 4 * 2
 
     # branches filtered by correlation
-    assert len(list(fixtures.logic_tree.composite_branches)) == 4
+    assert len(list(fixtures.logic_tree.composite_branches_fun(filtered=False))) == 4
 
     # can correlate a subset of BranchSets
-    assert len(list(fixtures.logic_tree2._composite_branches())) == 4 * 2 * 2
+    assert len(list(fixtures.logic_tree2._composite_branches(filtered=False))) == 4 * 2 * 2
 
-    assert len(list(fixtures.logic_tree2.composite_branches)) == 4 * 2
+    assert len(list(fixtures.logic_tree2.composite_branches_fun(filtered=False))) == 4 * 2
 
 
 def test_composite_weights(fixtures: Fixtures):
     # weights sum to 1.0
-    assert sum([branch.weight for branch in fixtures.logic_tree.composite_branches]) == pytest.approx(1.0)
-    assert sum([branch.weight for branch in fixtures.logic_tree_nocor.composite_branches]) == pytest.approx(1.0)
+    assert sum([branch.weight for branch in fixtures.logic_tree.composite_branches_fun(filtered=False)]) == pytest.approx(1.0)
+    assert sum([branch.weight for branch in fixtures.logic_tree_nocor.composite_branches_fun(filtered=False)]) == pytest.approx(1.0)
 
     # weights are default from the primary branch
     for cg in fixtures.logic_tree.correlations.correlation_groups:

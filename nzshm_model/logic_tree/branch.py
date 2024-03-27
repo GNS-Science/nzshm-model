@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import reduce
 from operator import mul
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Sequence, Union
 
 if TYPE_CHECKING:
     from .logic_tree_base import BranchSet, FilteredBranch, LogicTree
@@ -50,7 +50,7 @@ class CompositeBranch:
         weight: the weight of the composite branch
     """
 
-    branches: Sequence[Branch] = field(default_factory=list)
+    branches: Sequence[Union[Branch, 'FilteredBranch']] = field(default_factory=list)
     weight: float = 1.0
 
     def __post_init__(self) -> None:
