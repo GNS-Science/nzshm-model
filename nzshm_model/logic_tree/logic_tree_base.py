@@ -242,7 +242,7 @@ class LogicTree(ABC):
         """
         file_path = Path(file_path)
         with file_path.open('w') as jsonfile:
-            json.dump(self.to_dict(), jsonfile)
+            json.dump(self.to_dict(), jsonfile, indent=2)
 
     # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
