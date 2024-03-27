@@ -122,7 +122,7 @@ class LogicTree(ABC):
             for branches in product(*[branch_set.branches for branch_set in self.branch_sets]):
                 yield CompositeBranch(branches=branches)
 
-    def composite_branches_fun(self, filtered=True) -> Generator[CompositeBranch, None, None]:
+    def composite_branches_fn(self, filtered=True) -> Generator[CompositeBranch, None, None]:
         """
         Yields all composite (combined) branches of the branch_sets enforcing correlations.
         The filtered parameter is set to False during validation of correlation weights to avoid recursion issues. It
@@ -160,7 +160,7 @@ class LogicTree(ABC):
                 composite_branch.weight = reduce(mul, weights, 1.0)
             yield composite_branch
 
-    composite_branches = property(composite_branches_fun)
+    composite_branches = property(composite_branches_fn)
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
