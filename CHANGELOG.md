@@ -7,6 +7,7 @@
 
 ### Changed
  - renamed property LogicTree.combined_branches to composite_branches for clarity
+ - CompositeBranch uses FilteredBranch type to facilitate tracking of BranchSet and LogicTree when forming branch combinations
 
 ## [0.9.3] 2024-03-18
 
