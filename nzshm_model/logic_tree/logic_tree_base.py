@@ -160,7 +160,15 @@ class LogicTree(ABC):
                 composite_branch.weight = reduce(mul, weights, 1.0)
             yield composite_branch
 
-    composite_branches = property(composite_branches_fn)
+    @property
+    def composite_branches(self) -> Generator[CompositeBranch, None, None]:
+        """
+        Yields all composite (combined) branches of the branch_sets enforcing correlations.
+
+        Returns:
+            composite_branches: the CompositeBranches of the combined logic tree BranchSets
+        """
+        return self.composite_branches_fn()
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
