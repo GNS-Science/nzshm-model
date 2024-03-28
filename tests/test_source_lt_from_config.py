@@ -15,8 +15,8 @@ def slt_dict():
 
 def test_slt_from_config(slt_dict):
     slt = SourceLogicTree.from_dict(slt_dict)
-    assert len(list(slt.combined_branches)) == 4
-    assert len(list(slt._combined_branches())) == 4 * 2
+    assert len(list(slt.composite_branches)) == 4
+    assert len(list(slt._composite_branches())) == 4 * 2
 
     assert slt.branch_sets[2].branches[0].branch_id == ""
     assert slt.branch_sets[2].short_name == ""

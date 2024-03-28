@@ -32,6 +32,14 @@ from .correlation import LogicTreeCorrelations
 LogicTreeType = TypeVar("LogicTreeType", bound="LogicTree")
 
 
+def get_fields(obj):
+    return {
+        field.name: copy.deepcopy(getattr(obj, field.name))
+        for field in fields(obj)
+        if field.name not in ('branches', 'branch_sets')
+    }
+
+
 @dataclass
 class BranchSet:
     """
@@ -80,35 +88,87 @@ class LogicTree(ABC):
         if __name == "correlations":
             helpers._validate_correlation_weights(self)
 
-    def _combined_branches(self) -> Generator[CompositeBranch, None, None]:
+    def _composite_branches(self, filtered=True) -> Generator[CompositeBranch, None, None]:
         """
-        yields all composite (combined) branches of the branch_sets without applying correlations.
-        """
-        for branches in product(*[branch_set.branches for branch_set in self.branch_sets]):
-            yield CompositeBranch(branches=branches)
+        Yields all composite (combined) branches of the branch_sets without applying correlations.
+        The filtered parameter is set to False during validation of correlation weights to avoid recursion issues. It
+        is otherwise left to True.
 
-    @property
-    def combined_branches(self) -> Generator[CompositeBranch, None, None]:
+        Parameters:
+            filtered: if True the FilteredBranch type is used in the composite branches, otherwise Branch type is used
+
+        Returns:
+            composite_branches: the CompositeBranches of the combined logic tree BranchSets
         """
-        yields all composite (combined) branches of the branch_sets enforcing correlations
+        # for branches in product(*[branch_set.branches for branch_set in self.branch_sets]):
+        if filtered:
+            lt_fields = get_fields(self)
+            for branches_and_sets in product(
+                *[zip(branch_set.branches, (branch_set,) * len(branch_set.branches)) for branch_set in self.branch_sets]
+            ):
+                cbranches = []
+                for branch, set in branches_and_sets:
+                    bs_fields = get_fields(set)
+                    lt_lite = type(self)(**lt_fields)
+                    bs_lite = type(set)(**bs_fields, branches=[type(branch)()])
+                    cbranches.append(
+                        branch.filtered_branch(
+                            branch_set=bs_lite,
+                            logic_tree=lt_lite,
+                        )
+                    )
+                yield CompositeBranch(branches=cbranches)
+        else:
+            for branches in product(*[branch_set.branches for branch_set in self.branch_sets]):
+                yield CompositeBranch(branches=branches)
+
+    def composite_branches_fn(self, filtered=True) -> Generator[CompositeBranch, None, None]:
         """
-        for combined_branch in self._combined_branches():
+        Yields all composite (combined) branches of the branch_sets enforcing correlations.
+        The filtered parameter is set to False during validation of correlation weights to avoid recursion issues. It
+        is otherwise left to True.
+
+        Parameters:
+            filtered: if True the FilteredBranch type is used in the composite branches, otherwise Branch type is used
+
+        Returns:
+            composite_branches: the CompositeBranches of the combined logic tree BranchSets
+        """
+        for composite_branch in self._composite_branches(filtered):
             # if the comp_branch contains a branch listed as the 0th element of the correlations, only
             # yeild if the other branches are present
             # weight is automatically calculated by CompositeBranch if not explicitly assigned
             # (as we would with correlations)
-            correlation_match = [branch_pri in combined_branch for branch_pri in self.correlations.primary_branches()]
+            if filtered:
+                cbranches = [
+                    branch.to_branch() for branch in composite_branch
+                ]  # need to convert from a FilteredBranch back to a Branch for compairison
+            else:
+                cbranches = [
+                    branch for branch in composite_branch
+                ]  # need to convert from a FilteredBranch back to a Branch for compairison
+            correlation_match = [branch_pri in cbranches for branch_pri in self.correlations.primary_branches()]
             if any(correlation_match):
                 i_cor = correlation_match.index(
                     True
-                )  # index of the correlation that matches a branch in _combined_branches()
-                if not all(br in combined_branch for br in self.correlations[i_cor].all_branches):
+                )  # index of the correlation that matches a branch in _composite_branches()
+                if not all(br in cbranches for br in self.correlations[i_cor].all_branches):
                     continue
                 weights = [self.correlations[i_cor].weight] + [
-                    branch.weight for branch in combined_branch if branch not in self.correlations[i_cor].all_branches
+                    branch.weight for branch in cbranches if branch not in self.correlations[i_cor].all_branches
                 ]
-                combined_branch.weight = reduce(mul, weights, 1.0)
-            yield combined_branch
+                composite_branch.weight = reduce(mul, weights, 1.0)
+            yield composite_branch
+
+    @property
+    def composite_branches(self) -> Generator[CompositeBranch, None, None]:
+        """
+        Yields all composite (combined) branches of the branch_sets enforcing correlations.
+
+        Returns:
+            composite_branches: the CompositeBranches of the combined logic tree BranchSets
+        """
+        return self.composite_branches_fn()
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
@@ -201,7 +261,7 @@ class LogicTree(ABC):
         """
         file_path = Path(file_path)
         with file_path.open('w') as jsonfile:
-            json.dump(self.to_dict(), jsonfile)
+            json.dump(self.to_dict(), jsonfile, indent=2)
 
     # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
@@ -226,13 +286,6 @@ class LogicTree(ABC):
 
         NB this class is never used for serialising models.
         """
-
-        def get_fields(obj):
-            return {
-                field.name: copy.deepcopy(getattr(obj, field.name))
-                for field in fields(obj)
-                if field.name not in ('branches', 'branch_sets')
-            }
 
         lt_fields = get_fields(self)
         for branch_set in self.branch_sets:
@@ -284,7 +337,7 @@ class LogicTree(ABC):
         self.__branch_list = list(self.__all_branches__())
         return self
 
-    def __next__(self):
+    def __next__(self) -> 'FilteredBranch':
         if self.__current_branch >= len(self.__branch_list):
             raise StopIteration
         else:
