@@ -3,11 +3,13 @@ import hashlib
 import json
 import logging
 import sys
+import io
 
 import click
 
 import nzshm_model
 from nzshm_model import all_model_versions, get_model_version
+from nzshm_model import branch_registry
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.WARN)
@@ -56,40 +58,43 @@ def cli_model_as_json(model_id: str):
 
 @slt.command(name='hash_sources')
 @click.argument('model_id')
-def cli_model_source_hashes(model_id: str):
-    """Dump the sources with hashes."""
+@click.option('-o', '--outfile', type=click.File('w'))
+def cli_model_source_hashes(model_id: str, outfile: io.FileIO):
+    """Dump the sources with hashes form the given MODEL."""
     model = get_model_version(model_id)
+    registry = branch_registry.BranchRegistry()
     for branch_set in model.source_logic_tree.branch_sets:
         for branch in branch_set.branches:
-            nrmls = sorted([s.nrml_id for s in branch.sources])
-            row = [
-                hashlib.shake_256(",".join(nrmls).encode()).hexdigest(6),
-                branch_set.short_name,
-                branch.tag,
-                nrmls,
-                branch.weight,
-            ]
-            click.echo(row)
-
+            entry = branch_registry.BranchRegistryEntry(
+                hash_digest=hashlib.shake_256(branch.registry_identity.encode()).hexdigest(6),
+                identity= branch.registry_identity,
+                extra=str(branch.tag)
+            )
+            registry.add(entry)
+            click.echo(entry)
+    if outfile:
+        registry.save(outfile)
 
 @slt.command(name='hash_gmms')
 @click.argument('model_id')
-def cli_model_gmm_hashes(model_id: str):
+@click.option('-o', '--outfile', type=click.File('w'))
+def cli_model_gmm_hashes(model_id: str, outfile: io.FileIO):
     """Dump the gmm branches with hashes."""
     model = get_model_version(model_id)
+    registry = branch_registry.BranchRegistry()
     for branch_set in model.gmm_logic_tree.branch_sets:
         # print(dir(branch_set))
         for branch in branch_set.branches:
-            # print(dir(branch))
-            um_gmpe = branch.gsim_name
-            um_gmpe += ",".join(sorted([str(itm) for itm in branch.gsim_args.items()]))
-            row = [
-                hashlib.shake_256(um_gmpe.encode()).hexdigest(6),
-                branch_set.tectonic_region_type,
-                um_gmpe,
-                branch.weight,
-            ]
-            click.echo(row)
+            entry = branch_registry.BranchRegistryEntry(
+                hash_digest=hashlib.shake_256(branch.registry_identity.encode()).hexdigest(6),
+                identity= branch.registry_identity,
+                # extra=str(branch.tag)
+            )
+            registry.add(entry)
+            click.echo(entry)
+    if outfile:
+        registry.save(outfile)
+
 
 
 # @slt.command(name='from_config')

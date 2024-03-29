@@ -96,6 +96,10 @@ class SourceBranch(Branch):
         """
         return str(self.values)
 
+    @property
+    def registry_identity(self):
+        nrmls = sorted([s.nrml_id for s in self.sources])
+        return "|".join(nrmls)
 
 @dataclass
 class SourceBranchSet(BranchSet):
