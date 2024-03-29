@@ -1,8 +1,10 @@
 # Changelog
 
-## [0.10.2] 2024-03
+
+## [0.10.3] 2024-03
 ### Added
- - BranchRegistry 
+ - BranchRegistry
+ - auto digest on BranchRegistryEntry
 
 ## [0.10.1] 2024-03
 
