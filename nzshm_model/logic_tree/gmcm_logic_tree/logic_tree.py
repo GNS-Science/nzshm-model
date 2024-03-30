@@ -43,6 +43,7 @@ class GMCMBranch(Branch):
             arg_vals.append(f"{k}={v}")
         return f"{self.gsim_name}({', '.join(arg_vals)})"
 
+
 @dataclass
 class GMCMBranchSet(BranchSet):
     """A list of GMCM branches that apply to a particular tectonic region.

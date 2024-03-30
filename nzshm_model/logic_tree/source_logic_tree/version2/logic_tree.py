@@ -101,6 +101,7 @@ class SourceBranch(Branch):
         nrmls = sorted([s.nrml_id for s in self.sources])
         return "|".join(nrmls)
 
+
 @dataclass
 class SourceBranchSet(BranchSet):
     """A list of Source Branches.

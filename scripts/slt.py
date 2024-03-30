@@ -1,15 +1,13 @@
 import dataclasses
-import hashlib
+import io
 import json
 import logging
 import sys
-import io
 
 import click
 
 import nzshm_model
-from nzshm_model import all_model_versions, get_model_version
-from nzshm_model import branch_registry
+from nzshm_model import all_model_versions, branch_registry, get_model_version
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.WARN)
@@ -65,15 +63,12 @@ def cli_model_source_hashes(model_id: str, outfile: io.FileIO):
     registry = branch_registry.BranchRegistry()
     for branch_set in model.source_logic_tree.branch_sets:
         for branch in branch_set.branches:
-            entry = branch_registry.BranchRegistryEntry(
-                hash_digest=hashlib.shake_256(branch.registry_identity.encode()).hexdigest(6),
-                identity= branch.registry_identity,
-                extra=str(branch.tag)
-            )
+            entry = branch_registry.BranchRegistryEntry(identity=branch.registry_identity, extra=str(branch.tag))
             registry.add(entry)
             click.echo(entry)
     if outfile:
         registry.save(outfile)
+
 
 @slt.command(name='hash_gmms')
 @click.argument('model_id')
@@ -85,16 +80,11 @@ def cli_model_gmm_hashes(model_id: str, outfile: io.FileIO):
     for branch_set in model.gmm_logic_tree.branch_sets:
         # print(dir(branch_set))
         for branch in branch_set.branches:
-            entry = branch_registry.BranchRegistryEntry(
-                hash_digest=hashlib.shake_256(branch.registry_identity.encode()).hexdigest(6),
-                identity= branch.registry_identity,
-                # extra=str(branch.tag)
-            )
+            entry = branch_registry.BranchRegistryEntry(branch.registry_identity)
             registry.add(entry)
             click.echo(entry)
     if outfile:
         registry.save(outfile)
-
 
 
 # @slt.command(name='from_config')
