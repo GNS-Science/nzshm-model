@@ -1,4 +1,5 @@
 import os
+import botocore.exceptions
 
 try:
     from nshm_toshi_client.toshi_file import ToshiFile
@@ -17,7 +18,7 @@ try:
         API_KEY = get_secret("NZSHM22_TOSHI_API_SECRET_PROD", "us-east-1").get("NZSHM22_TOSHI_API_KEY_PROD")
     else:
         API_KEY = os.getenv('NZSHM22_TOSHI_API_KEY', "")
-except AttributeError as err:
+except (AttributeError, botocore.exceptions.EndpointConnectionError) as err:
     print(f"unable to get secret from secretmanager: {err}")
     API_KEY = os.getenv('NZSHM22_TOSHI_API_KEY', "")
 
