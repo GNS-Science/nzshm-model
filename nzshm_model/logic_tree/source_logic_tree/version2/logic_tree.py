@@ -73,6 +73,7 @@ class SourceBranch(Branch):
     values: List[BranchAttributeValue] = field(default_factory=list)
     sources: List[Union[DistributedSource, InversionSource]] = field(default_factory=list)
     rupture_rate_scaling: float = 1.0
+    tectonic_region_types: List[str] = field(default_factory=list)
 
     def filtered_branch(self, logic_tree: 'LogicTree', branch_set: 'BranchSet') -> 'FilteredBranch':
         """get a filtered branch containing reference to parent instances.
@@ -105,8 +106,20 @@ class SourceBranchSet(BranchSet):
         branches: list of branches.
     """
 
-    tectonic_region_types: List[str] = field(default_factory=list)
     branches: List[SourceBranch] = field(default_factory=list)
+
+    # def __post_init__(self):
+    #     trts = 
+
+    @property
+    def tectonic_region_types(self) -> List[str]:
+        return self.branches[0].tectonic_region_types if self.branches else []
+    
+    @tectonic_region_types.setter
+    def tectonic_region_types(self, value: List[str]):
+        for branch in self.branches:
+            branch.tectonic_region_types = value
+
 
 
 @dataclass

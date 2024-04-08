@@ -50,7 +50,7 @@ class CompositeBranch:
         weight: the weight of the composite branch
     """
 
-    branches: Sequence[Union[Branch, 'FilteredBranch']] = field(default_factory=list)
+    branches: Sequence[Branch] = field(default_factory=list)
     weight: float = 1.0
 
     def __post_init__(self) -> None:

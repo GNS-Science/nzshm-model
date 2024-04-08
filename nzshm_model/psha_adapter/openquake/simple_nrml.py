@@ -92,7 +92,6 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                 )
             branch_sets.append(
                 GMCMBranchSet(
-                    tectonic_region_type=branch_set.applyToTectonicRegionType,
                     branches=branches,
                 )
             )

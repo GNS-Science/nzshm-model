@@ -77,8 +77,6 @@ class NshmModel:
         ltv = data.get("logic_tree_version")
         if ltv is None:  # original json is unversioned
             return SourceLogicTree.from_source_logic_tree(SourceLogicTreeV1.from_dict(data))
-        elif ltv == 2:
-            return SourceLogicTree.from_dict(data)
         raise ValueError("Unsupported logic_tree_version.")
 
     def source_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":

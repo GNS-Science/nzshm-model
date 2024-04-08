@@ -33,7 +33,7 @@ def _validate_names(logic_tree: 'LogicTree') -> None:
 def _validate_correlation_weights(logic_tree: 'LogicTree') -> None:
     # check that the weights total 1.0
     weight_total = 0.0
-    for branch in logic_tree.composite_branches_fn(filtered=False):
+    for branch in logic_tree.composite_branches:
         weight_total += branch.weight
     if not math.isclose(weight_total, 1.0):
         raise ValueError("the weights of the logic tree do not sum to 1.0 when correlations are applied")

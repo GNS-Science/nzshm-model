@@ -3,7 +3,6 @@
     "title": "lt1",
     "branch_sets": [
         {
-            "tectonic_region_type": "Active Shallow Crust",
             "branches": [
                 {
                     "gsim_name": "Stafford2022",
@@ -158,7 +157,6 @@
             ]
         },
         {
-            "tectonic_region_type": "Subduction Interface",
             "branches": [
                 {
                     "gsim_name": "Atkinson2022SInter",
@@ -262,7 +260,6 @@
             ]
         },
         {
-            "tectonic_region_type": "Subduction Intraslab",
             "branches": [
                 {
                     "gsim_name": "Atkinson2022SSlab",

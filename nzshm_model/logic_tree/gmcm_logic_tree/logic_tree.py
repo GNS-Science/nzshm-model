@@ -23,6 +23,7 @@ class GMCMBranch(Branch):
 
     gsim_name: str = ""
     gsim_args: Dict[str, Any] = field(default_factory=dict)
+    tectonic_region_type: str = ""  # need a default becasue base class has a memeber with a default
 
     def filtered_branch(self, logic_tree, branch_set) -> 'GMCMFilteredBranch':
         """get a filtered branch containing reference to parent instances.
@@ -46,8 +47,17 @@ class GMCMBranchSet(BranchSet):
         branches: list of branches.
     """
 
-    tectonic_region_type: str = ""  # need a default becasue base class has a memeber with a default
     branches: List[GMCMBranch] = field(default_factory=list)
+
+    @property
+    def tectonic_region_type(self) -> str:
+        return self.branches[0].tectonic_region_type if self.branches else ""
+    
+    @tectonic_region_type.setter
+    def tectonic_region_type(self, value: str):
+        for branch in self.branches:
+            branch.tectonic_region_type = value
+
 
 
 @dataclass
