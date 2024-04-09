@@ -1,8 +1,11 @@
 """
 Classes for enforcing correlations between branches in logic trees
 """
+import collections.abc
 from dataclasses import dataclass, field
-from typing import Generator, List, Optional, Sequence, overload
+from typing import Generator, List, Optional, overload
+from typing import Sequence
+import collections
 
 from .branch import Branch
 
@@ -44,7 +47,7 @@ class Correlation:
 
 
 @dataclass(frozen=True)
-class LogicTreeCorrelations(Sequence):
+class LogicTreeCorrelations(collections.abc.Sequence):
     """
     All correlations for a logic tree.
 

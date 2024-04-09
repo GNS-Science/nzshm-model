@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from .logic_tree_base import BranchSet, FilteredBranch, LogicTree
 
 
-@dataclass
+@dataclass(frozen=True)
 class Branch(ABC):
     """
     Abstract baseclass for logic tree branches

@@ -5,13 +5,12 @@ This module contains base classes (some of which are abstract) common to both **
 import copy
 import json
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Type, TypeVar, Union
+from typing import Any, Dict, Generator, Iterator, List, Type, TypeVar, Union, Sequence
 
 import dacite
 
@@ -75,6 +74,7 @@ class LogicTree(ABC):
     correlations: LogicTreeCorrelations = field(default_factory=LogicTreeCorrelations)
 
     def __post_init__(self) -> None:
+        # TODO: branch set short_names should be unique (see from_branches())
         helpers._validate_correlation_weights(self)
 
     def __setattr__(self, __name: str, __value: Any) -> None:
@@ -173,7 +173,10 @@ class LogicTree(ABC):
         Returns:
             logic_tree
         """
-        return dacite.from_dict(data_class=cls, data=data, config=dacite.Config(strict=True))
+        import typing
+        config = dacite.Config(strict=True, cast=[tuple])
+        # config = dacite.Config(strict=True)
+        return dacite.from_dict(data_class=cls, data=data, config=config)
 
     def _to_dict(self) -> Dict[str, Any]:
         """Create dict representation of logic tree. This creates an exact dict of the class and is not used for serialisation.
@@ -299,7 +302,7 @@ class LogicTree(ABC):
             return self.__branch_list[self.__current_branch - 1]
 
 
-@dataclass
+@dataclass(frozen=True)
 class FilteredBranch(Branch):
     """
     A branch type that points back to it's logic tree and branch set. Should never be serialized, only

@@ -8,7 +8,7 @@ from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBr
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 
-@dataclass
+@dataclass(frozen=True)
 class GMCMBranch(Branch):
     """
     A branch of the GMCM logic tree
@@ -48,6 +48,11 @@ class GMCMBranchSet(BranchSet):
     """
 
     branches: List[GMCMBranch] = field(default_factory=list)
+    
+    def __post_init__(self):
+        trts = {branch.tectonic_region_type for branch in self.branches}
+        if len(trts) > 1:
+            raise ValueError("all tectonic_region_types in a branch set must be the same")
 
     @property
     def tectonic_region_type(self) -> str:
@@ -105,7 +110,7 @@ class GMCMLogicTree(LogicTree):
     #     raise NotImplementedError("from_user_config not implimented for GMCMLogicTree")
 
 
-@dataclass
+@dataclass(frozen=True)
 class GMCMFilteredBranch(FilteredBranch, GMCMBranch):
     logic_tree: 'GMCMLogicTree' = field(default_factory=GMCMLogicTree)
     branch_set: 'GMCMBranchSet' = field(default_factory=GMCMBranchSet)
