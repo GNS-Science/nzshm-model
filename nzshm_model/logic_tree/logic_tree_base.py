@@ -10,7 +10,7 @@ from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Type, TypeVar, Union, Sequence
+from typing import Any, Dict, Generator, Iterator, List, Sequence, Type, TypeVar, Union
 
 import dacite
 
@@ -29,8 +29,6 @@ from .correlation import LogicTreeCorrelations
 
 # https://github.com/python/mypy/issues/8495
 LogicTreeType = TypeVar("LogicTreeType", bound="LogicTree")
-
-
 
 
 @dataclass
@@ -108,7 +106,7 @@ class LogicTree(ABC):
             correlation_match = [branch_pri in composite_branch for branch_pri in self.correlations.primary_branches()]
             if any(correlation_match):
                 # index of the correlation that matches a branch in _composite_branches()
-                i_cor = correlation_match.index(True)  
+                i_cor = correlation_match.index(True)
                 if not all(br in composite_branch for br in self.correlations[i_cor].all_branches):
                     continue
                 weights = [self.correlations[i_cor].weight] + [
@@ -173,9 +171,8 @@ class LogicTree(ABC):
         Returns:
             logic_tree
         """
-        import typing
+
         config = dacite.Config(strict=True, cast=[tuple])
-        # config = dacite.Config(strict=True)
         return dacite.from_dict(data_class=cls, data=data, config=config)
 
     def _to_dict(self) -> Dict[str, Any]:
@@ -302,7 +299,7 @@ class LogicTree(ABC):
             return self.__branch_list[self.__current_branch - 1]
 
 
-@dataclass(frozen=True)
+@dataclass
 class FilteredBranch(Branch):
     """
     A branch type that points back to it's logic tree and branch set. Should never be serialized, only

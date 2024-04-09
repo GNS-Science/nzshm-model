@@ -3,11 +3,11 @@
 ## [0.9.4] 2024-03-22
 
 ### Added
- - tectonic_region_types member for SourceBranchSet
+ - tectonic_region_types member for SourceBranch
 
 ### Changed
+ - tectonic_region_type moved from GMCMBranchSet to GMCMBranch
  - renamed property LogicTree.combined_branches to composite_branches for clarity
- - CompositeBranch uses FilteredBranch type to facilitate tracking of BranchSet and LogicTree when forming branch combinations
 
 ## [0.9.3] 2024-03-18
 

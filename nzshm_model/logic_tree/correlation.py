@@ -1,11 +1,10 @@
 """
 Classes for enforcing correlations between branches in logic trees
 """
+import collections
 import collections.abc
 from dataclasses import dataclass, field
-from typing import Generator, List, Optional, overload
-from typing import Sequence
-import collections
+from typing import Generator, List, Optional, Sequence, overload
 
 from .branch import Branch
 

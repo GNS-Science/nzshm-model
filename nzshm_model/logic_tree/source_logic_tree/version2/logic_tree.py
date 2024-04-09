@@ -1,12 +1,10 @@
 """
 Defines source logic tree structures used in NSHM.
 """
-import collections.abc
 import copy
 import warnings
-import collections
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Type, Union, Tuple, FrozenSet, Any
+from typing import Dict, List, Optional, Tuple, Type, Union
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
@@ -59,8 +57,7 @@ class DistributedSource:
     type: str = "distributed"
 
 
-
-@dataclass(frozen=True)
+@dataclass
 class SourceBranch(Branch):
     """
     A source branch can contain multiple sources.
@@ -80,9 +77,7 @@ class SourceBranch(Branch):
 
     def __post_init__(self):
         if not isinstance(self.tectonic_region_types, tuple):
-            breakpoint()
             raise TypeError("tectonic_region_types must be a tuple")
-
 
     def filtered_branch(self, logic_tree: 'LogicTree', branch_set: 'BranchSet') -> 'FilteredBranch':
         """get a filtered branch containing reference to parent instances.
@@ -107,9 +102,7 @@ class SourceBranch(Branch):
         return str(self.values)
 
 
-# TODO: the frozen SourceBranch and use of frozen set for tectonic_region_types will prevent users chaning TRTs and
-# breaking the rule that all TRTs must be the same for every branch in a branch set. However, a user could still
-# change the branches in a SourceBranchSet() after creation
+# TODO: protect from users changing tectonic_region_types
 @dataclass
 class SourceBranchSet(BranchSet):
     """A list of Source Branches.
@@ -126,14 +119,8 @@ class SourceBranchSet(BranchSet):
             raise ValueError("all tectonic_region_types in a branch set must be the same")
 
     @property
-    def tectonic_region_types(self) -> Tuple[str]:
+    def tectonic_region_types(self) -> Tuple[str, ...]:
         return self.branches[0].tectonic_region_types if self.branches else ()
-    
-    @tectonic_region_types.setter
-    def tectonic_region_types(self, value: List[str]):
-        for branch in self.branches:
-            branch.tectonic_region_types = value
-
 
 
 @dataclass
@@ -275,7 +262,7 @@ class SourceLogicTree(LogicTree):
         return provider(source_logic_tree=self)
 
 
-@dataclass(frozen=True)
+@dataclass
 class SourceFilteredBranch(FilteredBranch, SourceBranch):
     """A logic tree source branch with additional properties
 

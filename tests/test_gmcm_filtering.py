@@ -28,12 +28,7 @@ def test_filter_trt():
 
 
 def test_build_gmcmlt_from_filtered_gmcmlt():
-    flt = (
-        filt_branch
-        for filt_branch in filter(
-            lambda obj: obj.gsim_name == 'Atkinson2022SInter', gmcm_logic_tree
-        )
-    )
+    flt = (filt_branch for filt_branch in filter(lambda obj: obj.gsim_name == 'Atkinson2022SInter', gmcm_logic_tree))
     glt = GMCMLogicTree.from_branches(flt)
     print(glt)
     assert len(glt.branch_sets) == 1

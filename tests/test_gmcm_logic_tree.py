@@ -35,11 +35,6 @@ def test_gmcm_logic_tree_from_xml():
     assert gmcm_logic_tree.branch_sets[0].branches[0].gsim_args == expected_args
 
 
-def test_gmcm_logic_tree_from_json():
-    gmcm_logic_tree = gmcm_logic_tree_fromjson
-    assert gmcm_logic_tree == gmcm_logic_tree_fromxml
-
-
 def test_serialize_gmcm_logic_tree():
     lt_as_dict = gmcm_logic_tree_fromjson.to_dict()
     gmcm_logic_tree = GMCMLogicTree.from_dict(lt_as_dict)

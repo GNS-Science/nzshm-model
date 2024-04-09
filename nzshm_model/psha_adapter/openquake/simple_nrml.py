@@ -88,6 +88,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                         gsim_name=gmpe_name,
                         gsim_args=process_gmm_args(branch.uncertainty_models[0].arguments),
                         weight=branch.uncertainty_weight,
+                        tectonic_region_type=branch_set.applyToTectonicRegionType,
                     )
                 )
             branch_sets.append(

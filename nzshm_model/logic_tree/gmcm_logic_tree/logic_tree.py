@@ -8,7 +8,7 @@ from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBr
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 
-@dataclass(frozen=True)
+@dataclass
 class GMCMBranch(Branch):
     """
     A branch of the GMCM logic tree
@@ -38,6 +38,7 @@ class GMCMBranch(Branch):
         return GMCMFilteredBranch(logic_tree=logic_tree, branch_set=branch_set, **self.__dict__)
 
 
+# TODO: protect from users changing TRT
 @dataclass
 class GMCMBranchSet(BranchSet):
     """A list of GMCM branches that apply to a particular tectonic region.
@@ -48,7 +49,7 @@ class GMCMBranchSet(BranchSet):
     """
 
     branches: List[GMCMBranch] = field(default_factory=list)
-    
+
     def __post_init__(self):
         trts = {branch.tectonic_region_type for branch in self.branches}
         if len(trts) > 1:
@@ -57,12 +58,6 @@ class GMCMBranchSet(BranchSet):
     @property
     def tectonic_region_type(self) -> str:
         return self.branches[0].tectonic_region_type if self.branches else ""
-    
-    @tectonic_region_type.setter
-    def tectonic_region_type(self, value: str):
-        for branch in self.branches:
-            branch.tectonic_region_type = value
-
 
 
 @dataclass
@@ -110,7 +105,7 @@ class GMCMLogicTree(LogicTree):
     #     raise NotImplementedError("from_user_config not implimented for GMCMLogicTree")
 
 
-@dataclass(frozen=True)
+@dataclass
 class GMCMFilteredBranch(FilteredBranch, GMCMBranch):
     logic_tree: 'GMCMLogicTree' = field(default_factory=GMCMLogicTree)
     branch_set: 'GMCMBranchSet' = field(default_factory=GMCMBranchSet)

@@ -99,7 +99,7 @@ def test__composite_branches(fixtures: Fixtures):
 def test_composite_weights(fixtures: Fixtures):
     # weights sum to 1.0
     assert sum([branch.weight for branch in fixtures.logic_tree.composite_branches]) == pytest.approx(1.0)
-    assert sum( [branch.weight for branch in fixtures.logic_tree_nocor.composite_branches]) == pytest.approx(1.0)
+    assert sum([branch.weight for branch in fixtures.logic_tree_nocor.composite_branches]) == pytest.approx(1.0)
 
     # weights are default from the primary branch
     for cg in fixtures.logic_tree.correlations.correlation_groups:
