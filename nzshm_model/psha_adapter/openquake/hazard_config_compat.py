@@ -99,8 +99,4 @@ def compatible_hash_digest(config: configparser.ConfigParser, digest_len: int = 
     compat = compatible_config(config)
     value = io.StringIO()
     compat.write(value)
-    value.seek(0)
-    for n, line in enumerate(value.readlines()):
-        print(n, line, end="")
-
     return hashlib.shake_256(value.getvalue().encode()).hexdigest(int(digest_len / 2))

@@ -5,7 +5,7 @@
 ### Added
  - BranchRegistry
  - auto digest on BranchRegistryEntry
- - botocode error handling dor toshiAPI
+ - botocode error handling for toshiAPI
 
 ## [0.10.1] 2024-03
 

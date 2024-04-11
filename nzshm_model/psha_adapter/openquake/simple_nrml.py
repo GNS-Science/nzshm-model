@@ -54,18 +54,13 @@ def process_gmm_args(args: List[str]) -> Dict[str, Any]:
     return args_dict
 
 
-def gmcm_branch_from_element_text(element_text:str) -> GMCMBranch:
-    """Produce a GMCMBranch from NRML Uncertainty node text
-    """
+def gmcm_branch_from_element_text(element_text: str) -> GMCMBranch:
+    """Produce a GMCMBranch from NRML Uncertainty node text"""
     lines = element_text.split("\n")
-    gmpe_name=lines[0].strip().replace('[', '').replace(']', '')
-    arguments=[arg.strip() for arg in lines[1:]]
+    gmpe_name = lines[0].strip().replace('[', '').replace(']', '')
+    arguments = [arg.strip() for arg in lines[1:]]
 
-    return GMCMBranch(
-        gsim_name=gmpe_name,
-        gsim_args=process_gmm_args(arguments),
-        weight=0.0
-    )
+    return GMCMBranch(gsim_name=gmpe_name, gsim_args=process_gmm_args(arguments), weight=0.0)
 
 
 class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
