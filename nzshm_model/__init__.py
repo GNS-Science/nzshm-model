@@ -38,8 +38,9 @@ Functions:
     get_model_version: Get the model instance specified
 
 """
+from . import branch_registry
 from .model import NshmModel
 from .model_version import CURRENT_VERSION, all_model_versions, get_model_version, versions
 
 # Python package version is different than the NSHM MODEL version !!
-__version__ = '0.9.4'
+__version__ = '0.10.3'

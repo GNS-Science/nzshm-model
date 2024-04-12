@@ -1,13 +1,21 @@
 # Changelog
 
-## [0.9.4] 2024-03-22
+
+## [0.10.3] 2024-03
+### Added
+ - BranchRegistry
+ - auto digest on BranchRegistryEntry
+ - botocode error handling for toshiAPI
+
+## [0.10.1] 2024-03
 
 ### Added
- - tectonic_region_types member for SourceBranch
+ - migrated OpenquakeConfig class from runzi
+ - added test to above
+ - added hazard_config_compat module for hashig compatible configs
 
 ### Changed
- - tectonic_region_type moved from GMCMBranchSet to GMCMBranch
- - renamed property LogicTree.combined_branches to composite_branches for clarity
+ - fixed broken import for toshi
 
 ## [0.9.3] 2024-03-18
 

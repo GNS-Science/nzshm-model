@@ -37,6 +37,13 @@ class GMCMBranch(Branch):
         """
         return GMCMFilteredBranch(logic_tree=logic_tree, branch_set=branch_set, **self.__dict__)
 
+    @property
+    def registry_identity(self):
+        arg_vals = []
+        for k, v in self.gsim_args.items():
+            arg_vals.append(f"{k}={v}")
+        return f"{self.gsim_name}({', '.join(arg_vals)})"
+
 
 # TODO: protect from users changing TRT
 @dataclass
