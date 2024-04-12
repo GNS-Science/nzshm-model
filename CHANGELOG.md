@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.4] 2024-04-12
+### Added
+ - tectonic_region_types member for SourceBranch
+
+### Changed
+ - tectonic_region_type moved from GMCMBranchSet to GMCMBranch
+ - renamed property LogicTree.combined_branches to composite_branches for clarity
 
 ## [0.10.3] 2024-03
 ### Added
