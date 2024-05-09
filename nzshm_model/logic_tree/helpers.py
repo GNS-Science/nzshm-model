@@ -27,13 +27,13 @@ def _validate_names(logic_tree: 'LogicTree') -> None:
     # do not allow duplicate branch_set.shortname:branch.name
     branch_names = [f"{branch.branch_set.short_name}:{branch.branch_id}" for branch in logic_tree]
     if len(set(branch_names)) != len(branch_names):
-        raise ValueError("branch_set.shortname:branch.name must be unique")
+        raise ValueError("branch_set.short_name:branch.branch_id must be unique")
 
 
 def _validate_correlation_weights(logic_tree: 'LogicTree') -> None:
     # check that the weights total 1.0
     weight_total = 0.0
-    for branch in logic_tree.combined_branches:
+    for branch in logic_tree.composite_branches:
         weight_total += branch.weight
     if not math.isclose(weight_total, 1.0):
         raise ValueError("the weights of the logic tree do not sum to 1.0 when correlations are applied")

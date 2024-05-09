@@ -80,26 +80,26 @@ def test_check_correlations_validation(fixtures: Fixtures):
         LogicTreeCorrelations(correlation_groups=[fixtures.correlation1, correlation2x])
 
 
-def test__combined_branches(fixtures: Fixtures):
+def test__composite_branches(fixtures: Fixtures):
 
-    assert len(list(fixtures.logic_tree_nocor.combined_branches)) == 4 * 2 * 2
+    assert len(list(fixtures.logic_tree_nocor.composite_branches)) == 4 * 2 * 2
 
     # branches not filtered by correlation
-    assert len(list(fixtures.logic_tree._combined_branches())) == 4 * 2
+    assert len(list(fixtures.logic_tree._composite_branches())) == 4 * 2
 
     # branches filtered by correlation
-    assert len(list(fixtures.logic_tree.combined_branches)) == 4
+    assert len(list(fixtures.logic_tree.composite_branches)) == 4
 
     # can correlate a subset of BranchSets
-    assert len(list(fixtures.logic_tree2._combined_branches())) == 4 * 2 * 2
+    assert len(list(fixtures.logic_tree2._composite_branches())) == 4 * 2 * 2
 
-    assert len(list(fixtures.logic_tree2.combined_branches)) == 4 * 2
+    assert len(list(fixtures.logic_tree2.composite_branches)) == 4 * 2
 
 
-def test_combined_weights(fixtures: Fixtures):
+def test_composite_weights(fixtures: Fixtures):
     # weights sum to 1.0
-    assert sum([branch.weight for branch in fixtures.logic_tree.combined_branches]) == pytest.approx(1.0)
-    assert sum([branch.weight for branch in fixtures.logic_tree_nocor.combined_branches]) == pytest.approx(1.0)
+    assert sum([branch.weight for branch in fixtures.logic_tree.composite_branches]) == pytest.approx(1.0)
+    assert sum([branch.weight for branch in fixtures.logic_tree_nocor.composite_branches]) == pytest.approx(1.0)
 
     # weights are default from the primary branch
     for cg in fixtures.logic_tree.correlations.correlation_groups:

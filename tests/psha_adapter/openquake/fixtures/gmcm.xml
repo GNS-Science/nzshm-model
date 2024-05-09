@@ -1,6 +1,6 @@
 <nrml xmlns:gml="http://www.opengis.net/gml" xmlns="http://openquake.org/xmlns/nrml/0.5">
   <logicTree logicTreeID="lt1">
-    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="BS:Active Shallow Crust" applyToTectonicRegionType="Active Shallow Crust">
+    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="BS:" applyToTectonicRegionType="">
       <logicTreeBranch branchID="Stafford20220">
         <uncertaintyModel>[Stafford2022]
 				mu_branch="Upper"
@@ -131,7 +131,7 @@ modified_sigma="true"
         <uncertaintyWeight>0.0198</uncertaintyWeight>
       </logicTreeBranch>
     </logicTreeBranchSet>
-    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="BS:Subduction Interface" applyToTectonicRegionType="Subduction Interface">
+    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="BS:" applyToTectonicRegionType="">
       <logicTreeBranch branchID="Atkinson2022SInter21">
         <uncertaintyModel>[Atkinson2022SInter]
 				epistemic="Upper"
@@ -220,7 +220,7 @@ modified_sigma="true"
         <uncertaintyWeight>0.072</uncertaintyWeight>
       </logicTreeBranch>
     </logicTreeBranchSet>
-    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="BS:Subduction Intraslab" applyToTectonicRegionType="Subduction Intraslab">
+    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="BS:" applyToTectonicRegionType="">
       <logicTreeBranch branchID="Atkinson2022SSlab33">
         <uncertaintyModel>[Atkinson2022SSlab]
 				epistemic="Upper"

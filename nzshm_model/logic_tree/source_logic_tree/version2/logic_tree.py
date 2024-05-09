@@ -4,7 +4,7 @@ Defines source logic tree structures used in NSHM.
 import copy
 import warnings
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Type, Union
+from typing import Dict, List, Optional, Tuple, Type, Union
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
@@ -73,6 +73,11 @@ class SourceBranch(Branch):
     values: List[BranchAttributeValue] = field(default_factory=list)
     sources: List[Union[DistributedSource, InversionSource]] = field(default_factory=list)
     rupture_rate_scaling: float = 1.0
+    tectonic_region_types: Tuple[str, ...] = field(default_factory=tuple)
+
+    def __post_init__(self):
+        if not isinstance(self.tectonic_region_types, tuple):
+            raise TypeError("tectonic_region_types must be a tuple")
 
     def filtered_branch(self, logic_tree: 'LogicTree', branch_set: 'BranchSet') -> 'FilteredBranch':
         """get a filtered branch containing reference to parent instances.
@@ -96,7 +101,13 @@ class SourceBranch(Branch):
         """
         return str(self.values)
 
+    @property
+    def registry_identity(self):
+        nrmls = sorted([s.nrml_id for s in self.sources])
+        return "|".join(nrmls)
 
+
+# TODO: protect from users changing tectonic_region_types
 @dataclass
 class SourceBranchSet(BranchSet):
     """A list of Source Branches.
@@ -106,6 +117,15 @@ class SourceBranchSet(BranchSet):
     """
 
     branches: List[SourceBranch] = field(default_factory=list)
+
+    def __post_init__(self):
+        trts = {frozenset(branch.tectonic_region_types) for branch in self.branches}
+        if len(trts) > 1:
+            raise ValueError("all tectonic_region_types in a branch set must be the same")
+
+    @property
+    def tectonic_region_types(self) -> Tuple[str, ...]:
+        return self.branches[0].tectonic_region_types if self.branches else ()
 
 
 @dataclass

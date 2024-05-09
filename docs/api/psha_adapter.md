@@ -5,4 +5,10 @@ a PSHA adapter implementation should provide the necessary methods to convert to
 
 TODO: complete these docs
 
-::: nzshm_model.psha_adapter
+::: nzshm_model.psha_adapter.openquake.hazard_config
+    options:
+      show_docstring_classes: true
+
+::: nzshm_model.psha_adapter.psha_adapter_interface
+    options:
+      show_docstring_classes: true
