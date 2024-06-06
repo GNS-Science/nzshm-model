@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
+GMM_JSON_SOURCE_PATH = RESOURCES_PATH / "GMM_JSON"
 GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
 
 versions = {
@@ -42,7 +43,7 @@ class NshmModel:
     An NshmModel instance represents a complete National Seismic Hazard Model version.
     """
 
-    def __init__(self, version, title, slt_json, gmm_xml, slt_config):
+    def __init__(self, version, title, slt_json, gmm_json, gmm_xml, slt_config):
         """
         Create a new NshmModel instance.
 
@@ -54,13 +55,21 @@ class NshmModel:
         self.slt_config = slt_config
 
         self._slt_json = SLT_SOURCE_PATH / slt_json
+        self._gmm_json = GMM_JSON_SOURCE_PATH / gmm_json
         self._gmm_xml = GMM_SOURCE_PATH / gmm_xml
         assert self._slt_json.exists()
+        assert self._gmm_json.exists()
         assert self._gmm_xml.exists()
 
     @property
-    def _data(self):
+    def _slt_data(self):
         with open(self._slt_json, 'r') as jsonfile:
+            data = json.load(jsonfile)
+        return data
+
+    @property
+    def _glt_data(self):
+        with open(self._gmm_json, 'r') as jsonfile:
             data = json.load(jsonfile)
         return data
 
@@ -73,7 +82,7 @@ class NshmModel:
             a source_logic_tree
 
         """
-        data = self._data
+        data = self._slt_data
         ltv = data.get("logic_tree_version")
         if ltv is None:  # original json is unversioned
             return SourceLogicTree.from_source_logic_tree(SourceLogicTreeV1.from_dict(data))
@@ -93,6 +102,19 @@ class NshmModel:
         return slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
 
     @property
+    def gmm_logic_tree_from_xml(self) -> "GMCMLogicTree":
+        """
+        the ground motion logic tree for this model.
+
+        Returns:
+            a gmcm_logic_tree
+
+        """
+        warnings.warn("use NshmModel.gmm_logic_tree instead", DeprecationWarning)
+        adapter = GMCMLogicTree().psha_adapter(OpenquakeSimplePshaAdapter)
+        return adapter.logic_tree_from_xml(self._gmm_xml)  # type: ignore
+
+    @property
     def gmm_logic_tree(self) -> "GMCMLogicTree":
         """
         the ground motion logic tree for this model.
@@ -101,8 +123,8 @@ class NshmModel:
             a gmcm_logic_tree
 
         """
-        adapter = GMCMLogicTree().psha_adapter(OpenquakeSimplePshaAdapter)
-        return adapter.logic_tree_from_xml(self._gmm_xml)  # type: ignore
+        data = self._glt_data
+        return GMCMLogicTree.from_dict(data)
 
     def gmm_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
         """
