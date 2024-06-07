@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.5] 2024-06-07
+### Added
+ - short_name and long_name for ground motion branch_sets of stored models
+
+### Changed
+ - ground motion logic trees loaded from json instead of xml
+
 ## [0.10.4] 2024-04-12
 ### Added
  - tectonic_region_types member for SourceBranch

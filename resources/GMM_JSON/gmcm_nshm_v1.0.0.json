@@ -1,0 +1,462 @@
+{
+  "title": "lt1",
+  "version": "",
+  "branch_sets": [
+    {
+      "short_name": "CRU",
+      "long_name": "Crustal",
+      "branches": [
+        {
+          "branch_id": "",
+          "weight": 0.117,
+          "gsim_name": "Stafford2022",
+          "gsim_args": {
+            "mu_branch": "Upper"
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.156,
+          "gsim_name": "Stafford2022",
+          "gsim_args": {
+            "mu_branch": "Central"
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.117,
+          "gsim_name": "Stafford2022",
+          "gsim_args": {
+            "mu_branch": "Lower"
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.084,
+          "gsim_name": "Atkinson2022Crust",
+          "gsim_args": {
+            "epistemic": "Upper",
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.112,
+          "gsim_name": "Atkinson2022Crust",
+          "gsim_args": {
+            "epistemic": "Central",
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.084,
+          "gsim_name": "Atkinson2022Crust",
+          "gsim_args": {
+            "epistemic": "Lower",
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "AbrahamsonEtAl2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": 1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0264,
+          "gsim_name": "AbrahamsonEtAl2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": 0.0
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "AbrahamsonEtAl2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": -1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "BooreEtAl2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": 1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0264,
+          "gsim_name": "BooreEtAl2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": 0.0
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "BooreEtAl2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": -1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "CampbellBozorgnia2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": 1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0264,
+          "gsim_name": "CampbellBozorgnia2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": 0.0
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "CampbellBozorgnia2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": -1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "ChiouYoungs2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": 1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0264,
+          "gsim_name": "ChiouYoungs2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": 0.0
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "ChiouYoungs2014",
+          "gsim_args": {
+            "sigma_mu_epsilon": -1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "Bradley2013",
+          "gsim_args": {
+            "sigma_mu_epsilon": 1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0264,
+          "gsim_name": "Bradley2013",
+          "gsim_args": {
+            "sigma_mu_epsilon": 0.0
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.0198,
+          "gsim_name": "Bradley2013",
+          "gsim_args": {
+            "sigma_mu_epsilon": -1.28155
+          },
+          "tectonic_region_type": "Active Shallow Crust"
+        }
+      ]
+    },
+    {
+      "short_name": "INTER",
+      "long_name": "Subduction Interface",
+      "branches": [
+        {
+          "branch_id": "",
+          "weight": 0.081,
+          "gsim_name": "Atkinson2022SInter",
+          "gsim_args": {
+            "epistemic": "Upper",
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.108,
+          "gsim_name": "Atkinson2022SInter",
+          "gsim_args": {
+            "epistemic": "Central",
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.081,
+          "gsim_name": "Atkinson2022SInter",
+          "gsim_args": {
+            "epistemic": "Lower",
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.075,
+          "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SInter",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": 1.28155
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.1,
+          "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SInter",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": 0.0
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.075,
+          "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SInter",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": -1.28155
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.072,
+          "gsim_name": "NZNSHM2022_ParkerEtAl2020SInter",
+          "gsim_args": {
+            "sigma_mu_epsilon": 1.28155,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.096,
+          "gsim_name": "NZNSHM2022_ParkerEtAl2020SInter",
+          "gsim_args": {
+            "sigma_mu_epsilon": 0.0,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.072,
+          "gsim_name": "NZNSHM2022_ParkerEtAl2020SInter",
+          "gsim_args": {
+            "sigma_mu_epsilon": -1.28155,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.072,
+          "gsim_name": "NZNSHM2022_KuehnEtAl2020SInter",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": 1.28155,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.096,
+          "gsim_name": "NZNSHM2022_KuehnEtAl2020SInter",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": 0.0,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Interface"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.072,
+          "gsim_name": "NZNSHM2022_KuehnEtAl2020SInter",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": -1.28155,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Interface"
+        }
+      ]
+    },
+    {
+      "short_name": "SLAB",
+      "long_name": "Subduction Intraslab",
+      "branches": [
+        {
+          "branch_id": "",
+          "weight": 0.084,
+          "gsim_name": "Atkinson2022SSlab",
+          "gsim_args": {
+            "epistemic": "Upper",
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.112,
+          "gsim_name": "Atkinson2022SSlab",
+          "gsim_args": {
+            "epistemic": "Central",
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.084,
+          "gsim_name": "Atkinson2022SSlab",
+          "gsim_args": {
+            "epistemic": "Lower",
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.075,
+          "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SSlab",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": 1.28155
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.1,
+          "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SSlab",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": 0.0
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.075,
+          "gsim_name": "NZNSHM2022_AbrahamsonGulerce2020SSlab",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": -1.28155
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.069,
+          "gsim_name": "NZNSHM2022_ParkerEtAl2020SSlab",
+          "gsim_args": {
+            "sigma_mu_epsilon": 1.28155,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.092,
+          "gsim_name": "NZNSHM2022_ParkerEtAl2020SSlab",
+          "gsim_args": {
+            "sigma_mu_epsilon": 0.0,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.069,
+          "gsim_name": "NZNSHM2022_ParkerEtAl2020SSlab",
+          "gsim_args": {
+            "sigma_mu_epsilon": -1.28155,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.072,
+          "gsim_name": "NZNSHM2022_KuehnEtAl2020SSlab",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": 1.28155,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.096,
+          "gsim_name": "NZNSHM2022_KuehnEtAl2020SSlab",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": 0.0,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        },
+        {
+          "branch_id": "",
+          "weight": 0.072,
+          "gsim_name": "NZNSHM2022_KuehnEtAl2020SSlab",
+          "gsim_args": {
+            "region": "GLO",
+            "sigma_mu_epsilon": -1.28155,
+            "modified_sigma": "true"
+          },
+          "tectonic_region_type": "Subduction Intraslab"
+        }
+      ]
+    }
+  ]
+}
