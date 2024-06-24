@@ -40,12 +40,6 @@ class SourceSolution(ToshiFile):
                   file_size
                   meta {k v}
                 }
-                ... on ScaledInversionSolution {
-                  meta{ k k}
-                  source_solution {
-                    meta {k v}
-                  }
-                }
             }
         }
         '''

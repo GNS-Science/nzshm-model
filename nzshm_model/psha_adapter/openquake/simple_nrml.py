@@ -35,12 +35,6 @@ def fetch_toshi_source(file_id: str, destination: pathlib.Path) -> pathlib.Path:
     return fname
 
 
-def rupt_set_from_meta(meta):
-    for itm in meta:
-        if itm['k'] == "rupture_set_file_id":
-            return itm['v']
-
-
 def process_gmm_args(args: List[str]) -> Dict[str, Any]:
     def clean_string(string):
         return string.replace('"', '').replace("'", '').strip()
