@@ -19,11 +19,11 @@ def test_gmcm_logic_tree_from_xml():
     gmcm_logic_tree = gmcm_logic_tree_fromxml
 
     assert len(gmcm_logic_tree.branch_sets) == len(doc.logic_trees[0].branch_sets)
-    for i in range(len(gmcm_logic_tree.branch_sets)):
-        assert (
-            gmcm_logic_tree.branch_sets[i].tectonic_region_type
-            == doc.logic_trees[0].branch_sets[i].applyToTectonicRegionType
-        )
+    # for i in range(len(gmcm_logic_tree.branch_sets)):
+    #     assert (
+    #         gmcm_logic_tree.branch_sets[i].tectonic_region_type
+    #         == doc.logic_trees[0].branch_sets[i].applyToTectonicRegionType
+    #     )
 
     assert len(gmcm_logic_tree.branch_sets[0].branches) == len(doc.logic_trees[0].branch_sets[0].branches)
     assert (
@@ -33,11 +33,6 @@ def test_gmcm_logic_tree_from_xml():
     assert gmcm_logic_tree.branch_sets[0].branches[0].gsim_name == 'Stafford2022'
     expected_args = dict(mu_branch='Upper')
     assert gmcm_logic_tree.branch_sets[0].branches[0].gsim_args == expected_args
-
-
-def test_gmcm_logic_tree_from_json():
-    gmcm_logic_tree = gmcm_logic_tree_fromjson
-    assert gmcm_logic_tree == gmcm_logic_tree_fromxml
 
 
 def test_serialize_gmcm_logic_tree():

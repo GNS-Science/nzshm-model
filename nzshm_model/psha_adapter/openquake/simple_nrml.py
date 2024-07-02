@@ -35,12 +35,6 @@ def fetch_toshi_source(file_id: str, destination: pathlib.Path) -> pathlib.Path:
     return fname
 
 
-def rupt_set_from_meta(meta):
-    for itm in meta:
-        if itm['k'] == "rupture_set_file_id":
-            return itm['v']
-
-
 def process_gmm_args(args: List[str]) -> Dict[str, Any]:
     def clean_string(string):
         return string.replace('"', '').replace("'", '').strip()
@@ -52,6 +46,15 @@ def process_gmm_args(args: List[str]) -> Dict[str, Any]:
             args_dict[clean_string(k)] = clean_string(v)
 
     return args_dict
+
+
+def gmcm_branch_from_element_text(element_text: str) -> GMCMBranch:
+    """Produce a GMCMBranch from NRML Uncertainty node text"""
+    lines = element_text.split("\n")
+    gmpe_name = lines[0].strip().replace('[', '').replace(']', '')
+    arguments = [arg.strip() for arg in lines[1:]]
+
+    return GMCMBranch(gsim_name=gmpe_name, gsim_args=process_gmm_args(arguments), weight=0.0)
 
 
 class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
@@ -88,11 +91,11 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                         gsim_name=gmpe_name,
                         gsim_args=process_gmm_args(branch.uncertainty_models[0].arguments),
                         weight=branch.uncertainty_weight,
+                        tectonic_region_type=branch_set.applyToTectonicRegionType,
                     )
                 )
             branch_sets.append(
                 GMCMBranchSet(
-                    tectonic_region_type=branch_set.applyToTectonicRegionType,
                     branches=branches,
                 )
             )

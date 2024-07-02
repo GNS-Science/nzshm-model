@@ -8,7 +8,8 @@ from .model import NshmModel
 model = NshmModel(  # NOQA F401
     version='NSHM_v1.0.4',
     title="NSHM version 1.0.4, corrected fault geometry",
-    slt_json="nshm_v1.0.4.json",
+    slt_json="nshm_v1.0.4_v2.json",
+    gmm_json="gmcm_nshm_v1.0.4.json",
     gmm_xml="NZ_NSHM_GMM_LT_final_EE_new_names.xml",
     slt_config=slt_config,
 )

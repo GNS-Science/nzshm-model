@@ -16,6 +16,7 @@ nav:
      - slt script: scripts/slt.md
   - API Reference:
     - nzshm_model: api/nzshm_model.md
+    - branch_registry: api/branch_registry.md
     - NshmModel (class): api/model.NshmModel.md
     - logic_tree (package):
         - logic_tree_base: api/logic_tree/logic_tree_base.md

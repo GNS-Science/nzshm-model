@@ -84,7 +84,6 @@ class NshmSourceUncertaintyModel:
     ) -> Iterator["NshmSourceUncertaintyModel"]:
         """resolve to filenames of NRML sources"""
         for source in ltb.sources:
-            # print(source)
             if source.type == 'inversion':
                 yield NshmSourceUncertaintyModel(parent=parent, toshi_nrml_id=source.nrml_id, model_type="FaultSource")
             if source.type == 'distributed':

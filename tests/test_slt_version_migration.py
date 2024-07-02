@@ -1,16 +1,20 @@
 """
 test migration from slt v1 to v2
 """
+import json
+from pathlib import Path
+
 import pytest
 
-import nzshm_model
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree, SourceLogicTreeV1
 
 
 @pytest.fixture(scope='module')
 def slt_version_1():
     # get a published v1 logic tree
-    data = nzshm_model.get_model_version('NSHM_v1.0.4')._data
+    data_filepath = Path(__file__).parent.parent / 'resources' / 'SRM_JSON' / 'nshm_v1.0.4.json'
+    with data_filepath.open() as datafile:
+        data = json.load(datafile)
     yield SourceLogicTreeV1.from_dict(data)
 
 

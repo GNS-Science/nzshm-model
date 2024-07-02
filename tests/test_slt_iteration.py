@@ -13,7 +13,7 @@ from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree, SourceLogi
 @pytest.fixture(scope='module')
 def slt_version_1():
     # get a published v1 logic tree
-    data = nzshm_model.get_model_version('NSHM_v1.0.4')._data
+    data = nzshm_model.get_model_version('NSHM_v1.0.4')._slt_data
     yield SourceLogicTreeV1.from_dict(data)
 
 

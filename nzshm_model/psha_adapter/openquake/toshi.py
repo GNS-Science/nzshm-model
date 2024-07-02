@@ -1,9 +1,11 @@
 import os
 
+import botocore.exceptions
+
 try:
     from nshm_toshi_client.toshi_file import ToshiFile
 
-    from nzshm_model.source_logic_tree.toshi_api import get_secret
+    from nzshm_model.logic_tree.source_logic_tree.toshi_api import get_secret
 except (ModuleNotFoundError, ImportError):
     print("WARNING: optional `toshi` dependencies are not installed.")
     raise
@@ -17,7 +19,7 @@ try:
         API_KEY = get_secret("NZSHM22_TOSHI_API_SECRET_PROD", "us-east-1").get("NZSHM22_TOSHI_API_KEY_PROD")
     else:
         API_KEY = os.getenv('NZSHM22_TOSHI_API_KEY', "")
-except AttributeError as err:
+except (AttributeError, botocore.exceptions.EndpointConnectionError) as err:
     print(f"unable to get secret from secretmanager: {err}")
     API_KEY = os.getenv('NZSHM22_TOSHI_API_KEY', "")
 
@@ -37,12 +39,6 @@ class SourceSolution(ToshiFile):
                   file_name
                   file_size
                   meta {k v}
-                }
-                ... on ScaledInversionSolution {
-                  meta{ k k}
-                  source_solution {
-                    meta {k v}
-                  }
                 }
             }
         }

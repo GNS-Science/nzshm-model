@@ -1,4 +1,5 @@
 import dataclasses
+import io
 import json
 import logging
 import sys
@@ -6,7 +7,7 @@ import sys
 import click
 
 import nzshm_model
-from nzshm_model import all_model_versions, get_model_version
+from nzshm_model import all_model_versions, branch_registry, get_model_version
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.WARN)
@@ -51,6 +52,39 @@ def cli_model_as_json(model_id: str):
     model = get_model_version(model_id)
     j = json.dumps(dataclasses.asdict(model.source_logic_tree), indent=4)
     click.echo(j)
+
+
+@slt.command(name='hash_sources')
+@click.argument('model_id')
+@click.option('-o', '--outfile', type=click.File('w'))
+def cli_model_source_hashes(model_id: str, outfile: io.FileIO):
+    """Dump the sources with hashes form the given MODEL."""
+    model = get_model_version(model_id)
+    registry = branch_registry.BranchRegistry()
+    for branch_set in model.source_logic_tree.branch_sets:
+        for branch in branch_set.branches:
+            entry = branch_registry.BranchRegistryEntry(identity=branch.registry_identity, extra=str(branch.tag))
+            registry.add(entry)
+            click.echo(entry)
+    if outfile:
+        registry.save(outfile)
+
+
+@slt.command(name='hash_gmms')
+@click.argument('model_id')
+@click.option('-o', '--outfile', type=click.File('w'))
+def cli_model_gmm_hashes(model_id: str, outfile: io.FileIO):
+    """Dump the gmm branches with hashes."""
+    model = get_model_version(model_id)
+    registry = branch_registry.BranchRegistry()
+    for branch_set in model.gmm_logic_tree.branch_sets:
+        # print(dir(branch_set))
+        for branch in branch_set.branches:
+            entry = branch_registry.BranchRegistryEntry(branch.registry_identity)
+            registry.add(entry)
+            click.echo(entry)
+    if outfile:
+        registry.save(outfile)
 
 
 # @slt.command(name='from_config')

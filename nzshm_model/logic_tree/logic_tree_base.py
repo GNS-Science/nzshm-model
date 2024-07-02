@@ -5,13 +5,12 @@ This module contains base classes (some of which are abstract) common to both **
 import copy
 import json
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Type, TypeVar, Union
+from typing import Any, Dict, Generator, Iterator, List, Sequence, Type, TypeVar, Union
 
 import dacite
 
@@ -73,6 +72,7 @@ class LogicTree(ABC):
     correlations: LogicTreeCorrelations = field(default_factory=LogicTreeCorrelations)
 
     def __post_init__(self) -> None:
+        # TODO: branch set short_names should be unique (see from_branches())
         helpers._validate_correlation_weights(self)
 
     def __setattr__(self, __name: str, __value: Any) -> None:
@@ -80,35 +80,40 @@ class LogicTree(ABC):
         if __name == "correlations":
             helpers._validate_correlation_weights(self)
 
-    def _combined_branches(self) -> Generator[CompositeBranch, None, None]:
+    def _composite_branches(self) -> Generator[CompositeBranch, None, None]:
         """
-        yields all composite (combined) branches of the branch_sets without applying correlations.
+        Yields all composite (combined) branches of the branch_sets without applying correlations.
+
+        Returns:
+            composite_branches: the CompositeBranches of the combined logic tree BranchSets
         """
         for branches in product(*[branch_set.branches for branch_set in self.branch_sets]):
             yield CompositeBranch(branches=branches)
 
     @property
-    def combined_branches(self) -> Generator[CompositeBranch, None, None]:
+    def composite_branches(self) -> Generator[CompositeBranch, None, None]:
         """
-        yields all composite (combined) branches of the branch_sets enforcing correlations
+        Yields all composite (combined) branches of the branch_sets enforcing correlations.
+
+        Returns:
+            composite_branches: the CompositeBranches of the combined logic tree BranchSets
         """
-        for combined_branch in self._combined_branches():
+        for composite_branch in self._composite_branches():
             # if the comp_branch contains a branch listed as the 0th element of the correlations, only
             # yeild if the other branches are present
             # weight is automatically calculated by CompositeBranch if not explicitly assigned
             # (as we would with correlations)
-            correlation_match = [branch_pri in combined_branch for branch_pri in self.correlations.primary_branches()]
+            correlation_match = [branch_pri in composite_branch for branch_pri in self.correlations.primary_branches()]
             if any(correlation_match):
-                i_cor = correlation_match.index(
-                    True
-                )  # index of the correlation that matches a branch in _combined_branches()
-                if not all(br in combined_branch for br in self.correlations[i_cor].all_branches):
+                # index of the correlation that matches a branch in _composite_branches()
+                i_cor = correlation_match.index(True)
+                if not all(br in composite_branch for br in self.correlations[i_cor].all_branches):
                     continue
                 weights = [self.correlations[i_cor].weight] + [
-                    branch.weight for branch in combined_branch if branch not in self.correlations[i_cor].all_branches
+                    branch.weight for branch in composite_branch if branch not in self.correlations[i_cor].all_branches
                 ]
-                combined_branch.weight = reduce(mul, weights, 1.0)
-            yield combined_branch
+                composite_branch.weight = reduce(mul, weights, 1.0)
+            yield composite_branch
 
     @classmethod
     def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
@@ -166,7 +171,9 @@ class LogicTree(ABC):
         Returns:
             logic_tree
         """
-        return dacite.from_dict(data_class=cls, data=data, config=dacite.Config(strict=True))
+
+        config = dacite.Config(strict=True, cast=[tuple])
+        return dacite.from_dict(data_class=cls, data=data, config=config)
 
     def _to_dict(self) -> Dict[str, Any]:
         """Create dict representation of logic tree. This creates an exact dict of the class and is not used for serialisation.
@@ -201,7 +208,7 @@ class LogicTree(ABC):
         """
         file_path = Path(file_path)
         with file_path.open('w') as jsonfile:
-            json.dump(self.to_dict(), jsonfile)
+            json.dump(self.to_dict(), jsonfile, indent=2)
 
     # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
@@ -284,7 +291,7 @@ class LogicTree(ABC):
         self.__branch_list = list(self.__all_branches__())
         return self
 
-    def __next__(self):
+    def __next__(self) -> 'FilteredBranch':
         if self.__current_branch >= len(self.__branch_list):
             raise StopIteration
         else:
