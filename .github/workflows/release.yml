@@ -27,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        python-versions: [3.9, "3.10"]
+        python-version: [3.9, "3.10"]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -50,7 +50,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-versions }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Install and configure Poetry
         uses: GNS-Science/install-poetry@main
