@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.10.6] 2023-07-03
+
+official 0.10.6 release
+
 ## [0.10.5] 2024-06-07
 ### Added
  - short_name and long_name for ground motion branch_sets of stored models
