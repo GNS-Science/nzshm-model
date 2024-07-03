@@ -14,9 +14,9 @@ jobs:
       matrix:
         python-version: [3.9, '3.10', '3.11']
         os: [ubuntu-latest, windows-latest, macos-latest]
-      env:
-        OS: ${{ matrix.os }}
-        PYTHON: ${{ matrix.python-version }}
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: ${{ matrix.python-version }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
