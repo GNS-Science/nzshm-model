@@ -14,7 +14,9 @@ jobs:
       matrix:
         python-version: [3.9, '3.10', '3.11']
         os: [ubuntu-latest, windows-latest, macos-latest]
-
+      env:
+        OS: ${{ matrix.os }}
+        PYTHON: ${{ matrix.python-version }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
@@ -52,8 +54,7 @@ jobs:
           poetry run tox
       - name: list files
         run: ls -l .
-      - name: Submit coverage report on ubuntu-latest/python3.11
-        if: runner.os == 'ubuntu-latest' && runner.python-version == '3.11'
+      - name: Submit coverage report
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage.xml # optional
@@ -61,4 +62,5 @@ jobs:
           name: codecov-umbrella # optional
           token: ${{ secrets.CODECOV_TOKEN }} # required
           verbose: true # optional (default = false)
+          env_vars: OS,PYTHON
           # fail_ci_if_error: true # optional (default = false)
