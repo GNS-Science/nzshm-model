@@ -50,6 +50,17 @@ class BranchSet:
     def __post_init__(self):
         helpers._validate_branchset_weights(self)
 
+    def __iter__(self):
+        self.__counter = 0
+        return self
+    
+    def __next__(self):
+        if self.__counter >= len(self.branches):
+            raise StopIteration
+        else:
+            self.__counter += 1
+            return self.branches[self.__counter - 1]
+
 
 @dataclass
 class LogicTree(ABC):
