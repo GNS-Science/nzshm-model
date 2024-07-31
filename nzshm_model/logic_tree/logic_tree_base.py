@@ -50,6 +50,11 @@ class BranchSet:
     def __post_init__(self):
         helpers._validate_branchset_weights(self)
 
+    def __str__(self) -> str:
+        string = f'short_name: {self.short_name}, long_name: {self.long_name}\n'
+        string += '======BRANCHES======\n'
+        return string + '\n'.join([str(branch) for branch in self])
+
     def __iter__(self):
         self.__counter = 0
         return self
@@ -90,6 +95,13 @@ class LogicTree(ABC):
         super().__setattr__(__name, __value)
         if __name == "correlations":
             helpers._validate_correlation_weights(self)
+
+    def __str__(self) -> str:
+        string = f'LogicTree type: {type(self)}\n'
+        string += f'title: {self.title}, version:{self.version}\n'
+        string += '==========BRANCH SETS==========\n\n'
+        string += '\n\n'.join([str(bs) for bs in self.branch_sets])
+        return string
 
     def _composite_branches(self) -> Generator[CompositeBranch, None, None]:
         """
