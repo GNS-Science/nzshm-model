@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.10.7] 2024-08-01
+
+### Changed
+ - elevate stable version2 of source logic tree modules to top of source_logic_tree package
+ - optional dependencies for minimum install
+
 ## [0.10.6] 2024-07-03
 
 official 0.10.6 release

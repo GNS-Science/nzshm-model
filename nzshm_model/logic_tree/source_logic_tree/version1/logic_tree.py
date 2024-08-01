@@ -18,7 +18,7 @@ import dacite
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .. import BranchAttributeValue
-from ..core import BranchSetBase, BranchSetSpec
+from ..fault_system_branch_set import BranchSetBase, BranchSetSpec
 
 
 @dataclass

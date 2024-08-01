@@ -10,9 +10,9 @@ from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelation
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
-from .. import BranchAttributeValue
-from ..core import BranchSetSpec
-from ..version1 import SourceLogicTree as SourceLogicTreeV1
+from . import BranchAttributeValue
+from .fault_system_branch_set import BranchSetSpec
+from .version1 import SourceLogicTree as SourceLogicTreeV1
 
 
 @dataclass

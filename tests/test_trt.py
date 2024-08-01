@@ -3,7 +3,7 @@ import pytest
 from nzshm_model import get_model_version
 from nzshm_model.logic_tree.gmcm_logic_tree import GMCMBranch, GMCMBranchSet
 from nzshm_model.logic_tree.source_logic_tree import SourceBranch, SourceBranchSet
-from nzshm_model.logic_tree.source_logic_tree.version2.logic_tree import DistributedSource
+from nzshm_model.logic_tree.source_logic_tree.logic_tree import DistributedSource
 
 
 def test_source_trts():
