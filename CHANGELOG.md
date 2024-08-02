@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.10.8] 2024-08-01
+
+### Added
+ - easy to read string representation of LogicTree
+ - BranchSet class is an iterator which can be used to access its branches
+
 ## [0.10.7] 2024-08-01
 
 ### Changed

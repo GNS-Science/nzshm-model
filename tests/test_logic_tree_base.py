@@ -65,6 +65,11 @@ def test_branchset(fixtures: Fixtures):
         BranchSet(branches=[fixtures.branchA1, fixtures.branchB2])
 
 
+def test_iterate_branchset(fixtures: Fixtures):
+    for branch1, branch2 in zip(fixtures.branchsetA.branches, fixtures.branchsetA):
+        assert branch1 == branch2
+
+
 def test_correlation(fixtures: Fixtures):
     # we get the correct nubmer of total branches in a correlation
     assert len(fixtures.correlation1.all_branches) == 2
