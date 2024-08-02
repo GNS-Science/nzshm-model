@@ -266,14 +266,14 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     ) -> Generator[tuple[Any, pathlib.Path, Any], None, None]:
         destination = pathlib.Path(cache_folder)
         destination.mkdir(parents=True, exist_ok=True)
-        nrml_logic_tree = self.config()
+        nrml_logic_tree = self.sources_document()
         for branch_set in nrml_logic_tree.branch_sets:
             for branch in branch_set.branches:
                 for um in branch.uncertainty_models:
                     filepath = fetch_toshi_source(um.toshi_nrml_id, destination)
                     yield um.toshi_nrml_id, filepath, um
 
-    def config(self):
+    def sources_document(self) -> NrmlDocument:
         return NrmlDocument.from_model_slt(self._source_logic_tree).logic_trees[0]
 
     @property

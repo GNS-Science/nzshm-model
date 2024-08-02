@@ -26,7 +26,7 @@ class PshaAdapterInterface(ABC):
         pass
 
     @abstractmethod
-    def config(self):
+    def sources_document(self):
         """Get the PSHA config file"""
         pass
 

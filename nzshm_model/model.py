@@ -78,9 +78,9 @@ class NshmModel:
         Returns:
             a source_logic_tree
         """
-        warnings.warn("use NshmModel.source_logic_tree().psha_adapter().config() instead", DeprecationWarning)
+        warnings.warn("use NshmModel.source_logic_tree().psha_adapter().sources_document() instead", DeprecationWarning)
         slt = self.source_logic_tree
-        return slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+        return slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).sources_document()
 
     @property
     def gmm_logic_tree_from_xml(self) -> "GMCMLogicTree":
