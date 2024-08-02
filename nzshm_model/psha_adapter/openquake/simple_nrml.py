@@ -104,7 +104,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
             branch_sets=branch_sets,
         )
 
-    def build_gmcm_xml(self):
+    def build_gmcm_xml(self) -> str:
         """Build a gmcm logic tree xml."""
         E = ElementMaker(
             namespace="http://openquake.org/xmlns/nrml/0.5",
@@ -145,7 +145,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         nrml = NRML(lt)
         return etree.tostring(nrml, pretty_print=True).decode()
 
-    def build_sources_xml(self, source_map):
+    def build_sources_xml(self, source_map) -> str:
         """Build a source model for a set of LTBs with their source files."""
         E = ElementMaker(
             namespace="http://openquake.org/xmlns/nrml/0.5",
@@ -216,16 +216,26 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
     ) -> pathlib.Path:
         destination = pathlib.Path(target_folder)
-        assert destination.exists()
-        assert destination.is_dir()
+        destination.mkdir(parents=True, exist_ok=True)
 
-        source_map = source_map or self.unpack_resources(cache_folder, target_folder)
-        xmlstr = self.build_sources_xml(source_map)
+        # sources
+        sources_folder = destination / 'sources'
+        sources_folder.mkdir(exist_ok=True)
 
-        target_file = pathlib.Path(destination, 'sources.xml')
-        with open(target_file, 'w') as fout:
-            fout.write(xmlstr)
-        return target_file
+        source_map = source_map or self.unpack_resources(cache_folder, sources_folder)
+        source_xmlstr = self.build_sources_xml(source_map)
+
+        sources_file = sources_folder / 'sources.xml'
+        with sources_file.open('w') as fout:
+            fout.write(source_xmlstr)
+
+        # ground motion
+        gmcm_xmlstr = self.build_gmcm_xml()
+        gmcm_file = destination / 'gsim_model.xml'
+        with gmcm_file.open('w') as fout:
+            fout.write(gmcm_xmlstr)
+
+        return sources_file, gmcm_file  # replace with path to job.ini once fn writes entire config
 
     def unpack_resources(
         self, cache_folder: Union[pathlib.Path, str], target_folder: Union[pathlib.Path, str]
