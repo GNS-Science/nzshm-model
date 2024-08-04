@@ -1,7 +1,7 @@
 import logging
 import pathlib
 import zipfile
-from typing import Any, Dict, Generator, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple, Union
 
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -9,6 +9,9 @@ from lxml.builder import ElementMaker
 from nzshm_model.logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree, SourceLogicTree
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
+
+if TYPE_CHECKING:
+    from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution
@@ -214,7 +217,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         cache_folder: Union[pathlib.Path, str],
         target_folder: Union[pathlib.Path, str],
         source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
-    ) -> pathlib.Path:
+    ) -> Tuple[pathlib.Path, pathlib.Path]:
         destination = pathlib.Path(target_folder)
         destination.mkdir(parents=True, exist_ok=True)
 
@@ -283,7 +286,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                     filepath = fetch_toshi_source(um.toshi_nrml_id, destination)
                     yield um.toshi_nrml_id, filepath, um
 
-    def sources_document(self) -> NrmlDocument:
+    def sources_document(self) -> 'LogicTree':
         return NrmlDocument.from_model_slt(self._source_logic_tree).logic_trees[0]
 
     @property
