@@ -4,7 +4,7 @@ This module contains base classes (some of which are abstract) common to both **
 """
 import copy
 import json
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
 from itertools import product
@@ -15,7 +15,6 @@ from typing import Any, Dict, Generator, Iterator, List, Sequence, Type, TypeVar
 import dacite
 
 import nzshm_model.logic_tree.helpers as helpers
-from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .branch import Branch, CompositeBranch
 from .correlation import LogicTreeCorrelations

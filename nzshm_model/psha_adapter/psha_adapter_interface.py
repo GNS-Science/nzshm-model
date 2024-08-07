@@ -3,7 +3,7 @@ This module defines the interface to be provided by a PshaAdapter implementation
 """
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Union
 
 if TYPE_CHECKING:
     from nzshm_model import NshmModel
