@@ -1,7 +1,7 @@
 import logging
 import pathlib
 import zipfile
-from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple, Union, cast, Type
 
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -9,14 +9,18 @@ from lxml.builder import ElementMaker
 from nzshm_model.logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree, SourceLogicTree
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
+from .hazard_config import OpenquakeConfig
 
 if TYPE_CHECKING:
     from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
+    from nzshm_model.hazard_config import HazardConfig
+    from nzshm_model import NshmModel
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution
 except (ModuleNotFoundError, ImportError):
     print('Running without `toshi` options')
+
 
 QUICK_TEST = False
 
@@ -65,13 +69,18 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     Openquake PSHA simple nrml support.
     """
 
-    def __init__(
-        self, source_logic_tree: Optional[SourceLogicTree] = None, gmcm_logic_tree: Optional[GMCMLogicTree] = None
-    ):
-        self._source_logic_tree = source_logic_tree
-        self._gmcm_logic_tree = gmcm_logic_tree
-        if source_logic_tree:
-            assert source_logic_tree.logic_tree_version == 2
+    # def __init__(
+    #     self, source_logic_tree: Optional[SourceLogicTree] = None, gmcm_logic_tree: Optional[GMCMLogicTree] = None
+    # ):
+    #     self._source_logic_tree = source_logic_tree
+    #     self._gmcm_logic_tree = gmcm_logic_tree
+    #     if source_logic_tree:
+    #         assert source_logic_tree.logic_tree_version == 2
+
+    # def __init__(self, model: 'NshmModel'):
+    #     super().__init__(model)
+        # assert isinstance(self.model, OpenquakeConfig)
+        # self.model: OpenquakeConfig = cast(OpenquakeConfig, self.model)
 
     @staticmethod
     def logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
@@ -133,7 +142,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
 
         i_branch = 0
         lt = LT(logicTreeID="lt1")
-        for bs in self.gmcm_logic_tree.branch_sets:
+        for bs in self.gmm_logic_tree.branch_sets:
             ltbs = LTBS(
                 uncertaintyType="gmpeModel",
                 branchSetID="BS:" + bs.tectonic_region_type,
@@ -217,7 +226,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         cache_folder: Union[pathlib.Path, str],
         target_folder: Union[pathlib.Path, str],
         source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
-    ) -> Tuple[pathlib.Path, pathlib.Path]:
+    ) -> pathlib.Path:
         destination = pathlib.Path(target_folder)
         destination.mkdir(parents=True, exist_ok=True)
 
@@ -238,7 +247,22 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         with gmcm_file.open('w') as fout:
             fout.write(gmcm_xmlstr)
 
-        return sources_file, gmcm_file  # replace with path to job.ini once fn writes entire config
+        # job.ini
+        self.hazard_config.set_source_logic_tree_file(sources_file.relative_to(destination))
+        self.hazard_config.set_gsim_logic_tree_file(gmcm_file.relative_to(destination))
+
+        # check that required settings not included in default exist
+        if not self.hazard_config.get_sites():
+            raise ValueError("configuration missing sites")
+
+        if not self.hazard_config.get_iml():
+            raise ValueError("configuration missing IMTs and IMTLs")
+        
+        job_file = destination / 'job.ini'
+        with job_file.open('w') as fout:
+            self.hazard_config.write(fout)
+
+        return job_file
 
     def unpack_resources(
         self, cache_folder: Union[pathlib.Path, str], target_folder: Union[pathlib.Path, str]
@@ -287,12 +311,16 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
                     yield um.toshi_nrml_id, filepath, um
 
     def sources_document(self) -> 'LogicTree':
-        return NrmlDocument.from_model_slt(self._source_logic_tree).logic_trees[0]
+        return NrmlDocument.from_model_slt(self.source_logic_tree).logic_trees[0]
 
     @property
-    def source_logic_tree(self):
-        return self._source_logic_tree
+    def source_logic_tree(self) -> SourceLogicTree:
+        return self._model.source_logic_tree
 
     @property
-    def gmcm_logic_tree(self):
-        return self._gmcm_logic_tree
+    def gmm_logic_tree(self) -> GMCMLogicTree:
+        return self._model.gmm_logic_tree
+
+    @property
+    def hazard_config(self) -> OpenquakeConfig:
+        return cast(OpenquakeConfig, self._model.hazard_config)

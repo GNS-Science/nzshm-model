@@ -254,18 +254,6 @@ class SourceLogicTree(LogicTree):
         warnings.warn("Please use branch_sets property instead", DeprecationWarning)
         return self.branch_sets
 
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
-        """get a PSHA adapter for this instance.
-
-        Arguments:
-            provider: the adapter class
-            **kwargs: additional arguments required by the provider class
-
-        Returns:
-            a PSHA Adapter instance
-        """
-        return provider(source_logic_tree=self)
-
 
 @dataclass
 class SourceFilteredBranch(FilteredBranch, SourceBranch):

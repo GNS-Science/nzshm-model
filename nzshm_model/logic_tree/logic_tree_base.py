@@ -235,19 +235,19 @@ class LogicTree(ABC):
 
     # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
-    @abstractmethod
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-        """
-        Provide an adapter object for translating LogicTrees to/from specific formats
+    # @abstractmethod
+    # def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
+    #     """
+    #     Provide an adapter object for translating LogicTrees to/from specific formats
 
-        Parameters:
-            provider: the interface object that defines a specific implimenation
-            **kwargs:
+    #     Parameters:
+    #         provider: the interface object that defines a specific implimenation
+    #         **kwargs:
 
-        Returns:
-            An adapter object
-        """
-        pass
+    #     Returns:
+    #         An adapter object
+    #     """
+    #     pass
 
     def __all_branches__(self) -> Generator['FilteredBranch', None, None]:
         """

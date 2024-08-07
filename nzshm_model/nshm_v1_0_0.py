@@ -2,6 +2,9 @@
 
 import nzshm_model.logic_tree.source_logic_tree.SLT_v8_gmm_v2_final as slt_config
 
+from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
+from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
+
 from .model import NshmModel
 
 model = NshmModel(  # NOQA F401
@@ -11,4 +14,5 @@ model = NshmModel(  # NOQA F401
     gmm_json="gmcm_nshm_v1.0.0.json",
     gmm_xml="NZ_NSHM_GMM_LT_final_EE_new_names.xml",
     slt_config=slt_config,
+    hazard_config=OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
 )

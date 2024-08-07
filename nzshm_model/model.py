@@ -4,14 +4,16 @@ NshmModel class describes a complete National Seismic Hazard Model.
 import json
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, List, Union, cast
+from typing import TYPE_CHECKING, Iterator, List, Union, cast, Any, Type, Optional, Dict
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
+from nzshm_model.psha_adapter import PshaAdapterInterface
 
 if TYPE_CHECKING:
     from nzshm_model import psha_adapter
+    from .hazard_config import HazardConfig
 
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
@@ -43,7 +45,16 @@ class NshmModel:
     An NshmModel instance represents a complete National Seismic Hazard Model version.
     """
 
-    def __init__(self, version, title, slt_json, gmm_json, gmm_xml, slt_config):
+    def __init__(
+        self,
+        version: str,
+        title: str,
+        slt_json: Union[str, Path],
+        gmm_json: Union[str, Path],
+        gmm_xml: Union[str, Path],
+        slt_config: Any,
+        hazard_config: 'HazardConfig',
+    ):
         """
         Create a new NshmModel instance.
 
@@ -53,6 +64,7 @@ class NshmModel:
         self.version = version
         self.title = title
         self.slt_config = slt_config
+        self.hazard_config = hazard_config
 
         self._slt_json = SLT_SOURCE_PATH / slt_json
         self._gmm_json = GMM_JSON_SOURCE_PATH / gmm_json
@@ -60,6 +72,36 @@ class NshmModel:
         assert self._slt_json.exists()
         assert self._gmm_json.exists()
         assert self._gmm_xml.exists()
+
+    # @classmethod
+    # def from_components(
+    #     cls,
+    #     version: str,
+    #     title: str,
+    #     source_logic_tree: Optional[SourceLogicTree]=None,
+    #     gmm_logic_tree: Optional[GMCMLogicTree]=None,
+    #     hazard_config: Optional['HazardConfig']=None
+    # ) -> "NshmModel":
+    #     """
+    #     Create a new NshmModel object from logic tree and hazard config objects.
+
+    #     Parameters:
+    #         version: describes version of model
+    #         titel: title of model
+    #         souce_logic_tree: the seismicity rate model logic tree
+    #         gmm_logic_tree: the GMCM logic tree
+    #         hazard_config: the configuration for the hazard engine
+        
+    #     Returns:
+    #         a NshmModel object
+    #     """
+
+    #     model = cls(version, title, "", "", "", None, hazard_config, assert_exists=False)
+    #     model._source_logic_tree = source_logic_tree
+    #     model._gmm_logic_tree = gmm_logic_tree
+    #     model.hazard_config = hazard_config
+
+    #     return model
 
     @property
     def _slt_data(self):
@@ -74,7 +116,7 @@ class NshmModel:
         return data
 
     @property
-    def source_logic_tree(self) -> "SourceLogicTree":
+    def source_logic_tree(self) -> SourceLogicTree:
         """
         the source logic tree for this model.
 
@@ -98,11 +140,10 @@ class NshmModel:
             a source_logic_tree
         """
         warnings.warn("use NshmModel.source_logic_tree().psha_adapter().sources_document() instead", DeprecationWarning)
-        slt = self.source_logic_tree
-        return slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).sources_document()
+        return self.psha_adapter(provider=OpenquakeSimplePshaAdapter).sources_document()
 
     @property
-    def gmm_logic_tree_from_xml(self) -> "GMCMLogicTree":
+    def gmm_logic_tree_from_xml(self) -> GMCMLogicTree:
         """
         the ground motion logic tree for this model.
 
@@ -111,11 +152,10 @@ class NshmModel:
 
         """
         warnings.warn("use NshmModel.gmm_logic_tree instead", DeprecationWarning)
-        adapter = GMCMLogicTree().psha_adapter(OpenquakeSimplePshaAdapter)
-        return adapter.logic_tree_from_xml(self._gmm_xml)  # type: ignore
+        return self.psha_adapter(provider=OpenquakeSimplePshaAdapter).logic_tree_from_xml(self._gmm_xml)  # type: ignore
 
     @property
-    def gmm_logic_tree(self) -> "GMCMLogicTree":
+    def gmm_logic_tree(self) -> GMCMLogicTree:
         """
         the ground motion logic tree for this model.
 
@@ -204,6 +244,18 @@ class NshmModel:
                         yield (b)
                 except StopIteration:
                     raise ValueError("The branch " + short_name + " was not found.")
+    
+    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
+        """get a PSHA adapter for this instance.
+
+        Arguments:
+            provider: the adapter class
+            **kwargs: additional arguments required by the provider class
+
+        Returns:
+            a PSHA Adapter instance
+        """
+        return provider(model=self)
 
     # def get_source_branches(self, short_names: list = None) -> Iterator['SourceBranch']:
     #     """

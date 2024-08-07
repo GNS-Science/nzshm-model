@@ -95,17 +95,6 @@ class GMCMLogicTree(LogicTree):
 
         return self
 
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs) -> "PshaAdapterInterface":
-        """get a PSHA adapter for this instance.
-
-        Arguments:
-            provider: the adapter class
-            **kwargs: additional arguments required by the provider class
-
-        Returns:
-            a PSHA Adapter instance
-        """
-        return provider(gmcm_logic_tree=self)
 
     # @classmethod
     # def from_user_config(cls, config_path: Union[Path, str]) -> 'GMCMLogicTree':

@@ -1,6 +1,9 @@
 import pytest
+import configparser
 
 import nzshm_model as nm
+
+from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
 
 CURRENT_MODEL = 'NSHM_v1.0.4'
 
@@ -43,6 +46,12 @@ class TestGetSourceBranchSets:
     def test_with_invalid_branch(self, model_104):
         with pytest.raises(StopIteration):
             next(model_104.get_source_branch_sets(['XXX']))
+
+class TestConfig:
+    def test_openquake_config(self, model_104):
+        expected = configparser.ConfigParser()
+        expected.read_dict(DEFAULT_HAZARD_CONFIG)
+        assert model_104.hazard_config.config == expected
 
 
 # class TestGetSourceBranches:
