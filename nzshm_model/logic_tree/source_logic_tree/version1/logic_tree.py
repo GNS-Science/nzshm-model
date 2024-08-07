@@ -76,9 +76,6 @@ class SourceLogicTree:
             slt_spec.fault_system_lts.append(FaultSystemLogicTree.derive_spec(fslt))
         return slt_spec
 
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-        return provider(source_logic_tree=self)
-
     @staticmethod
     def from_dict(data: Dict):
         ltv = data.get("logic_tree_version")

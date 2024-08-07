@@ -11,9 +11,10 @@ import configparser
 import copy
 import logging
 import pathlib
-from typing import Dict, List, TextIO, Union
+from typing import Dict, List, TextIO, Union, Any, Tuple, Optional
 
 from .hazard_config_compat import check_invariants, compatible_hash_digest
+from nzshm_model.hazard_config import HazardConfig
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ except ImportError:
     )
 
 
-class OpenquakeConfig:
+class OpenquakeConfig(HazardConfig):
     """Helper class to manage openquake configuration files.
 
     Examples:
@@ -104,6 +105,20 @@ class OpenquakeConfig:
         self.config.set(section, key, value)
         return self
 
+    def get_parameter(self, section: str, key: str) -> Any:
+        """a getter for arbitrary values
+
+        Arguments:
+            section: the config table name eg.[site_params]
+            key: the key name
+
+        Returns:
+            the value for section and key or None if the entry does not exist
+        """
+        if self.config.has_option(section, key):
+            return self.config.get(section, key)
+        return None
+
     def unset_parameter(self, section, key):
         """remove a table entry
 
@@ -149,6 +164,29 @@ class OpenquakeConfig:
         """
         self.set_parameter('site_params', 'site_model_file', str(site_model_filename))
         return self
+
+    def get_sites(self) -> str:
+        return self.get_parameter('site_params', 'site_model_file')
+
+    def get_iml(self) -> Optional[Tuple[List[str], List[float]]]:
+        """
+        Get the intensity measure types and levels. Returns None if not set
+
+        Returns:
+            IMTs: the intensity measure types
+            IMTLs: the intensity measure levels
+        """
+
+        if not self.get_parameter('calculation', 'intensity_measure_types_and_levels'):
+            return None
+
+        imls = ast.literal_eval(
+            self.get_parameter('calculation', 'intensity_measure_types_and_levels')
+        )
+        imts = list(imls.keys())
+        imtls = list([float(imtl) for imtl in next(iter(imls.values()))])
+
+        return imts, imtls
 
     # TODO disagg configs might warrant a separate class, and separate defaults ??
     def set_disagg_site_model(self):
@@ -226,8 +264,19 @@ class OpenquakeConfig:
         sect['reference_depth_to_2pt5km_per_sec'] = str(round(calculate_z2pt5(vs30), 1))
         return self
 
-    def set_gsim_logic_tree_file(self, filepath):
-        self.set_parameter('calculation', 'gsim_logic_tree_file', filepath)
+    def get_vs30(self) -> float:
+        return float(self.config.get('site_params', 'reference_vs30_value'))
+
+    def set_gsim_logic_tree_file(self, filepath: Union[str, pathlib.Path]) -> 'OpenquakeConfig':
+        """setter for ground motion model file
+
+        Arguments:
+            filepath: the path to the ground motion model file.
+
+        Returns:
+            the OpenquakeConfig instance.
+        """
+        self.set_parameter('calculation', 'gsim_logic_tree_file', str(filepath))
         return self
 
     def set_description(self, description):

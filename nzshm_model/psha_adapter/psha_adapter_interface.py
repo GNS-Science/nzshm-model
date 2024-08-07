@@ -3,7 +3,10 @@ This module defines the interface to be provided by a PshaAdapter implementation
 """
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple, Union
+from typing import Dict, Tuple, Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from nzshm_model import NshmModel
 
 
 class PshaAdapterInterface(ABC):
@@ -11,9 +14,8 @@ class PshaAdapterInterface(ABC):
     Defines methods to be provided by a PSHA adapter class implementation.
     """
 
-    def __init__(self, source_logic_tree=None, gmcm_logic_tree=None):
-        self._source_logic_tree = source_logic_tree
-        self._gmcm_logic_tree = gmcm_logic_tree
+    def __init__(self, model: 'NshmModel'):
+        self._model = model
 
     @abstractmethod
     def fetch_resources(self, cache_folder):
@@ -36,6 +38,6 @@ class PshaAdapterInterface(ABC):
         cache_folder: Union[pathlib.Path, str],
         target_folder: Union[pathlib.Path, str],
         resource_map: Dict[str, list[pathlib.Path]],
-    ) -> Tuple[pathlib.Path, pathlib.Path]:
+    ) -> pathlib.Path:
         """Build an openquake config from given input arguments"""
         pass

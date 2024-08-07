@@ -114,6 +114,26 @@ def test_config_from_runzi():
 
     assert config.config['general']['description'] == "hello world"
 
+def test_get():
+    config = (
+        OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+        .set_description("hello world")
+        .set_sites("./sites.csv")
+        .set_source_logic_tree_file("./hello.slt")
+        .set_gsim_logic_tree_file("./gsim_model.xml")
+        .set_vs30(750)
+    )
+    config.set_iml(_4_sites_measures, _4_sites_levels)
+
+    assert config.get_iml() == (_4_sites_measures, _4_sites_levels)
+    assert config.get_sites() == "./sites.csv"
+    assert config.get_vs30() == 750
+    assert config.set_parameter("foo", "bar", "foobar")
+    assert config.get_parameter("foo", "bar") == "foobar"
+
+    config.clear_iml()
+    assert not config.get_iml()
+
 
 def test_configuration_round_trip():
 
