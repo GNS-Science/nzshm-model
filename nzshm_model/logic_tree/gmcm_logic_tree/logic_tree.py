@@ -94,10 +94,6 @@ class GMCMLogicTree(LogicTree):
 
         return self
 
-    # @classmethod
-    # def from_user_config(cls, config_path: Union[Path, str]) -> 'GMCMLogicTree':
-    #     raise NotImplementedError("from_user_config not implimented for GMCMLogicTree")
-
 
 @dataclass
 class GMCMFilteredBranch(FilteredBranch, GMCMBranch):

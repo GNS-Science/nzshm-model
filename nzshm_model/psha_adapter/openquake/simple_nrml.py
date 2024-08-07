@@ -68,19 +68,6 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     Openquake PSHA simple nrml support.
     """
 
-    # def __init__(
-    #     self, source_logic_tree: Optional[SourceLogicTree] = None, gmcm_logic_tree: Optional[GMCMLogicTree] = None
-    # ):
-    #     self._source_logic_tree = source_logic_tree
-    #     self._gmcm_logic_tree = gmcm_logic_tree
-    #     if source_logic_tree:
-    #         assert source_logic_tree.logic_tree_version == 2
-
-    # def __init__(self, model: 'NshmModel'):
-    #     super().__init__(model)
-    # assert isinstance(self.model, OpenquakeConfig)
-    # self.model: OpenquakeConfig = cast(OpenquakeConfig, self.model)
-
     @staticmethod
     def logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
         """
