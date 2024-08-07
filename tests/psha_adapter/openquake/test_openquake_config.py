@@ -114,6 +114,7 @@ def test_config_from_runzi():
 
     assert config.config['general']['description'] == "hello world"
 
+
 def test_get():
     config = (
         OpenquakeConfig(DEFAULT_HAZARD_CONFIG)

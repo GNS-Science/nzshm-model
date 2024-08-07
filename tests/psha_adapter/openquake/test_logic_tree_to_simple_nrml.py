@@ -54,7 +54,15 @@ def test_gmcm_logic_tree_to_xml():
 
     gmcm_logic_tree = GMCMLogicTree.from_json(gmcm_json_filepath)
     model_v104 = get_model_version('NSHM_v1.0.4')
-    model = NshmModel("version", "title", slt_json_filepath, gmcm_json_filepath, model_v104._gmm_xml, model_v104.slt_config, model_v104.hazard_config)
+    model = NshmModel(
+        "version",
+        "title",
+        slt_json_filepath,
+        gmcm_json_filepath,
+        model_v104._gmm_xml,
+        model_v104.slt_config,
+        model_v104.hazard_config,
+    )
     adapter = model.psha_adapter(OpenquakeSimplePshaAdapter)
     # gmcm_logic_tree_expected = adapter.logic_tree_from_xml(xml_filepath)
     # adapter = gmcm_logic_tree

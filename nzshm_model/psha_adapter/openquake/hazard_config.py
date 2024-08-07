@@ -11,10 +11,11 @@ import configparser
 import copy
 import logging
 import pathlib
-from typing import Dict, List, TextIO, Union, Any, Tuple, Optional
+from typing import Any, Dict, List, Optional, TextIO, Tuple, Union
+
+from nzshm_model.hazard_config import HazardConfig
 
 from .hazard_config_compat import check_invariants, compatible_hash_digest
-from nzshm_model.hazard_config import HazardConfig
 
 log = logging.getLogger(__name__)
 
@@ -180,9 +181,7 @@ class OpenquakeConfig(HazardConfig):
         if not self.get_parameter('calculation', 'intensity_measure_types_and_levels'):
             return None
 
-        imls = ast.literal_eval(
-            self.get_parameter('calculation', 'intensity_measure_types_and_levels')
-        )
+        imls = ast.literal_eval(self.get_parameter('calculation', 'intensity_measure_types_and_levels'))
         imts = list(imls.keys())
         imtls = list([float(imtl) for imtl in next(iter(imls.values()))])
 

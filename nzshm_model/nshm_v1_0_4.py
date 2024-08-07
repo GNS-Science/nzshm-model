@@ -14,5 +14,5 @@ model = NshmModel(  # NOQA F401
     gmm_json="gmcm_nshm_v1.0.4.json",
     gmm_xml="NZ_NSHM_GMM_LT_final_EE_new_names.xml",
     slt_config=slt_config,
-    hazard_config=OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    hazard_config=OpenquakeConfig(DEFAULT_HAZARD_CONFIG),
 )

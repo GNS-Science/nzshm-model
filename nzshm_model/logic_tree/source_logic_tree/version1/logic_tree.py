@@ -11,11 +11,9 @@ from functools import reduce
 from itertools import product
 from math import isclose
 from operator import add, mul
-from typing import Dict, Iterable, List, Type, Union
+from typing import Dict, Iterable, List, Union
 
 import dacite
-
-from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .. import BranchAttributeValue
 from ..fault_system_branch_set import BranchSetBase, BranchSetSpec

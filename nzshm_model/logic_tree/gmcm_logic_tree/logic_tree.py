@@ -2,10 +2,9 @@
 Defines ground motion characterisation model logic tree structures used in NSHM.
 """
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Type
+from typing import Any, Dict, List
 
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
-from nzshm_model.psha_adapter import PshaAdapterInterface
 
 
 @dataclass
@@ -94,7 +93,6 @@ class GMCMLogicTree(LogicTree):
                         branch.gsim_args[k] = float(v)
 
         return self
-
 
     # @classmethod
     # def from_user_config(cls, config_path: Union[Path, str]) -> 'GMCMLogicTree':

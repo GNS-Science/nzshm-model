@@ -4,15 +4,17 @@ NshmModel class describes a complete National Seismic Hazard Model.
 import json
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, List, Union, cast, Any, Type, Optional, Dict
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Type, Union, cast
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
-from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
 from nzshm_model.psha_adapter import PshaAdapterInterface
+from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
 
 if TYPE_CHECKING:
-    from nzshm_model import psha_adapter
+    # from nzshm_model import psha_adapter
+    from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree as OQLogicTree
+
     from .hazard_config import HazardConfig
 
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
@@ -91,7 +93,7 @@ class NshmModel:
     #         souce_logic_tree: the seismicity rate model logic tree
     #         gmm_logic_tree: the GMCM logic tree
     #         hazard_config: the configuration for the hazard engine
-        
+
     #     Returns:
     #         a NshmModel object
     #     """
@@ -132,7 +134,7 @@ class NshmModel:
             return SourceLogicTree.from_dict(data)
         raise ValueError("Unsupported logic_tree_version.")
 
-    def source_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
+    def source_logic_tree_nrml(self) -> "OQLogicTree":
         """
         the Source logic tree for this model as a OpenQuake nrml compatiable type.
 
@@ -166,7 +168,7 @@ class NshmModel:
         data = self._glt_data
         return GMCMLogicTree.from_dict(data)
 
-    def gmm_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
+    def gmm_logic_tree_nrml(self) -> "OQLogicTree":
         """
         the ground motion characterisation model (gmcm) logic tree for this model as a OpenQuake nrml compatiable type.
 
@@ -244,7 +246,7 @@ class NshmModel:
                         yield (b)
                 except StopIteration:
                     raise ValueError("The branch " + short_name + " was not found.")
-    
+
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
         """get a PSHA adapter for this instance.
 

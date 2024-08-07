@@ -1,7 +1,7 @@
 import logging
 import pathlib
 import zipfile
-from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple, Union, cast, Type
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Union, cast
 
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -9,12 +9,11 @@ from lxml.builder import ElementMaker
 from nzshm_model.logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree, SourceLogicTree
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
+
 from .hazard_config import OpenquakeConfig
 
 if TYPE_CHECKING:
     from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
-    from nzshm_model.hazard_config import HazardConfig
-    from nzshm_model import NshmModel
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution
@@ -79,8 +78,8 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
 
     # def __init__(self, model: 'NshmModel'):
     #     super().__init__(model)
-        # assert isinstance(self.model, OpenquakeConfig)
-        # self.model: OpenquakeConfig = cast(OpenquakeConfig, self.model)
+    # assert isinstance(self.model, OpenquakeConfig)
+    # self.model: OpenquakeConfig = cast(OpenquakeConfig, self.model)
 
     @staticmethod
     def logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
@@ -257,7 +256,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
 
         if not self.hazard_config.get_iml():
             raise ValueError("configuration missing IMTs and IMTLs")
-        
+
         job_file = destination / 'job.ini'
         with job_file.open('w') as fout:
             self.hazard_config.write(fout)
