@@ -124,7 +124,9 @@ class NshmModel:
 
         """
         warnings.warn("use NshmModel.gmm_logic_tree instead", DeprecationWarning)
-        return self.psha_adapter(provider=OpenquakeSimplePshaAdapter).logic_tree_from_xml(self._gmm_xml)  # type: ignore
+        return self.psha_adapter(provider=OpenquakeSimplePshaAdapter).gmcm_logic_tree_from_xml(  # type: ignore
+            self._gmm_xml
+        )
 
     @property
     def gmm_logic_tree(self) -> GMCMLogicTree:
