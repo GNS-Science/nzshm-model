@@ -57,36 +57,6 @@ class NshmModel:
         assert self._gmm_json.exists()
         assert self._gmm_xml.exists()
 
-    # @classmethod
-    # def from_components(
-    #     cls,
-    #     version: str,
-    #     title: str,
-    #     source_logic_tree: Optional[SourceLogicTree]=None,
-    #     gmm_logic_tree: Optional[GMCMLogicTree]=None,
-    #     hazard_config: Optional['HazardConfig']=None
-    # ) -> "NshmModel":
-    #     """
-    #     Create a new NshmModel object from logic tree and hazard config objects.
-
-    #     Parameters:
-    #         version: describes version of model
-    #         titel: title of model
-    #         souce_logic_tree: the seismicity rate model logic tree
-    #         gmm_logic_tree: the GMCM logic tree
-    #         hazard_config: the configuration for the hazard engine
-
-    #     Returns:
-    #         a NshmModel object
-    #     """
-
-    #     model = cls(version, title, "", "", "", None, hazard_config, assert_exists=False)
-    #     model._source_logic_tree = source_logic_tree
-    #     model._gmm_logic_tree = gmm_logic_tree
-    #     model.hazard_config = hazard_config
-
-    #     return model
-
     @property
     def _slt_data(self):
         with open(self._slt_json, 'r') as jsonfile:
@@ -237,28 +207,3 @@ class NshmModel:
             a PSHA Adapter instance
         """
         return provider(model=self)
-
-    # def get_source_branches(self, short_names: list = None) -> Iterator['SourceBranch']:
-    #     """
-    #     get an iterator for the SourceBranches matching the specified branch set(s)
-
-    #     Examples:
-    #         >>>  model = get_model_version("NSHM_v1.0.4")
-    #         >>>  for branch in model.get_source_branches(['CRU', 'PUY']):
-    #                 print(branch.tag, branch.weight)
-    #         >>>
-    #         [dm0.7, bN[0.902, 4.6], C4.0, s0.28] 0.21
-    #         ...
-
-    #     Parameters:
-    #         short_names: list of short_names for branch_set(s) (eg. HIK, CRU, PUY, SLAB)
-
-    #     Raises:
-    #         ValueError: when a branch short_name is not found.
-
-    #     Yields:
-    #         iterator of branch objects
-    #     """
-    #     for branch_set in self.get_source_branch_sets(short_names):
-    #         for branch in branch_set.branches:
-    #             yield (branch)
