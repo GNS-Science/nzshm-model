@@ -69,7 +69,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     """
 
     @staticmethod
-    def logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
+    def gmcm_logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
         """
         Build a GMCMLogicTree from an OpenQuake nrml gmcm logic tree file.
         """
