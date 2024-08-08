@@ -13,7 +13,7 @@ import logging
 import pathlib
 from typing import Any, Dict, List, Optional, TextIO, Tuple, Union
 
-from nzshm_model.hazard_config import HazardConfig
+from nzshm_model.psha_adapter.hazard_config import HazardConfig
 
 from .hazard_config_compat import check_invariants, compatible_hash_digest
 
