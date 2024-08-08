@@ -63,6 +63,11 @@ class OpenquakeConfig(HazardConfig):
             return self.config == other.config
         return NotImplemented
 
+    def is_complete(self) -> bool:
+        if not (self.get_sites() and self.get_iml()) :
+            return False
+        return True
+
     @staticmethod
     def read_file(config_file: TextIO) -> 'OpenquakeConfig':
         """produce a OpenquakeConfig from a file-like object

@@ -1,5 +1,6 @@
 import logging
 import pathlib
+import warnings
 import zipfile
 from typing import TYPE_CHECKING, Any, Dict, Generator, List, Union, cast
 
@@ -213,16 +214,18 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         target_folder: Union[pathlib.Path, str],
         source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
     ) -> pathlib.Path:
+        # check that required settings not included in default exist
+        if not self.hazard_config.is_complete():
+            warnings.warn("hazard configuration is not complete; cannot be used to run OpenQuake job")
+
         destination = pathlib.Path(target_folder)
         destination.mkdir(parents=True, exist_ok=True)
 
         # sources
         sources_folder = destination / 'sources'
         sources_folder.mkdir(exist_ok=True)
-
         source_map = source_map or self.unpack_resources(cache_folder, sources_folder)
         source_xmlstr = self.build_sources_xml(source_map)
-
         sources_file = sources_folder / 'sources.xml'
         with sources_file.open('w') as fout:
             fout.write(source_xmlstr)
@@ -236,14 +239,6 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         # job.ini
         self.hazard_config.set_source_logic_tree_file(sources_file.relative_to(destination))
         self.hazard_config.set_gsim_logic_tree_file(gmcm_file.relative_to(destination))
-
-        # check that required settings not included in default exist
-        if not self.hazard_config.get_sites():
-            raise ValueError("configuration missing sites")
-
-        if not self.hazard_config.get_iml():
-            raise ValueError("configuration missing IMTs and IMTLs")
-
         job_file = destination / 'job.ini'
         with job_file.open('w') as fout:
             self.hazard_config.write(fout)
