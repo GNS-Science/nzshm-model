@@ -1,5 +1,8 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class HazardConfig(ABC):
-    pass
+
+    @abstractmethod
+    def is_complete(self) -> bool:
+        pass
