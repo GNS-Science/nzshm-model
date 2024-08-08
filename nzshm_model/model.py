@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     # from nzshm_model import psha_adapter
     from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree as OQLogicTree
 
-    from .hazard_config import HazardConfig
+    from .psha_adapter.hazard_config import HazardConfig
 
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
