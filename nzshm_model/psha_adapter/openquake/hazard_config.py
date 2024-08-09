@@ -64,9 +64,7 @@ class OpenquakeConfig(HazardConfig):
         return NotImplemented
 
     def is_complete(self) -> bool:
-        if not (self.get_sites() and self.get_iml()):
-            return False
-        return True
+        return bool(self.get_sites() and self.get_iml())
 
     @staticmethod
     def read_file(config_file: TextIO) -> 'OpenquakeConfig':
@@ -171,7 +169,7 @@ class OpenquakeConfig(HazardConfig):
         self.set_parameter('site_params', 'site_model_file', str(site_model_filename))
         return self
 
-    def get_sites(self) -> str:
+    def get_sites(self) -> Optional[str]:
         return self.get_parameter('site_params', 'site_model_file')
 
     def get_iml(self) -> Optional[Tuple[List[str], List[float]]]:

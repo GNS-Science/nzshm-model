@@ -39,7 +39,10 @@ class ModuleInterface:
 
 
 def import_module_with_interface(modname: str) -> ModuleInterface:
-    return __import__(modname, fromlist=['_trash'])  # type: ignore
+    return __import__(
+        modname,
+        fromlist=['_trash'],
+    )  # type: ignore
 
 
 class NshmModel:
