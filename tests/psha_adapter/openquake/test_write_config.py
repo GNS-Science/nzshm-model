@@ -24,10 +24,9 @@ def test_write_config():
     with tempfile.TemporaryDirectory() as tmpdir:
         cache_folder = Path(tmpdir) / 'cache'
         target_folder = Path(tmpdir) / 'target'
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as wngs:
             model.psha_adapter(OpenquakeSimplePshaAdapter).write_config(cache_folder, target_folder, source_map)
-            assert "not complete" in str(w[-1].message)
-
+            assert "not complete" in str(wngs[-1].message)
 
         model.hazard_config.set_sites('sites.csv')
         model.hazard_config.set_iml(imts, imtls)
@@ -36,4 +35,3 @@ def test_write_config():
         assert (target_folder / 'job.ini').exists()
         assert (target_folder / 'gsim_model.xml').exists()
         assert (target_folder / 'sources' / 'sources.xml').exists()
-

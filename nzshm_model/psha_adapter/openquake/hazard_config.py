@@ -64,7 +64,7 @@ class OpenquakeConfig(HazardConfig):
         return NotImplemented
 
     def is_complete(self) -> bool:
-        if not (self.get_sites() and self.get_iml()) :
+        if not (self.get_sites() and self.get_iml()):
             return False
         return True
 
