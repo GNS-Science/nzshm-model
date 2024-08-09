@@ -4,7 +4,7 @@ This module contains base classes (some of which are abstract) common to both **
 """
 import copy
 import json
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
 from itertools import product
@@ -15,7 +15,6 @@ from typing import Any, Dict, Generator, Iterator, List, Sequence, Type, TypeVar
 import dacite
 
 import nzshm_model.logic_tree.helpers as helpers
-from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .branch import Branch, CompositeBranch
 from .correlation import LogicTreeCorrelations
@@ -235,19 +234,19 @@ class LogicTree(ABC):
 
     # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
     # Could check for type in PshaAdaptorInterface, but then we have a circular import.
-    @abstractmethod
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-        """
-        Provide an adapter object for translating LogicTrees to/from specific formats
+    # @abstractmethod
+    # def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
+    #     """
+    #     Provide an adapter object for translating LogicTrees to/from specific formats
 
-        Parameters:
-            provider: the interface object that defines a specific implimenation
-            **kwargs:
+    #     Parameters:
+    #         provider: the interface object that defines a specific implimenation
+    #         **kwargs:
 
-        Returns:
-            An adapter object
-        """
-        pass
+    #     Returns:
+    #         An adapter object
+    #     """
+    #     pass
 
     def __all_branches__(self) -> Generator['FilteredBranch', None, None]:
         """

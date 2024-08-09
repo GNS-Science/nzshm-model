@@ -14,7 +14,7 @@ from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree
 from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter
 
 log = logging.getLogger()
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logging.getLogger('nshm_toshi_client.toshi_client_base').setLevel(logging.INFO)
 logging.getLogger('urllib3').setLevel(logging.INFO)
 logging.getLogger('botocore').setLevel(logging.INFO)

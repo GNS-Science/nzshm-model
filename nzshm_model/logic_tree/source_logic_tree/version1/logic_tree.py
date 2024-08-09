@@ -11,11 +11,9 @@ from functools import reduce
 from itertools import product
 from math import isclose
 from operator import add, mul
-from typing import Dict, Iterable, List, Type, Union
+from typing import Dict, Iterable, List, Union
 
 import dacite
-
-from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .. import BranchAttributeValue
 from ..fault_system_branch_set import BranchSetBase, BranchSetSpec
@@ -75,9 +73,6 @@ class SourceLogicTree:
         for fslt in self.fault_system_lts:
             slt_spec.fault_system_lts.append(FaultSystemLogicTree.derive_spec(fslt))
         return slt_spec
-
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-        return provider(source_logic_tree=self)
 
     @staticmethod
     def from_dict(data: Dict):

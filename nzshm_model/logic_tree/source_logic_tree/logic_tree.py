@@ -4,11 +4,10 @@ Defines source logic tree structures used in NSHM.
 import copy
 import warnings
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Type, Union
+from typing import List, Tuple, Union
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
-from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from . import BranchAttributeValue
 from .fault_system_branch_set import BranchSetSpec
@@ -253,18 +252,6 @@ class SourceLogicTree(LogicTree):
         """
         warnings.warn("Please use branch_sets property instead", DeprecationWarning)
         return self.branch_sets
-
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
-        """get a PSHA adapter for this instance.
-
-        Arguments:
-            provider: the adapter class
-            **kwargs: additional arguments required by the provider class
-
-        Returns:
-            a PSHA Adapter instance
-        """
-        return provider(source_logic_tree=self)
 
 
 @dataclass

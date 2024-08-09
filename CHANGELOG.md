@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.11.0] 2024-08-09
+
+### Added
+ - OpenquakeSimplePshaAdapter writes entire set of OpenQuake input files, including GMCM and job.ini
+ - Openquake configuration to official models NSHM_v1.0.0 and NHSM_v1.0.4
+
+### Changed
+ - PshaAdapterInterface works at model level rather than logic tree
+
+
 ## [0.10.8] 2024-08-01
 
 ### Added
