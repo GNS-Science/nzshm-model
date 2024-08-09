@@ -1,0 +1,77 @@
+{
+"version": "ten.2",
+"title": "gmcm logic tree number 10",
+"branch_sets": [
+    {
+        "short_name": "asc",
+        "long_name": "active_shallow_crust",
+
+        "tectonic_region_type": "Active Shallow Crust",
+        "branches": [
+            {
+                "gsim_name": "Stafford2022",
+                "gsim_args": {
+                    "mu_branch": "Upper"
+                },
+                "weight": 0.3
+            },
+            {
+                "gsim_name": "Stafford2022",
+                "gsim_args": {
+                    "mu_branch": "Central"
+                },
+                "weight": 0.4
+            },
+            {
+                "gsim_name": "Stafford2022",
+                "gsim_args": {
+                    "mu_branch": "Lower"
+                },
+                "weight": 0.3
+            }
+        ]
+    },
+    {
+        "tectonic_region_type": "Subduction Interface",
+        "branches": [
+            {
+                "gsim_name": "Atkinson2022SInter",
+                "gsim_args": {
+                    "epistemic": "Upper",
+                    "modified_sigma": "true"
+                },
+                "weight": 0.3
+            },
+            {
+                "gsim_name": "Atkinson2022SInter",
+                "gsim_args": {
+                    "epistemic": "Central",
+                    "modified_sigma": "true"
+                },
+                "weight": 0.4
+            },
+            {
+                "gsim_name": "Atkinson2022SInter",
+                "gsim_args": {
+                    "epistemic": "Lower",
+                    "modified_sigma": "true"
+                },
+                "weight": 0.3
+            }
+        ]
+    },
+    {
+        "tectonic_region_type": "Subduction Intraslab",
+        "branches": [
+            {
+                "gsim_name": "NZNSHM2022_ParkerEtAl2020SSlab",
+                "gsim_args": {
+                    "sigma_mu_epsilon": "0.0",
+                    "modified_sigma": "true"
+                },
+                "weight": 1.0
+            }
+        ]
+    }
+]
+}
