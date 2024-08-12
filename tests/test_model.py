@@ -45,6 +45,16 @@ class TestGetSourceBranchSets:
             next(model_104.get_source_branch_sets(['XXX']))
 
 
+class TestGetNewModel:
+    def test_get_new_model(self):
+        new_model_title = "NEW MODEL TITLE"
+        model1 = nm.get_model_version(CURRENT_MODEL)
+        model1.title = new_model_title
+
+        model2 = nm.get_model_version(CURRENT_MODEL)
+        assert model2.title != new_model_title
+
+
 # class TestGetSourceBranches:
 #     def test_get_first_crustal_branch(self, model_104):
 #         cru_branches = next(model_104.get_source_branch_sets('CRU')).branches

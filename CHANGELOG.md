@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.11.0] 2024-08-12
+
+### Changed
+ - model versions defined as argument dictionary rather than a NshmModel instance
+ - model versions no longer loaded as modules by get_model_version()
+ 
+### Removed
+ - slt_config attribue of NshmModel
+
 ## [0.10.8] 2024-08-01
 
 ### Added
