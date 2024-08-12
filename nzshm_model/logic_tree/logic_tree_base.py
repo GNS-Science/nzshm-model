@@ -10,9 +10,10 @@ from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Sequence, Type, TypeVar, Union
+from typing import Any, Dict, Generator, Iterator, List, Sequence, Type, TypeVar, Union, Optional
 
 import dacite
+from nzshm_model.psha_adapter import PshaAdapterInterface
 
 import nzshm_model.logic_tree.helpers as helpers
 
@@ -319,6 +320,18 @@ class LogicTree(ABC):
         else:
             self.__current_branch += 1
             return self.__branch_list[self.__current_branch - 1]
+
+    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
+        """get a PSHA adapter for this instance.
+
+        Arguments:
+            provider: the adapter class
+            **kwargs: additional arguments required by the provider class
+
+        Returns:
+            a PSHA Adapter instance
+        """
+        return provider(model=self)
 
 
 @dataclass
