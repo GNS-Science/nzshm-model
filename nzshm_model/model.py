@@ -4,7 +4,7 @@ NshmModel class describes a complete National Seismic Hazard Model.
 import json
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, List, Union
+from typing import TYPE_CHECKING, Iterator, List, Union, Type, Optional, Dict
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
@@ -36,7 +36,6 @@ class NshmModel:
         slt_json: Union[str, Path],
         gmm_json: Union[str, Path],
         gmm_xml: Union[str, Path],
-        slt_config: Any,
         hazard_config: 'HazardConfig',
     ):
         """
@@ -47,7 +46,6 @@ class NshmModel:
         """
         self.version = version
         self.title = title
-        self.slt_config = slt_config
         self.hazard_config = hazard_config
 
         self._slt_json = SLT_SOURCE_PATH / slt_json
@@ -208,4 +206,4 @@ class NshmModel:
         Returns:
             a PSHA Adapter instance
         """
-        return provider(model=self)
+        return provider(target=self)

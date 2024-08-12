@@ -36,7 +36,6 @@ def test_write_config():
         assert (target_folder / 'sources' / 'sources.xml').exists()
 
 
-@pytest.mark.skip("this will not work in current version")
 def test_write_config_warn():
     model = get_model_version(CURRENT_MODEL)
     source_map = {}

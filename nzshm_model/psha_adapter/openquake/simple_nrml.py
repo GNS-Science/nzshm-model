@@ -75,6 +75,8 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
     """
     Openquake GMCMLogicTree apapter
     """
+    def __init__(self, gmcm_logic_tree: SourceLogicTree):
+        self._gmcm_logic_tree = gmcm_logic_tree
 
     def write_config(
         self,
@@ -150,7 +152,7 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
 
         i_branch = 0
         lt = LT(logicTreeID="lt1")
-        for bs in self.gmm_logic_tree.branch_sets:
+        for bs in self._gmcm_logic_tree.branch_sets:
             ltbs = LTBS(
                 uncertaintyType="gmpeModel",
                 branchSetID="BS:" + bs.tectonic_region_type,
@@ -165,14 +167,12 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
         nrml = NRML(lt)
         return etree.tostring(nrml, pretty_print=True).decode()
     
-    @property
-    def gmm_logic_tree(self) -> GMCMLogicTree:
-        return self._model.gmm_logic_tree
-
 class OpenquakeSourcePshaAdapter(PshaAdapterInterface):
     """
     Openquake SourceLogicTree adapter
     """
+    def __init__(self, source_logic_tree: SourceLogicTree):
+        self._source_logic_tree = source_logic_tree
 
     def write_config(
         self,
@@ -227,12 +227,12 @@ class OpenquakeSourcePshaAdapter(PshaAdapterInterface):
 
         # Build from the source_logic_tree
         ltbl = LTBL(branchingLevelID="1")
-        for fs in self.source_logic_tree.branch_sets:
+        for fs in self._source_logic_tree.branch_sets:
             ltbs = LTBS(uncertaintyType="sourceModel", branchSetID=fs.short_name)
             for branch in fs.branches:
                 branch_name = str(branch.values)
                 files = ""
-                ltv = getattr(self.source_logic_tree, "logic_tree_version", 0)
+                ltv = getattr(self._source_logic_tree, "logic_tree_version", 0)
                 if ltv >= 2:
                     # new logic trees
                     for source in branch.sources:
@@ -304,11 +304,8 @@ class OpenquakeSourcePshaAdapter(PshaAdapterInterface):
                     yield um.toshi_nrml_id, filepath, um
 
     def sources_document(self) -> 'LogicTree':
-        return NrmlDocument.from_model_slt(self.source_logic_tree).logic_trees[0]
+        return NrmlDocument.from_model_slt(self._source_logic_tree).logic_trees[0]
 
-    @property
-    def source_logic_tree(self) -> SourceLogicTree:
-        return self._model.source_logic_tree
 
 class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
 
@@ -323,7 +320,7 @@ class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
     ) -> pathlib.Path:
 
         # check that required settings not included in default exist
-        if not self.hazard_config.is_complete():
+        if not self._hazard_config.is_complete():
             warnings.warn("hazard configuration is not complete; cannot be used to run OpenQuake job")
         
         target_folder = make_target(target_folder)
@@ -372,7 +369,3 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         # config
         return self.config_adapter.write_config(cache_folder, target_folder, source_map)
     
-
-    @property
-    def hazard_config(self) -> OpenquakeConfig:
-        return cast(OpenquakeConfig, self._model.hazard_config)
