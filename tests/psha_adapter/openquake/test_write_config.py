@@ -36,7 +36,7 @@ def test_write_config():
         assert (target_folder / 'sources' / 'sources.xml').exists()
 
 
-@pytest.mark.skip("fails test in tox enviornment")
+@pytest.mark.skip("this will not work in current version")
 def test_write_config_warn():
     model = get_model_version(CURRENT_MODEL)
     source_map = {}
@@ -46,10 +46,6 @@ def test_write_config_warn():
             source_map[nrml_id] = [
                 Path(f"path/to/{nrml_id}.xml"),
             ]
-
-    # get_model_version() loads a module that has been modified in the first test with the missing settings we're
-    # testing for here, so we must re-assign the model.hazard_config
-    model.hazard_config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         cache_folder = Path(tmpdir) / 'cache'
