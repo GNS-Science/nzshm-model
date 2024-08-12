@@ -4,10 +4,11 @@ NshmModel class describes a complete National Seismic Hazard Model.
 import json
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, List, Union, cast
+from typing import TYPE_CHECKING, Iterator, List, Union
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
+from nzshm_model.model_versions import versions
 from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
 
 if TYPE_CHECKING:
@@ -18,32 +19,13 @@ SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
 GMM_JSON_SOURCE_PATH = RESOURCES_PATH / "GMM_JSON"
 GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
 
-versions = {
-    "NSHM_v1.0.0": 'nzshm_model.nshm_v1_0_0',
-    "NSHM_v1.0.4": 'nzshm_model.nshm_v1_0_4',
-}
-
-
-# https://stackoverflow.com/questions/48976499/mypy-importlib-module-functions
-class ModuleInterface:
-    """a type interface for this module
-
-    it doesn't have to be instantiated, it'll just help mypy figure things out)
-    """
-
-    model: 'NshmModel'
-
-
-def import_module_with_interface(modname: str) -> ModuleInterface:
-    return __import__(modname, fromlist=['_trash'])  # type: ignore
-
 
 class NshmModel:
     """
     An NshmModel instance represents a complete National Seismic Hazard Model version.
     """
 
-    def __init__(self, version, title, slt_json, gmm_json, gmm_xml, slt_config):
+    def __init__(self, version, title, slt_json, gmm_json, gmm_xml):
         """
         Create a new NshmModel instance.
 
@@ -52,7 +34,6 @@ class NshmModel:
         """
         self.version = version
         self.title = title
-        self.slt_config = slt_config
 
         self._slt_json = SLT_SOURCE_PATH / slt_json
         self._gmm_json = GMM_JSON_SOURCE_PATH / gmm_json
@@ -136,8 +117,8 @@ class NshmModel:
         doc = NrmlDocument.from_xml_file(self._gmm_xml)
         return doc.logic_trees[0]
 
-    @staticmethod
-    def get_model_version(version: str) -> 'NshmModel':
+    @classmethod
+    def get_model_version(cls, version: str) -> 'NshmModel':
         """
         Retrieve an existing model by its specific version
 
@@ -157,14 +138,11 @@ class NshmModel:
         Returns:
             the model instance.
         """
-        model_spec_module = versions.get(version)
-        if not model_spec_module:
+        model_args = versions.get(version)
+        if not model_args:
             raise ValueError(f"{version} is not a valid model version.")
-        # module = importlib.import_module(model_spec_module)
-        module = import_module_with_interface(model_spec_module)
-        # return module.model
-        return cast('NshmModel', module.model)
-        # return cast('NshmModel', model)
+
+        return cls(**model_args)
 
     def get_source_branch_sets(self, short_names: Union[List[str], str, None] = None) -> Iterator['SourceBranchSet']:
         """

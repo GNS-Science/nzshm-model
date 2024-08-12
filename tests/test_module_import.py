@@ -19,9 +19,6 @@ def test_version_config(model, model_version):
 
     assert mod.version == model_version
 
-    assert mod.slt_config is not None
-    assert mod.slt_config.logic_tree_permutations is not None
-
 
 def test_get_model_version_unknown():
     with pytest.raises(ValueError, match='XXX is not a valid model version.'):

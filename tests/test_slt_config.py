@@ -18,6 +18,7 @@ from nzshm_model.logic_tree.source_logic_tree.version1.slt_config import (
 )
 
 
+@pytest.mark.skip("NshmModel no longer has slt_config attribute")
 class TestStructure:
     def setup(self):
         self.model = nzshm_model.get_model_version('NSHM_v1.0.0')
