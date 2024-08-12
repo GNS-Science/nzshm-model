@@ -16,6 +16,7 @@ from .hazard_config import OpenquakeConfig
 if TYPE_CHECKING:
     from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
     from nzshm_model import NshmModel
+    from nzshm_model.psha_adapter.hazard_config import HazardConfig
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution
@@ -311,6 +312,9 @@ class OpenquakeSourcePshaAdapter(PshaAdapterInterface):
 
 class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
 
+    def __init__(self, hazard_config: 'HazardConfig'):
+        self._hazard_config = hazard_config
+
     def write_config(
         self,
         cache_folder: Union[pathlib.Path, str],
@@ -329,11 +333,11 @@ class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
         sources_file = sources_folder / 'sources.xml'
         gmcm_file = target_folder / 'gsim_model.xml'
         
-        self.hazard_config.set_source_logic_tree_file(sources_file.relative_to(target_folder))
-        self.hazard_config.set_gsim_logic_tree_file(gmcm_file.relative_to(target_folder))
+        self._hazard_config.set_source_logic_tree_file(sources_file.relative_to(target_folder))
+        self._hazard_config.set_gsim_logic_tree_file(gmcm_file.relative_to(target_folder))
         job_file = target_folder / 'job.ini'
         with job_file.open('w') as fout:
-            self.hazard_config.write(fout)
+            self._hazard_config.write(fout)
 
         return job_file
         
@@ -366,7 +370,8 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         self.gmcm_adapter.write_config(cache_folder, target_folder, source_map)
 
         # config
-        self.config_adapter.write_config(cache_folder, target_folder, source_map)
+        return self.config_adapter.write_config(cache_folder, target_folder, source_map)
+    
 
     @property
     def hazard_config(self) -> OpenquakeConfig:

@@ -14,9 +14,6 @@ class PshaAdapterInterface(ABC):
     Defines methods to be provided by a PSHA adapter class implementation.
     """
 
-    def __init__(self, model: 'NshmModel'):
-        self._model = model
-
     @abstractmethod
     def fetch_resources(self, cache_folder):
         """pull required data from api and store in target_folder"""
