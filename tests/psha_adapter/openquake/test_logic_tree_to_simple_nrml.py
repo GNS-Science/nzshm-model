@@ -1,6 +1,5 @@
 #! python test_logic_tree.py
-
-import tempfile
+import json
 from pathlib import Path
 
 import pytest
@@ -26,7 +25,7 @@ def test_source_logic_tree_to_source_xml_basic():
 
 
 @pytest.mark.skip("WIP")
-def test_fetch_resources(monkeypatch):
+def test_fetch_resources(monkeypatch, tmp_path):
     def mockreturn(file_id, destination):
         return file_id
 
@@ -34,19 +33,17 @@ def test_fetch_resources(monkeypatch):
     slt = SourceLogicTree.from_json(config)
 
     monkeypatch.setattr(nzshm_model.psha_adapter.openquake.simple_nrml, "fetch_toshi_source", mockreturn)
-    with tempfile.TemporaryDirectory() as tmpdir:
-        result = [
-            {'id': _id, 'path': filepath, 'um': um}
-            for _id, filepath, um in slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).fetch_resources(tmpdir)
-        ]
-    import json
+    result = [
+        {'id': _id, 'path': filepath, 'um': um}
+        for _id, filepath, um in slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).fetch_resources(tmp_path)
+    ]
 
     with Path('test.json').open('w') as jsonfile:
         json.dump(result, jsonfile)
 
 
 # @pytest.mark.skip("WIP: need way to compare xml without being exact (or create fixture for exact match)")
-def test_gmcm_logic_tree_to_xml():
+def test_gmcm_logic_tree_to_xml(tmp_path):
 
     # xml_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example_b.xml'
     gmcm_json_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.json'
@@ -71,9 +68,8 @@ def test_gmcm_logic_tree_to_xml():
     with Path(Path(__file__).parent / 'fixtures' / 'gmcm.xml').open('w') as xmlfile:
         xmlfile.write(adapter.build_gmcm_xml())
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with open(Path(tmpdir, 'gmcm_lt.xml'), 'w') as xmlfile:
-            xmlfile.write(xml_str)
-        gmcm_logic_tree_deserialized = adapter.gmcm_logic_tree_from_xml(Path(tmpdir, 'gmcm_lt.xml'))
+    with (tmp_path / 'gmcm_lt.xml').open('w') as xmlfile:
+        xmlfile.write(xml_str)
+    gmcm_logic_tree_deserialized = adapter.gmcm_logic_tree_from_xml(tmp_path / 'gmcm_lt.xml')
 
     assert gmcm_logic_tree_deserialized == gmcm_logic_tree

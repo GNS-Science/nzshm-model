@@ -5,63 +5,55 @@ import pytest
 import nzshm_model as nm
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
 
-CURRENT_MODEL = 'NSHM_v1.0.4'
 
-
-@pytest.fixture(scope="module")
-def model_104():
-    # yield nm.model.NshmModel.get_model_version(CURRENT_MODEL)
-    yield nm.get_model_version(CURRENT_MODEL)
-
-
-def test_list_all_models():
-    assert CURRENT_MODEL in nm.all_model_versions()
+def test_list_all_models(current_version):
+    assert current_version in nm.all_model_versions()
 
 
 class TestLoadModel:
-    def test_load_model_104(self):
-        model = nm.model.NshmModel.get_model_version(CURRENT_MODEL)
+    def test_load_model_104(self, current_version):
+        model = nm.model.NshmModel.get_model_version(current_version)
         assert model
 
-    def test_model_104_title(self, model_104):
-        assert model_104.title == "NSHM version 1.0.4, corrected fault geometry"
+    def test_model_104_title(self, current_model):
+        assert current_model.title == "NSHM version 1.0.4, corrected fault geometry"
 
 
 class TestGetSourceBranchSets:
-    def test_with_list(self, model_104):
-        branch_sets = list(model_104.get_source_branch_sets(['CRU', 'PUY']))
+    def test_with_list(self, current_model):
+        branch_sets = list(current_model.get_source_branch_sets(['CRU', 'PUY']))
         assert len(branch_sets) == 2
         assert branch_sets[0].short_name == 'CRU'
         assert branch_sets[1].short_name == 'PUY'
 
-    def test_with_single(self, model_104):
-        branch_sets = list(model_104.get_source_branch_sets('CRU'))
+    def test_with_single(self, current_model):
+        branch_sets = list(current_model.get_source_branch_sets('CRU'))
         assert len(branch_sets) == 1
         assert branch_sets[0].short_name == 'CRU'
 
-    def test_with_null(self, model_104):
-        assert len(list(model_104.get_source_branch_sets([]))) == 4
-        assert len(list(model_104.get_source_branch_sets())) == 4
+    def test_with_null(self, current_model):
+        assert len(list(current_model.get_source_branch_sets([]))) == 4
+        assert len(list(current_model.get_source_branch_sets())) == 4
 
-    def test_with_invalid_branch(self, model_104):
+    def test_with_invalid_branch(self, current_model):
         with pytest.raises(StopIteration):
-            next(model_104.get_source_branch_sets(['XXX']))
+            next(current_model.get_source_branch_sets(['XXX']))
 
 
 class TestConfig:
-    def test_openquake_config(self, model_104):
+    def test_openquake_config(self, current_model):
         expected = configparser.ConfigParser()
         expected.read_dict(DEFAULT_HAZARD_CONFIG)
-        assert model_104.hazard_config.config == expected
+        assert current_model.hazard_config.config == expected
 
 
 class TestGetNewModel:
-    def test_get_new_model(self):
+    def test_get_new_model(self, current_version):
         new_model_title = "NEW MODEL TITLE"
-        model1 = nm.get_model_version(CURRENT_MODEL)
+        model1 = nm.get_model_version(current_version)
         model1.title = new_model_title
 
-        model2 = nm.get_model_version(CURRENT_MODEL)
+        model2 = nm.get_model_version(current_version)
         assert model1.title == new_model_title
         assert model2.title != new_model_title
 
