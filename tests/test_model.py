@@ -62,6 +62,7 @@ class TestGetNewModel:
         model1.title = new_model_title
 
         model2 = nm.get_model_version(CURRENT_MODEL)
+        assert model1.title == new_model_title
         assert model2.title != new_model_title
 
 

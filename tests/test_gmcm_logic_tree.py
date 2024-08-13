@@ -5,12 +5,12 @@ import pytest
 from nzshm_model import get_model_version
 from nzshm_model.logic_tree import GMCMLogicTree
 from nzshm_model.psha_adapter.openquake import NrmlDocument
-from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeSimplePshaAdapter
+from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeGMCMPshaAdapter
 
 gmcm_nrml_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.xml'
 gmcm_json_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.json'
 
-adapter = get_model_version('NSHM_v1.0.4').psha_adapter(OpenquakeSimplePshaAdapter)
+adapter = get_model_version('NSHM_v1.0.4').psha_adapter(OpenquakeGMCMPshaAdapter)
 gmcm_logic_tree_fromxml = adapter.gmcm_logic_tree_from_xml(gmcm_nrml_filepath)  # type: ignore
 gmcm_logic_tree_fromjson = GMCMLogicTree.from_json(gmcm_json_filepath)
 

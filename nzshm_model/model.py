@@ -10,7 +10,7 @@ from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTr
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.model_versions import versions
 from nzshm_model.psha_adapter import PshaAdapterInterface
-from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
+from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter, OpenquakeGMCMPshaAdapter
 
 if TYPE_CHECKING:
     # from nzshm_model import psha_adapter
@@ -84,15 +84,15 @@ class NshmModel:
             return SourceLogicTree.from_dict(data)
         raise ValueError("Unsupported logic_tree_version.")
 
-    def source_logic_tree_nrml(self) -> "OQLogicTree":
-        """
-        the Source logic tree for this model as a OpenQuake nrml compatiable type.
+    # def source_logic_tree_nrml(self) -> "OQLogicTree":
+    #     """
+    #     the Source logic tree for this model as a OpenQuake nrml compatiable type.
 
-        Returns:
-            a source_logic_tree
-        """
-        warnings.warn("use NshmModel.source_logic_tree().psha_adapter().sources_document() instead", DeprecationWarning)
-        return self.psha_adapter(provider=OpenquakeSimplePshaAdapter).sources_document()
+    #     Returns:
+    #         a source_logic_tree
+    #     """
+    #     warnings.warn("use NshmModel.source_logic_tree().psha_adapter().sources_document() instead", DeprecationWarning)
+    #     return self.psha_adapter(provider=OpenquakeSimplePshaAdapter).sources_document()
 
     @property
     def gmm_logic_tree_from_xml(self) -> GMCMLogicTree:
@@ -104,7 +104,7 @@ class NshmModel:
 
         """
         warnings.warn("use NshmModel.gmm_logic_tree instead", DeprecationWarning)
-        return self.psha_adapter(provider=OpenquakeSimplePshaAdapter).gmcm_logic_tree_from_xml(  # type: ignore
+        return self.psha_adapter(provider=OpenquakeGMCMPshaAdapter).gmcm_logic_tree_from_xml(  # type: ignore
             self._gmm_xml
         )
 
@@ -151,11 +151,11 @@ class NshmModel:
         Returns:
             the model instance.
         """
-        model_args = versions.get(version)
-        if not model_args:
+        model_args_factory = versions.get(version)
+        if not model_args_factory:
             raise ValueError(f"{version} is not a valid model version.")
 
-        return cls(**model_args)
+        return cls(**model_args_factory())
 
     def get_source_branch_sets(self, short_names: Union[List[str], str, None] = None) -> Iterator['SourceBranchSet']:
         """

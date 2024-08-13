@@ -8,7 +8,7 @@ import pytest
 import nzshm_model.psha_adapter.openquake.simple_nrml
 from nzshm_model import NshmModel, get_model_version
 from nzshm_model.logic_tree import GMCMLogicTree, SourceLogicTree
-from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter
+from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter, OpenquakeGMCMPshaAdapter
 
 FIXTURE_PATH = Path(__file__).parent.parent.parent / "fixtures"
 
@@ -60,10 +60,9 @@ def test_gmcm_logic_tree_to_xml():
         slt_json_filepath,
         gmcm_json_filepath,
         model_v104._gmm_xml,
-        model_v104.slt_config,
         model_v104.hazard_config,
     )
-    adapter = model.psha_adapter(OpenquakeSimplePshaAdapter)
+    adapter = model.gmm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
     # gmcm_logic_tree_expected = adapter.logic_tree_from_xml(xml_filepath)
     # adapter = gmcm_logic_tree
     xml_str = adapter.build_gmcm_xml()

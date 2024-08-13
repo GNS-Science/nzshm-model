@@ -331,7 +331,7 @@ class LogicTree(ABC):
         Returns:
             a PSHA Adapter instance
         """
-        return provider(model=self)
+        return provider(target=self)
 
 
 @dataclass
