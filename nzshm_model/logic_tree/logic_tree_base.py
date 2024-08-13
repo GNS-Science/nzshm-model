@@ -10,12 +10,12 @@ from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Sequence, Type, TypeVar, Union, Optional
+from typing import Any, Dict, Generator, Iterator, List, Optional, Sequence, Type, TypeVar, Union
 
 import dacite
-from nzshm_model.psha_adapter import PshaAdapterInterface
 
 import nzshm_model.logic_tree.helpers as helpers
+from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .branch import Branch, CompositeBranch
 from .correlation import LogicTreeCorrelations

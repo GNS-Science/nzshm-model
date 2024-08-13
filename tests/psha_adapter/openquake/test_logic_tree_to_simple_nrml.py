@@ -8,7 +8,7 @@ import pytest
 import nzshm_model.psha_adapter.openquake.simple_nrml
 from nzshm_model import NshmModel, get_model_version
 from nzshm_model.logic_tree import GMCMLogicTree, SourceLogicTree
-from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter, OpenquakeGMCMPshaAdapter
+from nzshm_model.psha_adapter.openquake import OpenquakeGMCMPshaAdapter, OpenquakeSimplePshaAdapter
 
 FIXTURE_PATH = Path(__file__).parent.parent.parent / "fixtures"
 

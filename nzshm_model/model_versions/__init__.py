@@ -5,4 +5,3 @@ versions = {
     "NSHM_v1.0.0": model_args_nshm_v1_0_0,
     "NSHM_v1.0.4": model_args_nshm_v1_0_4,
 }
-

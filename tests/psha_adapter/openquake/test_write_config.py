@@ -2,10 +2,8 @@ import tempfile
 import warnings
 from pathlib import Path
 
-import pytest
-
 from nzshm_model import get_model_version
-from nzshm_model.psha_adapter.openquake import DEFAULT_HAZARD_CONFIG, OpenquakeConfig, OpenquakeSimplePshaAdapter
+from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter
 
 CURRENT_MODEL = 'NSHM_v1.0.4'
 

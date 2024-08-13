@@ -2,7 +2,7 @@ import logging
 import pathlib
 import warnings
 import zipfile
-from typing import TYPE_CHECKING, Any, Dict, Generator, List, Union, cast, Optional
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Union
 
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -11,12 +11,11 @@ from nzshm_model.logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
 
-
 if TYPE_CHECKING:
-    from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
-    from nzshm_model.logic_tree import SourceLogicTree
     from nzshm_model import NshmModel
-    from nzshm_model.psha_adapter.hazard_config import HazardConfig
+    from nzshm_model.logic_tree import SourceLogicTree
+    from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
+
     from .hazard_config import OpenquakeConfig
 
 try:
@@ -28,6 +27,7 @@ except (ModuleNotFoundError, ImportError):
 QUICK_TEST = False
 
 log = logging.getLogger(__name__)
+
 
 def make_target(target_folder) -> pathlib.Path:
     destination = pathlib.Path(target_folder)
@@ -76,6 +76,7 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
     """
     Openquake GMCMLogicTree apapter
     """
+
     def __init__(self, target: GMCMLogicTree):
         self.gmcm_logic_tree = target
 
@@ -85,14 +86,14 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
         target_folder: Union[pathlib.Path, str],
         source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
     ) -> pathlib.Path:
-        
+
         target_folder = make_target(target_folder)
 
         gmcm_xmlstr = self.build_gmcm_xml()
         gmcm_file = target_folder / 'gsim_model.xml'
         with gmcm_file.open('w') as fout:
             fout.write(gmcm_xmlstr)
-        
+
         return gmcm_file
 
     @staticmethod
@@ -169,11 +170,13 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
             lt.append(ltbs)
         nrml = NRML(lt)
         return etree.tostring(nrml, pretty_print=True).decode()
-    
+
+
 class OpenquakeSourcePshaAdapter(PshaAdapterInterface):
     """
     Openquake SourceLogicTree adapter
     """
+
     def __init__(self, target: 'SourceLogicTree'):
         self.source_logic_tree = target
 
@@ -183,7 +186,7 @@ class OpenquakeSourcePshaAdapter(PshaAdapterInterface):
         target_folder: Union[pathlib.Path, str],
         source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
     ) -> pathlib.Path:
-        
+
         target_folder = make_target(target_folder)
 
         sources_folder = target_folder / 'sources'
@@ -311,12 +314,11 @@ class OpenquakeSourcePshaAdapter(PshaAdapterInterface):
 
 
 class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
-
     def __init__(self, target: 'OpenquakeConfig'):
         self.hazard_config = target
         self._sources_file: Optional[pathlib.Path] = None
         self._gmcm_file: Optional[pathlib.Path] = None
-    
+
     def set_source_file(self, sources_file: Union[pathlib.Path, str]):
         self._sources_file = pathlib.Path(sources_file)
 
@@ -333,7 +335,7 @@ class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
         # check that required settings not included in default exist
         if not self.hazard_config.is_complete():
             warnings.warn("hazard configuration is not complete; cannot be used to run OpenQuake job")
-        
+
         target_folder = make_target(target_folder)
 
         self._sources_file = pathlib.Path('<path to source file>') if not self._sources_file else self._sources_file
@@ -345,7 +347,7 @@ class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
             self.hazard_config.write(fout)
 
         return job_file
-        
+
 
 class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     """
@@ -357,13 +359,12 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         self.source_adapter = self.model.source_logic_tree.psha_adapter(OpenquakeSourcePshaAdapter)
         self.gmcm_adapter = self.model.gmm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
         self.config_adapter = self.model.hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
-        
 
     def write_config(
         self,
         cache_folder: Union[pathlib.Path, str],
         target_folder: Union[pathlib.Path, str],
-        source_map: Optional[Dict[str, list[pathlib.Path]]]=None,
+        source_map: Optional[Dict[str, list[pathlib.Path]]] = None,
     ) -> pathlib.Path:
 
         target_folder = make_target(target_folder)

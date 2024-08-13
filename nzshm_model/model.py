@@ -4,13 +4,13 @@ NshmModel class describes a complete National Seismic Hazard Model.
 import json
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, List, Union, Type, Optional, Dict
+from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, Type, Union
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.model_versions import versions
 from nzshm_model.psha_adapter import PshaAdapterInterface
-from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter, OpenquakeGMCMPshaAdapter
+from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeGMCMPshaAdapter
 
 if TYPE_CHECKING:
     # from nzshm_model import psha_adapter
@@ -91,7 +91,9 @@ class NshmModel:
     #     Returns:
     #         a source_logic_tree
     #     """
-    #     warnings.warn("use NshmModel.source_logic_tree().psha_adapter().sources_document() instead", DeprecationWarning)
+    #     warnings.warn(
+    #       "use NshmModel.source_logic_tree().psha_adapter().sources_document() instead", DeprecationWarning
+    #        )
     #     return self.psha_adapter(provider=OpenquakeSimplePshaAdapter).sources_document()
 
     @property

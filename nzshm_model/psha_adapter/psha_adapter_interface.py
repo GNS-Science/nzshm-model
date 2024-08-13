@@ -3,10 +3,7 @@ This module defines the interface to be provided by a PshaAdapter implementation
 """
 import pathlib
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, Union, Any, Optional
-
-if TYPE_CHECKING:
-    from nzshm_model import NshmModel
+from typing import Any, Dict, Optional, Union
 
 
 class PshaAdapterInterface(ABC):
@@ -38,7 +35,7 @@ class PshaAdapterInterface(ABC):
         self,
         cache_folder: Union[pathlib.Path, str],
         target_folder: Union[pathlib.Path, str],
-        resource_map: Optional[Dict[str, list[pathlib.Path]]]=None,
+        resource_map: Optional[Dict[str, list[pathlib.Path]]] = None,
     ) -> pathlib.Path:
         """Build an openquake config from given input arguments"""
         pass

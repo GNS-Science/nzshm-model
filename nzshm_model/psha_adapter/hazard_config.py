@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
+from typing import Dict, Optional, Type
+
 from nzshm_model.psha_adapter import PshaAdapterInterface
-from typing import Type, Optional, Dict
 
 
 class HazardConfig(ABC):
-
     @abstractmethod
     def is_complete(self) -> bool:
         pass
