@@ -338,8 +338,8 @@ class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
 
         target_folder = make_target(target_folder)
 
-        self._sources_file = pathlib.Path('<path to source file>') if not self._sources_file else self._sources_file
-        self._gmcm_file = pathlib.Path('<path to gmcm file>') if not self._gmcm_file else self._gmcm_file
+        self._sources_file = target_folder / '<path to source file>' if not self._sources_file else self._sources_file
+        self._gmcm_file = target_folder / '<path to gmcm file>' if not self._gmcm_file else self._gmcm_file
         self.hazard_config.set_source_logic_tree_file(self._sources_file.relative_to(target_folder))
         self.hazard_config.set_gsim_logic_tree_file(self._gmcm_file.relative_to(target_folder))
         job_file = target_folder / 'job.ini'
