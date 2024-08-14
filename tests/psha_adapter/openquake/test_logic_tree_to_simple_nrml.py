@@ -7,7 +7,7 @@ import pytest
 import nzshm_model.psha_adapter.openquake.simple_nrml
 from nzshm_model import NshmModel, get_model_version
 from nzshm_model.logic_tree import GMCMLogicTree, SourceLogicTree
-from nzshm_model.psha_adapter.openquake import OpenquakeGMCMPshaAdapter, OpenquakeSimplePshaAdapter
+from nzshm_model.psha_adapter.openquake import OpenquakeGMCMPshaAdapter, OpenquakeModelPshaAdapter
 
 FIXTURE_PATH = Path(__file__).parent.parent.parent / "fixtures"
 
@@ -20,7 +20,7 @@ def test_source_logic_tree_to_source_xml_basic():
 
     print(slt)
     target = FIXTURE_PATH  # noqa
-    src_xml = slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).write_config(Path('/tmp/DEMO'))  # noqa
+    src_xml = slt.psha_adapter(provider=OpenquakeModelPshaAdapter).write_config(Path('/tmp/DEMO'))  # noqa
     # assert 0
 
 
@@ -35,7 +35,7 @@ def test_fetch_resources(monkeypatch, tmp_path):
     monkeypatch.setattr(nzshm_model.psha_adapter.openquake.simple_nrml, "fetch_toshi_source", mockreturn)
     result = [
         {'id': _id, 'path': filepath, 'um': um}
-        for _id, filepath, um in slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).fetch_resources(tmp_path)
+        for _id, filepath, um in slt.psha_adapter(provider=OpenquakeModelPshaAdapter).fetch_resources(tmp_path)
     ]
 
     with Path('test.json').open('w') as jsonfile:

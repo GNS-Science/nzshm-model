@@ -11,7 +11,7 @@ import nzshm_model
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree
 
 # from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids  # noqa
-from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter
+from nzshm_model.psha_adapter.openquake import OpenquakeSourcePshaAdapter
 
 log = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
@@ -47,7 +47,7 @@ def fetch(cache_folder, model_id):
     click.echo(f"model_id: {model_id}")
 
     model = nzshm_model.get_model_version(model_id)
-    adapter = model.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter)
+    adapter = model.source_logic_tree().psha_adapter(provider=OpenquakeSourcePshaAdapter)
 
     for item in adapter.fetch_resources(cache_folder):
         click.echo(item)
@@ -62,7 +62,7 @@ def fetch(cache_folder, model_id):
 def unpack(cache_folder, output_folder, model_id):
 
     model = nzshm_model.get_model_version(model_id)
-    adapter = model.source_logic_tree().psha_adapter(provider=OpenquakeSimplePshaAdapter)
+    adapter = model.source_logic_tree().psha_adapter(provider=OpenquakeSourcePshaAdapter)
     source_map = adapter.unpack_resources(cache_folder, output_folder)
     click.echo(len(source_map.items()))
     click.echo('DONE')
@@ -95,7 +95,7 @@ def config(cache_folder, output_folder, model_id):
 
     slt = SourceLogicTree.from_branches((fb for fb in slt if unscaled_filter(fb) and geodetic_filter(fb)))
 
-    adapter = slt.psha_adapter(provider=OpenquakeSimplePshaAdapter)
+    adapter = slt.psha_adapter(provider=OpenquakeSourcePshaAdapter)
 
     adapter.write_config(cache_folder, output_folder)
     click.echo('DONE')

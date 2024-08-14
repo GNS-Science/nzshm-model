@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Optional, Type
 
-from nzshm_model.psha_adapter import PshaAdapterInterface
+from nzshm_model.psha_adapter import ConfigPshaAdapterInterface
 
 
 class HazardConfig(ABC):
@@ -9,7 +9,9 @@ class HazardConfig(ABC):
     def is_complete(self) -> bool:
         pass
 
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
+    def psha_adapter(
+        self, provider: Type[ConfigPshaAdapterInterface], **kwargs: Optional[Dict]
+    ) -> "ConfigPshaAdapterInterface":
         """get a PSHA adapter for this instance.
 
         Arguments:

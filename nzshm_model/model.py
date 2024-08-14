@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, Type, Union
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.model_versions import versions
-from nzshm_model.psha_adapter import PshaAdapterInterface
+from nzshm_model.psha_adapter import ModelPshaAdapterInterface
 from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeGMCMPshaAdapter
 
 if TYPE_CHECKING:
@@ -186,7 +186,9 @@ class NshmModel:
                 except StopIteration:
                     raise ValueError("The branch " + short_name + " was not found.")
 
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
+    def psha_adapter(
+        self, provider: Type[ModelPshaAdapterInterface], **kwargs: Optional[Dict]
+    ) -> "ModelPshaAdapterInterface":
         """get a PSHA adapter for this instance.
 
         Arguments:

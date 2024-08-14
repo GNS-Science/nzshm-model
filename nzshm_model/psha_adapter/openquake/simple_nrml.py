@@ -8,8 +8,13 @@ from lxml import etree
 from lxml.builder import ElementMaker
 
 from nzshm_model.logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree
+from nzshm_model.psha_adapter import (
+    ConfigPshaAdapterInterface,
+    GMCMPshaAdapterInterface,
+    ModelPshaAdapterInterface,
+    SourcePshaAdapterInterface,
+)
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
-from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
 
 if TYPE_CHECKING:
     from nzshm_model import NshmModel
@@ -72,7 +77,7 @@ def gmcm_branch_from_element_text(element_text: str) -> GMCMBranch:
     return GMCMBranch(gsim_name=gmpe_name, gsim_args=process_gmm_args(arguments), weight=0.0)
 
 
-class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
+class OpenquakeGMCMPshaAdapter(GMCMPshaAdapterInterface):
     """
     Openquake GMCMLogicTree apapter
     """
@@ -80,12 +85,7 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
     def __init__(self, target: GMCMLogicTree):
         self.gmcm_logic_tree = target
 
-    def write_config(
-        self,
-        cache_folder: Union[pathlib.Path, str],
-        target_folder: Union[pathlib.Path, str],
-        source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
-    ) -> pathlib.Path:
+    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
 
         target_folder = make_target(target_folder)
 
@@ -172,7 +172,7 @@ class OpenquakeGMCMPshaAdapter(PshaAdapterInterface):
         return etree.tostring(nrml, pretty_print=True).decode()
 
 
-class OpenquakeSourcePshaAdapter(PshaAdapterInterface):
+class OpenquakeSourcePshaAdapter(SourcePshaAdapterInterface):
     """
     Openquake SourceLogicTree adapter
     """
@@ -313,7 +313,7 @@ class OpenquakeSourcePshaAdapter(PshaAdapterInterface):
         return NrmlDocument.from_model_slt(self.source_logic_tree).logic_trees[0]
 
 
-class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
+class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
     def __init__(self, target: 'OpenquakeConfig'):
         self.hazard_config = target
         self._sources_file: Optional[pathlib.Path] = None
@@ -325,12 +325,7 @@ class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
     def set_gmcm_file(self, gmcm_file: Union[pathlib.Path, str]):
         self._gmcm_file = pathlib.Path(gmcm_file)
 
-    def write_config(
-        self,
-        cache_folder: Union[pathlib.Path, str],
-        target_folder: Union[pathlib.Path, str],
-        source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
-    ) -> pathlib.Path:
+    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
 
         # check that required settings not included in default exist
         if not self.hazard_config.is_complete():
@@ -349,7 +344,7 @@ class OpenquakeConfigPshaAdapter(PshaAdapterInterface):
         return job_file
 
 
-class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
+class OpenquakeModelPshaAdapter(ModelPshaAdapterInterface):
     """
     Openquake PSHA adapter.
     """
@@ -370,11 +365,11 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         target_folder = make_target(target_folder)
 
         source_file = self.source_adapter.write_config(cache_folder, target_folder, source_map)
-        gmcm_file = self.gmcm_adapter.write_config(cache_folder, target_folder, source_map)
+        gmcm_file = self.gmcm_adapter.write_config(target_folder)
 
         self.config_adapter.set_source_file(source_file)  # type: ignore
         self.config_adapter.set_gmcm_file(gmcm_file)  # type: ignore
 
-        job_file = self.config_adapter.write_config(cache_folder, target_folder, source_map)
+        job_file = self.config_adapter.write_config(target_folder)
 
         return job_file

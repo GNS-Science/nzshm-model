@@ -14,7 +14,7 @@ from .logic_tree import NrmlDocument
 from .simple_nrml import (
     OpenquakeConfigPshaAdapter,
     OpenquakeGMCMPshaAdapter,
-    OpenquakeSimplePshaAdapter,
+    OpenquakeModelPshaAdapter,
     OpenquakeSourcePshaAdapter,
     gmcm_branch_from_element_text,
 )
