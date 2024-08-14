@@ -84,18 +84,6 @@ class NshmModel:
             return SourceLogicTree.from_dict(data)
         raise ValueError("Unsupported logic_tree_version.")
 
-    # def source_logic_tree_nrml(self) -> "OQLogicTree":
-    #     """
-    #     the Source logic tree for this model as a OpenQuake nrml compatiable type.
-
-    #     Returns:
-    #         a source_logic_tree
-    #     """
-    #     warnings.warn(
-    #       "use NshmModel.source_logic_tree().psha_adapter().sources_document() instead", DeprecationWarning
-    #        )
-    #     return self.psha_adapter(provider=OpenquakeSimplePshaAdapter).sources_document()
-
     @property
     def gmm_logic_tree_from_xml(self) -> GMCMLogicTree:
         """

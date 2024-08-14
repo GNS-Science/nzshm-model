@@ -233,22 +233,6 @@ class LogicTree(ABC):
         with file_path.open('w') as jsonfile:
             json.dump(self.to_dict(), jsonfile, indent=2)
 
-    # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
-    # Could check for type in PshaAdaptorInterface, but then we have a circular import.
-    # @abstractmethod
-    # def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-    #     """
-    #     Provide an adapter object for translating LogicTrees to/from specific formats
-
-    #     Parameters:
-    #         provider: the interface object that defines a specific implimenation
-    #         **kwargs:
-
-    #     Returns:
-    #         An adapter object
-    #     """
-    #     pass
-
     def __all_branches__(self) -> Generator['FilteredBranch', None, None]:
         """
         Yield all branches from all BranchSets, each with a shallow copy of its LogicTree and BranchSet parents
