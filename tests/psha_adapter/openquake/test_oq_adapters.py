@@ -1,5 +1,7 @@
 import warnings
 
+import pytest
+
 from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
 from nzshm_model.psha_adapter.openquake.simple_nrml import (
@@ -34,6 +36,7 @@ def test_config_adapter(tmp_path):
     assert job_filepath.exists()
 
 
+@pytest.mark.filterwarnings("default")
 def test_write_config_warn(tmp_path):
     cache_folder = tmp_path / 'cache'
     target_folder = tmp_path / 'target'
