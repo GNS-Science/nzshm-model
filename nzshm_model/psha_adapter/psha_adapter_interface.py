@@ -3,7 +3,7 @@ This module defines the interface to be provided by a PshaAdapter implementation
 """
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Dict, Union
+from typing import Any, Dict, Optional, Union
 
 
 class PshaAdapterInterface(ABC):
@@ -11,9 +11,25 @@ class PshaAdapterInterface(ABC):
     Defines methods to be provided by a PSHA adapter class implementation.
     """
 
-    def __init__(self, source_logic_tree=None, gmcm_logic_tree=None):
-        self._source_logic_tree = source_logic_tree
-        self._gmcm_logic_tree = gmcm_logic_tree
+    @abstractmethod
+    def __init__(self, target: Any):
+        """
+        Create a new PshaAdapterInterface object.
+
+        Parameters:
+            target: the object (e.g. SourceLogicTree) to be adapted to the specific hazard engine
+        """
+        pass
+
+    @abstractmethod
+    def write_config(self, *args, **kwargs) -> pathlib.Path:
+        pass
+
+
+class SourcePshaAdapterInterface(PshaAdapterInterface):
+    """
+    Defines methods to be provided by a PSHA source model adapter class implementation.
+    """
 
     @abstractmethod
     def fetch_resources(self, cache_folder):
@@ -26,16 +42,49 @@ class PshaAdapterInterface(ABC):
         pass
 
     @abstractmethod
-    def config(self):
-        """Get the PSHA config file"""
+    def write_config(
+        self,
+        cache_folder: Union[pathlib.Path, str],
+        target_folder: Union[pathlib.Path, str],
+        resource_map: Optional[Dict[str, list[pathlib.Path]]] = None,
+    ) -> pathlib.Path:
+        """Build PSHA source input files"""
         pass
+
+
+class GMCMPshaAdapterInterface(PshaAdapterInterface):
+    """
+    Defines methods to be provided by a PSHA ground motion model adapter class implementation.
+    """
+
+    @abstractmethod
+    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+        """Build PSHA GMCM input files"""
+        pass
+
+
+class ConfigPshaAdapterInterface(PshaAdapterInterface):
+    """
+    Defines methods to be provided by a PSHA ground motion model adapter class implementation.
+    """
+
+    @abstractmethod
+    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+        """Build PSHA calculation config input files"""
+        pass
+
+
+class ModelPshaAdapterInterface(PshaAdapterInterface):
+    """
+    Defines methods to be provided by a PSHA model adapter class implementation.
+    """
 
     @abstractmethod
     def write_config(
         self,
         cache_folder: Union[pathlib.Path, str],
         target_folder: Union[pathlib.Path, str],
-        resource_map: Dict[str, list[pathlib.Path]],
+        resource_map: Optional[Dict[str, list[pathlib.Path]]] = None,
     ) -> pathlib.Path:
-        """Build an openquake config from given input arguments"""
+        """Build all PSHA input files"""
         pass

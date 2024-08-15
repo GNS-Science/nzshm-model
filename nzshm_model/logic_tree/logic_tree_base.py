@@ -4,13 +4,13 @@ This module contains base classes (some of which are abstract) common to both **
 """
 import copy
 import json
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Sequence, Type, TypeVar, Union
+from typing import Any, Dict, Generator, Iterator, List, Optional, Sequence, Type, TypeVar, Union
 
 import dacite
 
@@ -233,22 +233,6 @@ class LogicTree(ABC):
         with file_path.open('w') as jsonfile:
             json.dump(self.to_dict(), jsonfile, indent=2)
 
-    # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
-    # Could check for type in PshaAdaptorInterface, but then we have a circular import.
-    @abstractmethod
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-        """
-        Provide an adapter object for translating LogicTrees to/from specific formats
-
-        Parameters:
-            provider: the interface object that defines a specific implimenation
-            **kwargs:
-
-        Returns:
-            An adapter object
-        """
-        pass
-
     def __all_branches__(self) -> Generator['FilteredBranch', None, None]:
         """
         Yield all branches from all BranchSets, each with a shallow copy of its LogicTree and BranchSet parents
@@ -320,6 +304,18 @@ class LogicTree(ABC):
         else:
             self.__current_branch += 1
             return self.__branch_list[self.__current_branch - 1]
+
+    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
+        """get a PSHA adapter for this instance.
+
+        Arguments:
+            provider: the adapter class
+            **kwargs: additional arguments required by the provider class
+
+        Returns:
+            a PSHA Adapter instance
+        """
+        return provider(target=self)
 
 
 @dataclass

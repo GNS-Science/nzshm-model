@@ -1,23 +1,43 @@
 import logging
 import pathlib
+import warnings
 import zipfile
-from typing import Any, Dict, Generator, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Union
 
 from lxml import etree
 from lxml.builder import ElementMaker
 
-from nzshm_model.logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree, SourceLogicTree
+from nzshm_model.logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree
+from nzshm_model.psha_adapter import (
+    ConfigPshaAdapterInterface,
+    GMCMPshaAdapterInterface,
+    ModelPshaAdapterInterface,
+    SourcePshaAdapterInterface,
+)
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
-from nzshm_model.psha_adapter.psha_adapter_interface import PshaAdapterInterface
+
+if TYPE_CHECKING:
+    from nzshm_model import NshmModel
+    from nzshm_model.logic_tree import SourceLogicTree
+    from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
+
+    from .hazard_config import OpenquakeConfig
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution
 except (ModuleNotFoundError, ImportError):
     print('Running without `toshi` options')
 
+
 QUICK_TEST = False
 
 log = logging.getLogger(__name__)
+
+
+def make_target(target_folder) -> pathlib.Path:
+    destination = pathlib.Path(target_folder)
+    destination.mkdir(parents=True, exist_ok=True)
+    return destination
 
 
 def fetch_toshi_source(file_id: str, destination: pathlib.Path) -> pathlib.Path:
@@ -57,21 +77,27 @@ def gmcm_branch_from_element_text(element_text: str) -> GMCMBranch:
     return GMCMBranch(gsim_name=gmpe_name, gsim_args=process_gmm_args(arguments), weight=0.0)
 
 
-class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
+class OpenquakeGMCMPshaAdapter(GMCMPshaAdapterInterface):
     """
-    Openquake PSHA simple nrml support.
+    Openquake GMCMLogicTree apapter
     """
 
-    def __init__(
-        self, source_logic_tree: Optional[SourceLogicTree] = None, gmcm_logic_tree: Optional[GMCMLogicTree] = None
-    ):
-        self._source_logic_tree = source_logic_tree
-        self._gmcm_logic_tree = gmcm_logic_tree
-        if source_logic_tree:
-            assert source_logic_tree.logic_tree_version == 2
+    def __init__(self, target: GMCMLogicTree):
+        self.gmcm_logic_tree = target
+
+    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+
+        target_folder = make_target(target_folder)
+
+        gmcm_xmlstr = self.build_gmcm_xml()
+        gmcm_file = target_folder / 'gsim_model.xml'
+        with gmcm_file.open('w') as fout:
+            fout.write(gmcm_xmlstr)
+
+        return gmcm_file
 
     @staticmethod
-    def logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> 'GMCMLogicTree':
+    def gmcm_logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> GMCMLogicTree:
         """
         Build a GMCMLogicTree from an OpenQuake nrml gmcm logic tree file.
         """
@@ -104,7 +130,7 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
             branch_sets=branch_sets,
         )
 
-    def build_gmcm_xml(self):
+    def build_gmcm_xml(self) -> str:
         """Build a gmcm logic tree xml."""
         E = ElementMaker(
             namespace="http://openquake.org/xmlns/nrml/0.5",
@@ -145,7 +171,35 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         nrml = NRML(lt)
         return etree.tostring(nrml, pretty_print=True).decode()
 
-    def build_sources_xml(self, source_map):
+
+class OpenquakeSourcePshaAdapter(SourcePshaAdapterInterface):
+    """
+    Openquake SourceLogicTree adapter
+    """
+
+    def __init__(self, target: 'SourceLogicTree'):
+        self.source_logic_tree = target
+
+    def write_config(
+        self,
+        cache_folder: Union[pathlib.Path, str],
+        target_folder: Union[pathlib.Path, str],
+        source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
+    ) -> pathlib.Path:
+
+        target_folder = make_target(target_folder)
+
+        sources_folder = target_folder / 'sources'
+        sources_folder.mkdir(exist_ok=True)
+        source_map = source_map or self.unpack_resources(cache_folder, sources_folder)
+        source_xmlstr = self.build_sources_xml(source_map)
+        sources_file = sources_folder / 'sources.xml'
+        with sources_file.open('w') as fout:
+            fout.write(source_xmlstr)
+
+        return sources_file
+
+    def build_sources_xml(self, source_map) -> str:
         """Build a source model for a set of LTBs with their source files."""
         E = ElementMaker(
             namespace="http://openquake.org/xmlns/nrml/0.5",
@@ -209,24 +263,6 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
         nrml = NRML(LT(ltbl, logicTreeID="Combined"))
         return etree.tostring(nrml, pretty_print=True).decode()
 
-    def write_config(
-        self,
-        cache_folder: Union[pathlib.Path, str],
-        target_folder: Union[pathlib.Path, str],
-        source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
-    ) -> pathlib.Path:
-        destination = pathlib.Path(target_folder)
-        assert destination.exists()
-        assert destination.is_dir()
-
-        source_map = source_map or self.unpack_resources(cache_folder, target_folder)
-        xmlstr = self.build_sources_xml(source_map)
-
-        target_file = pathlib.Path(destination, 'sources.xml')
-        with open(target_file, 'w') as fout:
-            fout.write(xmlstr)
-        return target_file
-
     def unpack_resources(
         self, cache_folder: Union[pathlib.Path, str], target_folder: Union[pathlib.Path, str]
     ) -> Dict[str, list[pathlib.Path]]:
@@ -266,20 +302,74 @@ class OpenquakeSimplePshaAdapter(PshaAdapterInterface):
     ) -> Generator[tuple[Any, pathlib.Path, Any], None, None]:
         destination = pathlib.Path(cache_folder)
         destination.mkdir(parents=True, exist_ok=True)
-        nrml_logic_tree = self.config()
+        nrml_logic_tree = self.sources_document()
         for branch_set in nrml_logic_tree.branch_sets:
             for branch in branch_set.branches:
                 for um in branch.uncertainty_models:
                     filepath = fetch_toshi_source(um.toshi_nrml_id, destination)
                     yield um.toshi_nrml_id, filepath, um
 
-    def config(self):
-        return NrmlDocument.from_model_slt(self._source_logic_tree).logic_trees[0]
+    def sources_document(self) -> 'LogicTree':
+        return NrmlDocument.from_model_slt(self.source_logic_tree).logic_trees[0]
 
-    @property
-    def source_logic_tree(self):
-        return self._source_logic_tree
 
-    @property
-    def gmcm_logic_tree(self):
-        return self._gmcm_logic_tree
+class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
+    def __init__(self, target: 'OpenquakeConfig'):
+        self.hazard_config = target
+        self._sources_file: Optional[pathlib.Path] = None
+        self._gmcm_file: Optional[pathlib.Path] = None
+
+    def set_source_file(self, sources_file: Union[pathlib.Path, str]):
+        self._sources_file = pathlib.Path(sources_file)
+
+    def set_gmcm_file(self, gmcm_file: Union[pathlib.Path, str]):
+        self._gmcm_file = pathlib.Path(gmcm_file)
+
+    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+
+        # check that required settings not included in default exist
+        if not self.hazard_config.is_complete():
+            warnings.warn("hazard configuration is not complete; cannot be used to run OpenQuake job")
+
+        target_folder = make_target(target_folder)
+
+        self._sources_file = target_folder / '<path to source file>' if not self._sources_file else self._sources_file
+        self._gmcm_file = target_folder / '<path to gmcm file>' if not self._gmcm_file else self._gmcm_file
+        self.hazard_config.set_source_logic_tree_file(self._sources_file.relative_to(target_folder))
+        self.hazard_config.set_gsim_logic_tree_file(self._gmcm_file.relative_to(target_folder))
+        job_file = target_folder / 'job.ini'
+        with job_file.open('w') as fout:
+            self.hazard_config.write(fout)
+
+        return job_file
+
+
+class OpenquakeModelPshaAdapter(ModelPshaAdapterInterface):
+    """
+    Openquake PSHA adapter.
+    """
+
+    def __init__(self, target: 'NshmModel'):
+        self.model = target
+        self.source_adapter = self.model.source_logic_tree.psha_adapter(OpenquakeSourcePshaAdapter)
+        self.gmcm_adapter = self.model.gmm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
+        self.config_adapter = self.model.hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
+
+    def write_config(
+        self,
+        cache_folder: Union[pathlib.Path, str],
+        target_folder: Union[pathlib.Path, str],
+        source_map: Optional[Dict[str, list[pathlib.Path]]] = None,
+    ) -> pathlib.Path:
+
+        target_folder = make_target(target_folder)
+
+        source_file = self.source_adapter.write_config(cache_folder, target_folder, source_map)
+        gmcm_file = self.gmcm_adapter.write_config(target_folder)
+
+        self.config_adapter.set_source_file(source_file)  # type: ignore
+        self.config_adapter.set_gmcm_file(gmcm_file)  # type: ignore
+
+        job_file = self.config_adapter.write_config(target_folder)
+
+        return job_file

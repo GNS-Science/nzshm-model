@@ -6,7 +6,7 @@ import pytest
 
 import nzshm_model
 from nzshm_model.logic_tree import GMCMLogicTree
-from nzshm_model.psha_adapter.openquake import OpenquakeSimplePshaAdapter
+from nzshm_model.psha_adapter.openquake import OpenquakeSourcePshaAdapter
 
 MODEL = nzshm_model.model.NshmModel.get_model_version('NSHM_v1.0.4')
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
@@ -53,8 +53,7 @@ def test_gmm_logic_tree():
 
 def test_source_logic_tree():
 
-    slt = MODEL.source_logic_tree
-    src_logic_tree = slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+    src_logic_tree = MODEL.source_logic_tree.psha_adapter(provider=OpenquakeSourcePshaAdapter).sources_document()
 
     assert len(src_logic_tree.branch_sets) == 4
 
@@ -78,8 +77,7 @@ def test_source_logic_tree_uncertainty_PUY():
     # uncertainty model attributes (SourceUncertaintyModel)
     # NB for crustal, the first is the ltb.onfault_nrml_id
     #    the 2nd is ltb.distributed_nrml_id
-    slt = MODEL.source_logic_tree
-    src_logic_tree = slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+    src_logic_tree = MODEL.source_logic_tree.psha_adapter(provider=OpenquakeSourcePshaAdapter).sources_document()
 
     BSID = 0
 
@@ -113,8 +111,7 @@ def reverse_path(*args):
 def test_source_logic_tree_uncertainty_SLAB():
     # uncertainty model attributes (SourceUncertaintyModel)
     # NB for slab we have just a distributed model
-    slt = MODEL.source_logic_tree
-    src_logic_tree = slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+    src_logic_tree = MODEL.source_logic_tree.psha_adapter(provider=OpenquakeSourcePshaAdapter).sources_document()
 
     BSID = 3
 
@@ -131,8 +128,7 @@ def test_source_logic_tree_uncertainty_SLAB():
 
 def test_source_logic_tree_uncertainty_CRU():
     # uncertainty model attributes (SourceUncertaintyModel)
-    slt = MODEL.source_logic_tree
-    src_logic_tree = slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
+    src_logic_tree = MODEL.source_logic_tree.psha_adapter(provider=OpenquakeSourcePshaAdapter).sources_document()
 
     BSID = 2
     assert src_logic_tree.branch_sets[BSID].branchSetID == "CRU"
