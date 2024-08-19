@@ -11,7 +11,7 @@ import configparser
 import copy
 import logging
 import pathlib
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Self, Sequence, TextIO, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Self, Sequence, TextIO, Tuple, Union
 
 from nzshm_model.psha_adapter.hazard_config import HazardConfig
 
@@ -116,7 +116,7 @@ class OpenquakeConfig(HazardConfig):
         self.config.set(section, key, value)
         return self
 
-    def get_parameter(self, section: str, key: str) -> Any:
+    def get_parameter(self, section: str, key: str) -> Optional[str]:
         """a getter for arbitrary values
 
         Arguments:
@@ -205,8 +205,9 @@ class OpenquakeConfig(HazardConfig):
         self.set_parameter('site_params', 'site_model_file', str(site_file))
         return self
 
-    def get_site_filepath(self) -> pathlib.Path:
-        return self.get_parameter('site_params', 'site_model_file')
+    def get_site_filepath(self) -> Optional[pathlib.Path]:
+        value = self.get_parameter('site_params', 'site_model_file')
+        return pathlib.Path(value) if value else None
 
     @property
     def locations(self) -> Optional[Tuple['CodedLocation']]:
@@ -225,10 +226,11 @@ class OpenquakeConfig(HazardConfig):
             IMTLs: the intensity measure levels
         """
 
-        if not self.get_parameter('calculation', 'intensity_measure_types_and_levels'):
+        value = self.get_parameter('calculation', 'intensity_measure_types_and_levels')
+        if not value:
             return None
 
-        imls = ast.literal_eval(self.get_parameter('calculation', 'intensity_measure_types_and_levels'))
+        imls = ast.literal_eval(value)
         imts = list(imls.keys())
         imtls = list([float(imtl) for imtl in next(iter(imls.values()))])
 
@@ -299,17 +301,18 @@ class OpenquakeConfig(HazardConfig):
 
         return self
 
-
-    def set_uniform_site_params(self, vs30: float) -> Self:
+    def set_uniform_site_params(self, vs30: float, z1p0: Optional[float] = None, z2p5: Optional[float] = None) -> Self:
         """
         setter for vs30, z1.0, and z2.5 site parameters
 
-        This will set the vs30, z1.0, and z2.5 site parameters for all sites based on a single vs30
-        value. z1.0 is caculated from vs30 using Chiou & Youngs (2014) California model and z2.5
-        is caclualted from vs30 using Campbell, K.W. & Bozorgnia, Y., 2014. NGA-West2 model.
+        This will set the vs30, z1.0, and z2.5 site parameters for all sites. If z1p0 and/or z2p5
+        are not specified they will be calculated from vs30. z1.0 is caculated using Chiou & Youngs
+        (2014) California model and z2.5 is caclualted using Campbell & Bozorgnia 2014 NGA-West2 model.
 
         Arguments:
             vs30: the desired vs30
+            z1pt0: the desired z1.0 depth in m
+            z2pt5: the desired z2.5 depth in km
 
         Returns:
             the OpenquakeConfig instance.
@@ -336,33 +339,41 @@ class OpenquakeConfig(HazardConfig):
 
         sect['reference_vs30_type'] = 'measured'
         sect['reference_vs30_value'] = str(vs30)
-        if 'calculate_z1pt0' in globals():
+
+        if z1p0:
+            sect['reference_depth_to_1pt0km_per_sec'] = str(round(z1p0, 0))
+        elif 'calculate_z1pt0' in globals():
             sect['reference_depth_to_1pt0km_per_sec'] = str(round(calculate_z1pt0(vs30), 0))
+
+        if z2p5:
+            sect['reference_depth_to_2pt5km_per_sec'] = str(round(z2p5, 1))
+        elif 'calculate_z2pt5' in globals():
             sect['reference_depth_to_2pt5km_per_sec'] = str(round(calculate_z2pt5(vs30), 1))
-        else:
-            sect['reference_depth_to_1pt0km_per_sec'] = "<z1.0 value>"
-            sect['reference_depth_to_2pt5km_per_sec'] = "<z2.5 value>"
+
         return self
 
-    def get_uniform_site_params(self) -> Optional[Tuple[float, float, float]]:
+    def get_uniform_site_params(self) -> Tuple[Optional[float], Optional[float], Optional[float]]:
         """
         the uniform site parameters of the model. Returns None if not set
 
         Returns:
             (vs30, z1p0, z2p5) where vs30 is the vs30 applied to all sites, z1p0 is the z1.0 reference
-            depth, and z2p5 is the z2.5 reference depth
+            depth in m, and z2p5 is the z2.5 reference depth in km
         """
 
         if not self.config.has_section('site_params'):
-            return None
+            return None, None, None
 
-        vs30 = self.config.get('site_params', 'reference_vs30_value', fallback=None)
-        z1p0 = self.config.get('site_params', 'reference_depth_to_1pt0km_per_sec', fallback=None)
-        z2p5 = self.config.get('site_params', 'reference_depth_to_2pt5km_per_sec', fallback=None)
-        if vs30:
-            return float(vs30), float(z1p0), float(z2p5)
+        value = self.get_parameter('site_params', 'reference_vs30_value')
+        vs30 = float(value) if value else None
 
-        return None
+        value = self.config.get('site_params', 'reference_depth_to_1pt0km_per_sec', fallback=None)
+        z1p0 = float(value) if value else None
+
+        value = self.config.get('site_params', 'reference_depth_to_2pt5km_per_sec', fallback=None)
+        z2p5 = float(value) if value else None
+
+        return vs30, z1p0, z2p5
 
     def set_gsim_logic_tree_file(self, filepath: Union[str, pathlib.Path]) -> Self:
         """setter for ground motion model file
