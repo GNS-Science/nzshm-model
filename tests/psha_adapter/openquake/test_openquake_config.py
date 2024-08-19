@@ -151,19 +151,19 @@ def test_uniform_site_params(locations):
     config = OpenquakeConfig()
     vs30_in = 100
     config.set_uniform_site_params(vs30_in)
-    vs30, z1p0, z2p5 = config.get_uniform_site_params()
+    vs30, z1pt0, z2pt5 = config.get_uniform_site_params()
     assert vs30 == vs30_in
-    assert z1p0 == pytest.approx(round(oqhc.calculate_z1pt0(vs30_in), 0))
-    assert z2p5 == pytest.approx(round(oqhc.calculate_z2pt5(vs30_in), 1))
+    assert z1pt0 == pytest.approx(round(oqhc.calculate_z1pt0(vs30_in), 0))
+    assert z2pt5 == pytest.approx(round(oqhc.calculate_z2pt5(vs30_in), 1))
 
     # user specified z values
     config = OpenquakeConfig()
-    vs30_in, z1p0_in, z2p5_in = (100, 490.0, 2.2)
-    config.set_uniform_site_params(vs30_in, z1p0_in, z2p5_in)
-    vs30, z1p0, z2p5 = config.get_uniform_site_params()
+    vs30_in, z1pt0_in, z2pt5_in = (100, 490.0, 2.2)
+    config.set_uniform_site_params(vs30_in, z1pt0_in, z2pt5_in)
+    vs30, z1pt0, z2pt5 = config.get_uniform_site_params()
     assert vs30 == vs30_in
-    assert z1p0 == pytest.approx(round(z1p0_in, 0))
-    assert z2p5 == pytest.approx(round(z2p5_in, 1))
+    assert z1pt0 == pytest.approx(round(z1pt0_in, 0))
+    assert z2pt5 == pytest.approx(round(z2pt5_in, 1))
 
 
 @pytest.mark.skipif(not hasattr(oqhc, 'calculate_z1pt0'), reason="requires openquake")
@@ -172,10 +172,10 @@ def test_unset_uniform_site_params(locations):
     vs30_in = 100
     config.set_uniform_site_params(vs30_in)
     config.unset_uniform_site_params()
-    vs30, z1p0, z2p5 = config.get_uniform_site_params()
+    vs30, z1pt0, z2pt5 = config.get_uniform_site_params()
     assert vs30 is None
-    assert z1p0 is None
-    assert z2p5 is None
+    assert z1pt0 is None
+    assert z2pt5 is None
 
 
 def test_site_errors(locations):

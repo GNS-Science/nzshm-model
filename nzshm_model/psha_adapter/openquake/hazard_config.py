@@ -181,7 +181,15 @@ class OpenquakeConfig(HazardConfig):
             the OpenquakeConfig instance.
         """
 
-        if 'vs30' in site_parameters and self.config.has_section('site_params'):
+        if 'vs30' in site_parameters and self.config.has_option('site_params', 'reference_vs30_value'):
+            raise KeyError(
+                "cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions"
+            )
+        if 'z1pt0' in site_parameters and self.config.has_option('site_params', 'reference_depth_to_1pt0km_per_sec'):
+            raise KeyError(
+                "cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions"
+            )
+        if 'z2pt5' in site_parameters and self.config.has_option('site_params', 'reference_depth_to_2pt5km_per_sec'):
             raise KeyError(
                 "cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions"
             )
@@ -303,11 +311,13 @@ class OpenquakeConfig(HazardConfig):
 
         return self
 
-    def set_uniform_site_params(self, vs30: float, z1p0: Optional[float] = None, z2p5: Optional[float] = None) -> Self:
+    def set_uniform_site_params(
+        self, vs30: float, z1pt0: Optional[float] = None, z2pt5: Optional[float] = None
+    ) -> Self:
         """
         setter for vs30, z1.0, and z2.5 site parameters
 
-        This will set the vs30, z1.0, and z2.5 site parameters for all sites. If z1p0 and/or z2p5
+        This will set the vs30, z1.0, and z2.5 site parameters for all sites. If z1pt0 and/or z2pt5
         are not specified they will be calculated from vs30. z1.0 is caculated using Chiou & Youngs
         (2014) California model and z2.5 is caclualted using Campbell & Bozorgnia 2014 NGA-West2 model.
 
@@ -342,13 +352,13 @@ class OpenquakeConfig(HazardConfig):
         sect['reference_vs30_type'] = 'measured'
         sect['reference_vs30_value'] = str(vs30)
 
-        if z1p0:
-            sect['reference_depth_to_1pt0km_per_sec'] = str(round(z1p0, 0))
+        if z1pt0:
+            sect['reference_depth_to_1pt0km_per_sec'] = str(round(z1pt0, 0))
         elif 'calculate_z1pt0' in globals():
             sect['reference_depth_to_1pt0km_per_sec'] = str(round(calculate_z1pt0(vs30), 0))
 
-        if z2p5:
-            sect['reference_depth_to_2pt5km_per_sec'] = str(round(z2p5, 1))
+        if z2pt5:
+            sect['reference_depth_to_2pt5km_per_sec'] = str(round(z2pt5, 1))
         elif 'calculate_z2pt5' in globals():
             sect['reference_depth_to_2pt5km_per_sec'] = str(round(calculate_z2pt5(vs30), 1))
 
@@ -359,8 +369,8 @@ class OpenquakeConfig(HazardConfig):
         the uniform site parameters of the model. Returns None if not set
 
         Returns:
-            (vs30, z1p0, z2p5) where vs30 is the vs30 applied to all sites, z1p0 is the z1.0 reference
-            depth in m, and z2p5 is the z2.5 reference depth in km
+            (vs30, z1pt0, z2pt5) where vs30 is the vs30 applied to all sites, z1pt0 is the z1.0 reference
+            depth in m, and z2pt5 is the z2.5 reference depth in km
         """
 
         if not self.config.has_section('site_params'):
@@ -370,12 +380,12 @@ class OpenquakeConfig(HazardConfig):
         vs30 = float(value) if value else None
 
         value = self.config.get('site_params', 'reference_depth_to_1pt0km_per_sec', fallback=None)
-        z1p0 = float(value) if value else None
+        z1pt0 = float(value) if value else None
 
         value = self.config.get('site_params', 'reference_depth_to_2pt5km_per_sec', fallback=None)
-        z2p5 = float(value) if value else None
+        z2pt5 = float(value) if value else None
 
-        return vs30, z1p0, z2p5
+        return vs30, z1pt0, z2pt5
 
     def set_gsim_logic_tree_file(self, filepath: Union[str, pathlib.Path]) -> Self:
         """setter for ground motion model file
