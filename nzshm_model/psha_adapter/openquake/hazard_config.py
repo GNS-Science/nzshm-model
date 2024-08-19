@@ -11,7 +11,7 @@ import configparser
 import copy
 import logging
 import pathlib
-from typing import TYPE_CHECKING, Dict, List, Optional, Self, Sequence, TextIO, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Sequence, TextIO, Tuple, Union
 
 from nzshm_model.psha_adapter.hazard_config import HazardConfig
 
@@ -87,7 +87,7 @@ class OpenquakeConfig(HazardConfig):
         config.read_file(config_file)
         return OpenquakeConfig(config)
 
-    def set_source_logic_tree_file(self, source_lt_filepath: Union[str, pathlib.Path]) -> Self:
+    def set_source_logic_tree_file(self, source_lt_filepath: Union[str, pathlib.Path]) -> 'OpenquakeConfig':
         """setter for source_model file
 
         Arguments:
@@ -99,7 +99,7 @@ class OpenquakeConfig(HazardConfig):
         self.set_parameter("calculation", "source_model_logic_tree_file", str(source_lt_filepath))
         return self
 
-    def set_parameter(self, section: str, key: str, value: str) -> Self:
+    def set_parameter(self, section: str, key: str, value: str) -> 'OpenquakeConfig':
         """a setter for arbitrary string values
 
         Arguments:
@@ -130,7 +130,7 @@ class OpenquakeConfig(HazardConfig):
             return self.config.get(section, key)
         return None
 
-    def unset_parameter(self, section, key) -> Self:
+    def unset_parameter(self, section, key) -> 'OpenquakeConfig':
         """remove a table entry
 
         Arguments:
@@ -144,7 +144,7 @@ class OpenquakeConfig(HazardConfig):
             self.config.remove_option(section, key)
         return self
 
-    def set_maximum_distance(self, value: dict[str, int]) -> Self:
+    def set_maximum_distance(self, value: dict[str, int]) -> 'OpenquakeConfig':
         """set the maximum distance, which is a dictionary
 
         e.g. `{'Active Shallow Crust': 300.0, 'Volcanic': 300, 'Subduction Interface': 400, 'default': 400}`
@@ -164,7 +164,7 @@ class OpenquakeConfig(HazardConfig):
         self.config.set("calculation", "maximum_distance", str(value_new))
         return self
 
-    def set_sites(self, locations: Sequence['CodedLocation'], **site_parameters) -> Self:
+    def set_sites(self, locations: Sequence['CodedLocation'], **site_parameters) -> 'OpenquakeConfig':
         """setter for site_model file
 
         If a vs30 values are specified, but a uniform vs30 has already been set a ValueError will be raised.
@@ -205,7 +205,7 @@ class OpenquakeConfig(HazardConfig):
         self._locations = tuple(locations)
         return self
 
-    def set_site_filepath(self, site_file: Union[str, pathlib.Path]) -> Self:
+    def set_site_filepath(self, site_file: Union[str, pathlib.Path]) -> 'OpenquakeConfig':
         """
         sets the path to the site_model_file
         """
@@ -245,21 +245,21 @@ class OpenquakeConfig(HazardConfig):
         return imts, imtls
 
     # TODO disagg configs might warrant a separate class, and separate defaults ??
-    def set_disagg_site_model(self) -> Self:
+    def set_disagg_site_model(self) -> 'OpenquakeConfig':
         raise NotImplementedError()
         # self.set_parameter('site_params', 'site_model_file', 'site.csv')
         return self
 
-    def set_disagg_site(self, lat, lon) -> Self:
+    def set_disagg_site(self, lat, lon) -> 'OpenquakeConfig':
         raise NotImplementedError()
         # self.set_parameter('site_params', 'sites', f'{lon} {lat}')
         return self
 
-    def set_iml_disagg(self, imt, level) -> Self:
+    def set_iml_disagg(self, imt, level) -> 'OpenquakeConfig':
         self.set_parameter('disagg', 'iml_disagg', str({imt: level}))
         return self
 
-    def clear_iml(self) -> Self:
+    def clear_iml(self) -> 'OpenquakeConfig':
         """remove intensity_measure_types_and_levels
 
         Returns:
@@ -268,7 +268,7 @@ class OpenquakeConfig(HazardConfig):
         self.unset_parameter('calculation', 'intensity_measure_types_and_levels')
         return self
 
-    def set_iml(self, measures: List[str], levels: List[float]) -> Self:
+    def set_iml(self, measures: List[str], levels: List[float]) -> 'OpenquakeConfig':
         """setter for intensity_measure_types_and_levels
 
         sets the same levels for all intensity measures.
@@ -291,7 +291,7 @@ class OpenquakeConfig(HazardConfig):
         self.config['calculation']['intensity_measure_types_and_levels'] = new_iml
         return self
 
-    def unset_uniform_site_params(self) -> Self:
+    def unset_uniform_site_params(self) -> 'OpenquakeConfig':
         """
         remove the uniform site parameters from the configuration. This will unset the values for
         'reference_vs30_type', 'reference_vs30_value', 'reference_depth_to_1pt0km_per_sec', and
@@ -313,7 +313,7 @@ class OpenquakeConfig(HazardConfig):
 
     def set_uniform_site_params(
         self, vs30: float, z1pt0: Optional[float] = None, z2pt5: Optional[float] = None
-    ) -> Self:
+    ) -> 'OpenquakeConfig':
         """
         setter for vs30, z1.0, and z2.5 site parameters
 
@@ -387,7 +387,7 @@ class OpenquakeConfig(HazardConfig):
 
         return vs30, z1pt0, z2pt5
 
-    def set_gsim_logic_tree_file(self, filepath: Union[str, pathlib.Path]) -> Self:
+    def set_gsim_logic_tree_file(self, filepath: Union[str, pathlib.Path]) -> 'OpenquakeConfig':
         """setter for ground motion model file
 
         Arguments:
@@ -399,7 +399,7 @@ class OpenquakeConfig(HazardConfig):
         self.set_parameter('calculation', 'gsim_logic_tree_file', str(filepath))
         return self
 
-    def set_description(self, description) -> Self:
+    def set_description(self, description) -> 'OpenquakeConfig':
         self.set_parameter('general', 'description', description)
         return self
 

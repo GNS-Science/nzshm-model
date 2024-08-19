@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, Optional, Self, Sequence, Type
+from typing import TYPE_CHECKING, Dict, Optional, Sequence, Type
 
 from nzshm_model.psha_adapter import ConfigPshaAdapterInterface
 
@@ -13,7 +13,7 @@ class HazardConfig(ABC):
         pass
 
     @abstractmethod
-    def set_sites(self, locations: Sequence['CodedLocation'], **kwargs) -> Self:
+    def set_sites(self, locations: Sequence['CodedLocation'], **kwargs) -> 'HazardConfig':
         pass
 
     def psha_adapter(
