@@ -355,7 +355,8 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
             }
             if self.hazard_config.site_parameters:
                 sites.update(self.hazard_config.site_parameters)
-            site_writer.writerows(sites.items())
+            rows = [[param[i] for param in sites.values()] for i in range(len(locations))]
+            site_writer.writerows(rows)
 
         self._site_file = site_file
 
