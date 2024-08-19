@@ -2143,6 +2143,20 @@ files = [
 ]
 
 [[package]]
+name = "nzshm-common"
+version = "0.8.1"
+description = "A small pure python library for shared NZ NSHM data like locations."
+optional = false
+python-versions = "<4.0.0,>=3.8"
+files = [
+    {file = "nzshm_common-0.8.1-py3-none-any.whl", hash = "sha256:f010b0684e1eddc2fef4cd583555e8448efe5351bcb13f9dba5a6f017b6391b8"},
+    {file = "nzshm_common-0.8.1.tar.gz", hash = "sha256:883884ce790477db0db67430f8cdbc2eb46429df22042baf13d3af954a8e54f8"},
+]
+
+[package.extras]
+geometry = ["shapely (>=2.0.2,<3.0.0)"]
+
+[[package]]
 name = "openquake-engine"
 version = "3.20.1"
 description = "Computes earthquake hazard and risk."
@@ -3436,4 +3450,4 @@ toshi = ["boto3", "nshm-toshi-client"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4.0"
-content-hash = "7176e5fa98b0d8b74f2150065ee7e26a7db57778d24e752d963c7899e6a894ab"
+content-hash = "94e78dbe8a0c97679cedfde63386dd59d9c5956c3e0d16326df417367dae4d94"

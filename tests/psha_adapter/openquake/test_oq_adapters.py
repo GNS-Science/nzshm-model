@@ -26,18 +26,30 @@ def test_gmcm_adapter(tmp_path, current_model):
     assert gmcm_filepath.exists()
 
 
-def test_config_adapter(tmp_path):
+def test_config_adapter(tmp_path, locations):
     target_folder = tmp_path / 'target'
     hazard_config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    hazard_config.set_sites(locations)
     config_adapter = hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
     job_filepath = config_adapter.write_config(target_folder)
+    assert (target_folder / 'sites.csv').exists()
     assert job_filepath.exists()
 
 
+def test_config_sitefile(tmp_path, locations):
+    site_file = tmp_path / 'sites1.csv'
+    hazard_config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    hazard_config.set_sites(locations)
+    config_adapter = hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
+    config_adapter.write_site_file(site_file)
+    assert site_file.exists()
+
+
 @pytest.mark.filterwarnings("default")
-def test_write_config_warn(tmp_path):
+def test_write_config_warn(tmp_path, locations):
     target_folder = tmp_path / 'target'
     hazard_config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    hazard_config.set_sites(locations)
     config_adapter = hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
     with warnings.catch_warnings(record=True) as wngs:
         config_adapter.write_config(target_folder)
