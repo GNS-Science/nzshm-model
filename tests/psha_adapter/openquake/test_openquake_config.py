@@ -157,6 +157,14 @@ def test_uniform_site_params(locations):
     assert z1p0 == pytest.approx(round(oqhc.calculate_z1pt0(vs30_in), 0))
     assert z2p5 == pytest.approx(round(oqhc.calculate_z2pt5(vs30_in), 1))
 
+@pytest.mark.skipif(not hasattr(oqhc, 'calculate_z1pt0'), reason="requires openquake")
+def test_unset_uniform_site_params(locations):
+    config = OpenquakeConfig()
+    vs30_in = 100
+    config.set_uniform_site_params(vs30_in)
+    config.unset_uniform_site_params()
+    assert not config.get_uniform_site_params()
+
 
 def test_site_errors(locations):
     config = OpenquakeConfig()

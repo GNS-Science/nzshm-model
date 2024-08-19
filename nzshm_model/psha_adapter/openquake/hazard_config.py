@@ -279,6 +279,27 @@ class OpenquakeConfig(HazardConfig):
         self.config['calculation']['intensity_measure_types_and_levels'] = new_iml
         return self
 
+    def unset_uniform_site_params(self) -> Self:
+        """
+        remove the uniform site parameters from the configuration. This will unset the values for
+        'reference_vs30_type', 'reference_vs30_value', 'reference_depth_to_1pt0km_per_sec', and
+        'reference_depth_to_2pt5km_per_sec' in the 'site_params' section
+        """
+        if not self.config.has_section('site_params'):
+            return self
+
+        sect = self.config['site_params']
+        for setting in [
+            'reference_vs30_type',
+            'reference_vs30_value',
+            'reference_depth_to_1pt0km_per_sec',
+            'reference_depth_to_2pt5km_per_sec',
+        ]:
+            sect.pop(setting, None)
+
+        return self
+
+
     def set_uniform_site_params(self, vs30: float) -> Self:
         """
         setter for vs30, z1.0, and z2.5 site parameters
@@ -307,20 +328,11 @@ class OpenquakeConfig(HazardConfig):
         if (site_parameters := (self.site_parameters)) and 'vs30' in site_parameters:
             raise KeyError("vs30 is already set as a site specific parameter")
 
+        # clean up old settings
+        self.unset_uniform_site_params()
         if not self.config.has_section('site_params'):
             self.config.add_section('site_params')
         sect = self.config['site_params']
-        # clean up old settings
-        for setting in [
-            'reference_vs30_type',
-            'reference_vs30_value',
-            'reference_depth_to_1pt0km_per_sec',
-            'reference_depth_to_2pt5km_per_sec',
-        ]:
-            sect.pop(setting, None)
-
-        if vs30 == 0:
-            return self
 
         sect['reference_vs30_type'] = 'measured'
         sect['reference_vs30_value'] = str(vs30)
@@ -341,9 +353,12 @@ class OpenquakeConfig(HazardConfig):
             depth, and z2p5 is the z2.5 reference depth
         """
 
-        vs30 = self.config.get('site_params', 'reference_vs30_value')
-        z1p0 = self.config.get('site_params', 'reference_depth_to_1pt0km_per_sec')
-        z2p5 = self.config.get('site_params', 'reference_depth_to_2pt5km_per_sec')
+        if not self.config.has_section('site_params'):
+            return None
+
+        vs30 = self.config.get('site_params', 'reference_vs30_value', fallback=None)
+        z1p0 = self.config.get('site_params', 'reference_depth_to_1pt0km_per_sec', fallback=None)
+        z2p5 = self.config.get('site_params', 'reference_depth_to_2pt5km_per_sec', fallback=None)
         if vs30:
             return float(vs30), float(z1p0), float(z2p5)
 
