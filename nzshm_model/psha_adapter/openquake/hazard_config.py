@@ -278,6 +278,8 @@ class OpenquakeConfig(HazardConfig):
             new_iml += f'"{m}": {str(levels)}, '
         new_iml += '}'
 
+        if not self.config.has_section('calculation'):
+            self.config.add_section('calculation')
         self.config['calculation']['intensity_measure_types_and_levels'] = new_iml
         return self
 
