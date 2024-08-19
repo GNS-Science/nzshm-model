@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.12.1] 2024-08-20
+
+### Added 
+ - support for sites in `OpenquakeConfig` and `OpenquakeConfigPshaAdapter`
+ - usage documentation for `OpenquakeConfig` and adapter classes
+
+### Changed
+ - flexibility in defining uniform site parameters
+
 ## [0.12.0] 2024-08-14
 
 ### Added
