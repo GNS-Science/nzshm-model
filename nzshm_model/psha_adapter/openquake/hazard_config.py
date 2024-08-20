@@ -78,10 +78,10 @@ class OpenquakeConfig(HazardConfig):
         """produce a OpenquakeConfig from a file-like object
 
         Arguments:
-            config_file: an file-like object with valid .ini contents.
+            config_file: An file-like object with valid .ini contents.
 
         Returns:
-            a new OpenquakeConfig instance.
+            A new OpenquakeConfig instance.
         """
         config = configparser.ConfigParser()
         config.read_file(config_file)
@@ -91,10 +91,10 @@ class OpenquakeConfig(HazardConfig):
         """setter for source_model file
 
         Arguments:
-            source_lt_filepath: the path to the source model file.
+            source_lt_filepath: The path to the source model file.
 
         Returns:
-            the OpenquakeConfig instance.
+            The OpenquakeConfig instance.
         """
         self.set_parameter("calculation", "source_model_logic_tree_file", str(source_lt_filepath))
         return self
@@ -103,12 +103,12 @@ class OpenquakeConfig(HazardConfig):
         """a setter for arbitrary string values
 
         Arguments:
-            section: the config table name eg.[site_params]
-            key: the key name
-            value: the value to set
+            section: The config table name eg.[site_params].
+            key: The key name.
+            value: The value to set.
 
         Returns:
-            the OpenquakeConfig instance.
+            The OpenquakeConfig instance.
         """
         assert isinstance(value, str)
         if not self.config.has_section(section):
@@ -117,14 +117,14 @@ class OpenquakeConfig(HazardConfig):
         return self
 
     def get_parameter(self, section: str, key: str) -> Optional[str]:
-        """a getter for arbitrary values
+        """A getter for arbitrary values.
 
         Arguments:
-            section: the config table name eg.[site_params]
-            key: the key name
+            section: The config table name eg.[site_params].
+            key: The key name.
 
         Returns:
-            the value for section and key or None if the entry does not exist
+            The value for section and key or None if the entry does not exist.
         """
         if self.config.has_option(section, key):
             return self.config.get(section, key)
@@ -134,26 +134,26 @@ class OpenquakeConfig(HazardConfig):
         """remove a table entry
 
         Arguments:
-            section: the config table name eg.[site_params]
-            key: the key name
+            section: The config table name eg.[site_params].
+            key: The key name.
 
         Returns:
-            the OpenquakeConfig instance.
+            The OpenquakeConfig instance.
         """
         if section in self.config:
             self.config.remove_option(section, key)
         return self
 
     def set_maximum_distance(self, value: dict[str, int]) -> 'OpenquakeConfig':
-        """set the maximum distance, which is a dictionary
+        """Set the maximum distance, which is a dictionary
 
         e.g. `{'Active Shallow Crust': 300.0, 'Volcanic': 300, 'Subduction Interface': 400, 'default': 400}`
 
         Arguments:
-            value: mapping of trt_names and distances
+            value: Mapping of trt_names and distances.
 
         Returns:
-            the OpenquakeConfig instance.
+            The OpenquakeConfig instance.
         """
         value_new = {}
         for trt, dist in value.items():
@@ -165,33 +165,33 @@ class OpenquakeConfig(HazardConfig):
         return self
 
     def set_sites(self, locations: Sequence['CodedLocation'], **site_parameters) -> 'OpenquakeConfig':
-        """setter for site_model file
+        """Setter for site_model file.
 
         If a vs30 values are specified, but a uniform vs30 has already been set a ValueError will be raised.
 
         Arguments:
-            locations: the surface locations of the sites
-            kwargs: additional site parameters to include in the OpenQuake site file.
-                    agrument names will be used in the site file header. all entries
-                    must be a sequence of the same length as locations.  see
+            locations: The surface locations of the sites.
+            kwargs: Additional site parameters to include in the OpenQuake site file.
+                    Argument names will be used in the site file header. All entries
+                    must be a sequence of the same length as locations.  See
                     https://docs.openquake.org/oq-engine/manual/latest/user-guide/inputs/site-model-inputs.html
                     for a list of valid site parameters.
 
         Returns:
-            the OpenquakeConfig instance.
+            The OpenquakeConfig instance.
         """
 
         if 'vs30' in site_parameters and self.config.has_option('site_params', 'reference_vs30_value'):
             raise KeyError(
-                "cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions"
+                "Cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions."
             )
         if 'z1pt0' in site_parameters and self.config.has_option('site_params', 'reference_depth_to_1pt0km_per_sec'):
             raise KeyError(
-                "cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions"
+                "Cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions."
             )
         if 'z2pt5' in site_parameters and self.config.has_option('site_params', 'reference_depth_to_2pt5km_per_sec'):
             raise KeyError(
-                "cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions"
+                "Cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions."
             )
 
         self._site_parameters = {}
@@ -207,7 +207,7 @@ class OpenquakeConfig(HazardConfig):
 
     def set_site_filepath(self, site_file: Union[str, pathlib.Path]) -> 'OpenquakeConfig':
         """
-        sets the path to the site_model_file
+        Set the path to the site_model_file.
         """
 
         self.set_parameter('site_params', 'site_model_file', str(site_file))
@@ -227,11 +227,11 @@ class OpenquakeConfig(HazardConfig):
 
     def get_iml(self) -> Optional[Tuple[List[str], List[float]]]:
         """
-        Get the intensity measure types and levels. Returns None if not set
+        Get the intensity measure types and levels. Returns None if not set.
 
         Returns:
-            IMTs: the intensity measure types
-            IMTLs: the intensity measure levels
+            IMTs: The intensity measure types.
+            IMTLs: The intensity measure levels.
         """
 
         value = self.get_parameter('calculation', 'intensity_measure_types_and_levels')
@@ -260,25 +260,25 @@ class OpenquakeConfig(HazardConfig):
         return self
 
     def clear_iml(self) -> 'OpenquakeConfig':
-        """remove intensity_measure_types_and_levels
+        """Remove intensity_measure_types_and_levels.
 
         Returns:
-            the OpenquakeConfig instance.
+            The OpenquakeConfig instance.
         """
         self.unset_parameter('calculation', 'intensity_measure_types_and_levels')
         return self
 
     def set_iml(self, measures: List[str], levels: List[float]) -> 'OpenquakeConfig':
-        """setter for intensity_measure_types_and_levels
+        """Setter for intensity_measure_types_and_levels
 
-        sets the same levels for all intensity measures.
+        Sets the same levels for all intensity measures.
 
         Arguments:
-            measures: the IML types e.g `['PGA', 'SA(0.5)', ...]
-            levels: the IML levels as floats  e.g. [0.01, 0.02, 0.04, ...]
+            measures: The IML types e.g `['PGA', 'SA(0.5)', ...].
+            levels: The IML levels as floats  e.g. [0.01, 0.02, 0.04, ...].
 
         Returns:
-            the OpenquakeConfig instance.
+            The OpenquakeConfig instance.
         """
         self.clear_iml()
         new_iml = '{'
@@ -293,9 +293,9 @@ class OpenquakeConfig(HazardConfig):
 
     def unset_uniform_site_params(self) -> 'OpenquakeConfig':
         """
-        remove the uniform site parameters from the configuration. This will unset the values for
+        Remove the uniform site parameters from the configuration. This will unset the values for
         'reference_vs30_type', 'reference_vs30_value', 'reference_depth_to_1pt0km_per_sec', and
-        'reference_depth_to_2pt5km_per_sec' in the 'site_params' section
+        'reference_depth_to_2pt5km_per_sec' in the 'site_params' section.
         """
         if not self.config.has_section('site_params'):
             return self
@@ -315,7 +315,7 @@ class OpenquakeConfig(HazardConfig):
         self, vs30: float, z1pt0: Optional[float] = None, z2pt5: Optional[float] = None
     ) -> 'OpenquakeConfig':
         """
-        setter for vs30, z1.0, and z2.5 site parameters
+        Setter for vs30, z1.0, and z2.5 site parameters.
 
         This will set the vs30, z1.0, and z2.5 site parameters for all sites. If z1pt0 and/or z2pt5
         are not specified they will be calculated from vs30. z1.0 is caculated using Chiou & Youngs
@@ -327,7 +327,7 @@ class OpenquakeConfig(HazardConfig):
             z2pt5: the desired z2.5 depth in km
 
         Returns:
-            the OpenquakeConfig instance.
+            The OpenquakeConfig instance.
 
         References:
             Campbell, K.W. & Bozorgnia, Y., 2014.
@@ -366,11 +366,11 @@ class OpenquakeConfig(HazardConfig):
 
     def get_uniform_site_params(self) -> Tuple[Optional[float], Optional[float], Optional[float]]:
         """
-        the uniform site parameters of the model. Returns None if not set
+        The uniform site parameters of the model. Returns None if not set.
 
         Returns:
             (vs30, z1pt0, z2pt5) where vs30 is the vs30 applied to all sites, z1pt0 is the z1.0 reference
-            depth in m, and z2pt5 is the z2.5 reference depth in km
+            depth in m, and z2pt5 is the z2.5 reference depth in km.
         """
 
         if not self.config.has_section('site_params'):
@@ -388,13 +388,13 @@ class OpenquakeConfig(HazardConfig):
         return vs30, z1pt0, z2pt5
 
     def set_gsim_logic_tree_file(self, filepath: Union[str, pathlib.Path]) -> 'OpenquakeConfig':
-        """setter for ground motion model file
+        """Setter for ground motion model file.
 
         Arguments:
-            filepath: the path to the ground motion model file.
+            filepath: The path to the ground motion model file.
 
         Returns:
-            the OpenquakeConfig instance.
+            The OpenquakeConfig instance.
         """
         self.set_parameter('calculation', 'gsim_logic_tree_file', str(filepath))
         return self
@@ -404,15 +404,15 @@ class OpenquakeConfig(HazardConfig):
         return self
 
     def write(self, tofile: TextIO) -> None:
-        """write the OpenquakeConfig to a file-like object
+        """Write the OpenquakeConfig to a file-like object.
 
         Arguments:
-            tofile: a file-like object
+            tofile: A file-like object.
         """
         self.config.write(tofile)
 
     def compatible_hash_digest(self) -> str:
-        """get a shake_256 hash digest for the compatablity config
+        """Get a shake_256 hash digest for the compatablity config.
 
         We want to ensure that, for this config:
 
@@ -420,7 +420,7 @@ class OpenquakeConfig(HazardConfig):
          - entries that will not break calcluation compatibility are ignored
 
         Returns:
-            the 12 character hash_digest.
+            The 12 character hash_digest.
         """
         check_invariants(self.config)
         return compatible_hash_digest(self.config)
