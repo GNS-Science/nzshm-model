@@ -1,3 +1,4 @@
+import csv
 import logging
 import pathlib
 import warnings
@@ -318,6 +319,7 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
         self.hazard_config = target
         self._sources_file: Optional[pathlib.Path] = None
         self._gmcm_file: Optional[pathlib.Path] = None
+        self._site_file: Optional[pathlib.Path] = None
 
     def set_source_file(self, sources_file: Union[pathlib.Path, str]):
         self._sources_file = pathlib.Path(sources_file)
@@ -325,18 +327,58 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
     def set_gmcm_file(self, gmcm_file: Union[pathlib.Path, str]):
         self._gmcm_file = pathlib.Path(gmcm_file)
 
+    def write_site_file(self, site_file: Union[pathlib.Path, str]):
+        """
+        writes the OpenQuake site_model_file
+
+        Arguments:
+            site_file: path to the site_model_file
+        """
+
+        site_file = pathlib.Path(site_file)
+        locations = self.hazard_config.locations
+        site_params = self.hazard_config.site_parameters
+
+        if not locations:
+            raise Exception("locations not yet set in configuration")
+
+        with site_file.open('w') as fout:
+            site_writer = csv.writer(fout)
+            header = ['lon', 'lat']
+            if site_params:
+                header += list(site_params.keys())
+            site_writer.writerow(header)
+
+            sites: Dict[str, tuple] = {
+                'lon': tuple(loc.lon for loc in locations),
+                'lat': tuple(loc.lat for loc in locations),
+            }
+            if self.hazard_config.site_parameters:
+                sites.update(self.hazard_config.site_parameters)
+            rows = [[param[i] for param in sites.values()] for i in range(len(locations))]
+            site_writer.writerows(rows)
+
+        self._site_file = site_file
+
     def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+
+        target_folder = make_target(target_folder)
+
+        if self.hazard_config.locations:
+            site_file = target_folder / 'sites.csv'
+            self.write_site_file(site_file)
+            self.hazard_config.set_site_filepath(site_file.relative_to(target_folder))
+        else:
+            site_file = target_folder / '<path to site file>'
 
         # check that required settings not included in default exist
         if not self.hazard_config.is_complete():
             warnings.warn("hazard configuration is not complete; cannot be used to run OpenQuake job")
 
-        target_folder = make_target(target_folder)
-
-        self._sources_file = target_folder / '<path to source file>' if not self._sources_file else self._sources_file
-        self._gmcm_file = target_folder / '<path to gmcm file>' if not self._gmcm_file else self._gmcm_file
-        self.hazard_config.set_source_logic_tree_file(self._sources_file.relative_to(target_folder))
-        self.hazard_config.set_gsim_logic_tree_file(self._gmcm_file.relative_to(target_folder))
+        sources_file = target_folder / '<path to source file>' if not self._sources_file else self._sources_file
+        gmcm_file = target_folder / '<path to gmcm file>' if not self._gmcm_file else self._gmcm_file
+        self.hazard_config.set_source_logic_tree_file(sources_file.relative_to(target_folder))
+        self.hazard_config.set_gsim_logic_tree_file(gmcm_file.relative_to(target_folder))
         job_file = target_folder / 'job.ini'
         with job_file.open('w') as fout:
             self.hazard_config.write(fout)

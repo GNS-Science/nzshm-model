@@ -7,6 +7,7 @@ import io
 # import tomli
 import pytest
 
+import nzshm_model.psha_adapter.openquake.hazard_config as oqhc
 from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import (
     DEFAULT_HAZARD_CONFIG,
@@ -15,52 +16,6 @@ from nzshm_model.psha_adapter.openquake.hazard_config_compat import (
     compatible_hash_digest,
 )
 
-_4_sites_levels = [
-    0.01,
-    0.02,
-    0.04,
-    0.06,
-    0.08,
-    0.1,
-    0.2,
-    0.3,
-    0.4,
-    0.5,
-    0.6,
-    0.7,
-    0.8,
-    0.9,
-    1.0,
-    1.2,
-    1.4,
-    1.6,
-    1.8,
-    2.0,
-    2.2,
-    2.4,
-    2.6,
-    2.8,
-    3.0,
-    3.5,
-    4,
-    4.5,
-    5.0,
-]
-_4_sites_measures = [
-    'PGA',
-    "SA(0.1)",
-    "SA(0.2)",
-    "SA(0.3)",
-    "SA(0.4)",
-    "SA(0.5)",
-    "SA(0.7)",
-    "SA(1.0)",
-    "SA(1.5)",
-    "SA(2.0)",
-    "SA(3.0)",
-    "SA(4.0)",
-    "SA(5.0)",
-]
 measures = ['PGA', 'SA(0.5)']
 
 min_expected = """
@@ -101,34 +56,34 @@ individual_curves = true
 """  # noqa
 
 
-def test_config_from_runzi():
+def test_config_from_runzi(iml):
     config = (
         OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
         .set_description("hello world")
-        .set_sites("./sites.csv")
+        .set_site_filepath("./sites.csv")
         .set_source_logic_tree_file("./hello.slt")
         .set_gsim_logic_tree_file("./gsim_model.xml")
-        .set_vs30(750)
+        .set_uniform_site_params(750)
     )
-    config.set_iml(_4_sites_measures, _4_sites_levels)
+    config.set_iml(iml['imts'], iml['imtls'])
 
     assert config.config['general']['description'] == "hello world"
 
 
-def test_get():
+def test_get(iml):
     config = (
         OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
         .set_description("hello world")
-        .set_sites("./sites.csv")
+        .set_site_filepath("./sites.csv")
         .set_source_logic_tree_file("./hello.slt")
         .set_gsim_logic_tree_file("./gsim_model.xml")
-        .set_vs30(750)
+        .set_uniform_site_params(750)
     )
-    config.set_iml(_4_sites_measures, _4_sites_levels)
+    config.set_iml(iml['imts'], iml['imtls'])
 
-    assert config.get_iml() == (_4_sites_measures, _4_sites_levels)
-    assert config.get_sites() == "./sites.csv"
-    assert config.get_vs30() == 750
+    assert config.get_iml() == (iml['imts'], iml['imtls'])
+    assert str(config.get_site_filepath()) == "sites.csv"
+    assert config.get_uniform_site_params()[0] == 750
     assert config.set_parameter("foo", "bar", "foobar")
     assert config.get_parameter("foo", "bar") == "foobar"
 
@@ -136,18 +91,18 @@ def test_get():
     assert not config.get_iml()
 
 
-def test_configuration_round_trip():
+def test_configuration_round_trip(iml):
 
     nc = (
         OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
-        .set_sites('./sites.csv')
+        .set_site_filepath('./sites.csv')
         .set_parameter("general", "ps_grid_spacing", "20")
     )
 
     # levels1 = 'logscale(0.005, 4.00, 30)'
 
-    nc.set_iml(_4_sites_measures, _4_sites_levels)
-    nc.set_vs30(250)
+    nc.set_iml(iml['imts'], iml['imtls'])
+    nc.set_uniform_site_params(250)
     nc.set_parameter("erf", "rupture_mesh_spacing", "42")
 
     out = io.StringIO()  # aother fake file
@@ -190,6 +145,68 @@ def example_config():
     yield config
 
 
+@pytest.mark.skipif(not hasattr(oqhc, 'calculate_z1pt0'), reason="requires openquake")
+def test_uniform_site_params(locations):
+    # default z values
+    config = OpenquakeConfig()
+    vs30_in = 100
+    config.set_uniform_site_params(vs30_in)
+    vs30, z1pt0, z2pt5 = config.get_uniform_site_params()
+    assert vs30 == vs30_in
+    assert z1pt0 == pytest.approx(round(oqhc.calculate_z1pt0(vs30_in), 0))
+    assert z2pt5 == pytest.approx(round(oqhc.calculate_z2pt5(vs30_in), 1))
+
+    # user specified z values
+    config = OpenquakeConfig()
+    vs30_in, z1pt0_in, z2pt5_in = (100, 490.0, 2.2)
+    config.set_uniform_site_params(vs30_in, z1pt0_in, z2pt5_in)
+    vs30, z1pt0, z2pt5 = config.get_uniform_site_params()
+    assert vs30 == vs30_in
+    assert z1pt0 == pytest.approx(round(z1pt0_in, 0))
+    assert z2pt5 == pytest.approx(round(z2pt5_in, 1))
+
+
+@pytest.mark.skipif(not hasattr(oqhc, 'calculate_z1pt0'), reason="requires openquake")
+def test_unset_uniform_site_params(locations):
+    config = OpenquakeConfig()
+    vs30_in = 100
+    config.set_uniform_site_params(vs30_in)
+    config.unset_uniform_site_params()
+    vs30, z1pt0, z2pt5 = config.get_uniform_site_params()
+    assert vs30 is None
+    assert z1pt0 is None
+    assert z2pt5 is None
+
+
+def test_site_errors(locations):
+    config = OpenquakeConfig()
+    n_locs = len(locations)
+
+    # vs30 values must be Sequence type
+    with pytest.raises(TypeError):
+        config.set_sites(locations, vs30=set(range(n_locs)))
+
+    # vs30 must have same lenth as locations
+    with pytest.raises(ValueError):
+        config.set_sites(locations, vs30=[100] * (n_locs + 1))
+
+    # cannot set site specific vs30 if uniform is specified
+    config = OpenquakeConfig()
+    config.set_uniform_site_params(100)
+
+    assert config.set_sites(locations)
+
+    vs30 = list(range(n_locs))
+    with pytest.raises(KeyError):
+        config.set_sites(locations, vs30=vs30)
+
+    # cannot set uniform vs30 if site specific
+    config = OpenquakeConfig()
+    config.set_sites(locations, vs30=vs30)
+    with pytest.raises(KeyError):
+        config.set_uniform_site_params(100)
+
+
 class TestConfigCompatability:
     def test_compatible_check_invariants(self, example_config):
         assert check_invariants(example_config.config)
@@ -205,13 +222,13 @@ class TestConfigCompatability:
             check_invariants(example_config.config)
 
     def test_compatible_config(self, example_config):
-        example_config.set_sites('./sites.csv')
+        example_config.set_site_filepath('./sites.csv')
         compat = compatible_config(example_config.config)
         assert compat.get('site_params', 'sites_csv', fallback=None) is None
         assert compat.get('site_params', 'site_model_file', fallback=None) is None
 
     def test_compatible_hash_digest(self, example_config):
-        example_config.set_sites('./sites.csv')
+        example_config.set_site_filepath('./sites.csv')
         digest = compatible_hash_digest(example_config.config)
         print(digest)
         assert digest == "06f026df641e"

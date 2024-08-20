@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nzshm-model"
-version = "0.12.0"
+version = "0.12.1"
 description = "The logic tree definitions, final configurations, and versioning of the New Zealand | Aotearoa National Seismic Hazard Model"
 authors = ["Chris DiCaprio <c.dicaprio@gns.cri.nz>", "Chris Chamberlain <chrisbc@artisan.co.nz>"]
 license = "AGPL3"
@@ -26,6 +26,7 @@ fiona = {version = "^1.9.6", optional = true}
 nshm-toshi-client = {version = "^1.0.1", extras = ["toshi"], optional = true}
 boto3 = {version = "^1.26.28", optional = true}
 click = {version = "^8.1.3", optional = true}
+nzshm-common = "^0.8.1"
 
 [tool.poetry.extras]
 toshi = [
