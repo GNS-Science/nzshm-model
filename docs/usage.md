@@ -36,6 +36,8 @@ SourceBranch(weight=0.00286782725429677, values=[dmgeologic, tdTrue, bN[1.089, 4
 
 ## OpenQuake Configuration
 The `OpenquakeConfig` class is used to define the calculation configuration for an OpenQuake job. It is essentially a wrapper around the OpenQuake `job.ini` file with some helper methods.
+
+Site parameters vs30, z1.0, and z2.5 can be made uniform (i.e. they apply to all sites) or on a site specific basis. An exception will be raised if you attempt to set site specific properties after setting uniform properties or vice-versa. When setting uniform properties, if z1.0 or z2.5 arguments are omitted, they will be calculated using Chiou & Youngs 2014 California model and Campbell & Bozorgnia 2014 NGA-West2 model, respectively.
 ```python3
 from nzshm_common.location.location import get_locations
 from nzshm_model.psha_adapter.openquake import DEFAULT_HAZARD_CONFIG, OpenquakeConfig
