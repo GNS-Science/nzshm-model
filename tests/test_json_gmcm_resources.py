@@ -13,7 +13,7 @@ def branchset_names():
 
 
 @pytest.mark.parametrize("model_version", all_model_versions())
-def test_json_gmcm(model_version):
+def test_lt_json(model_version):
     model = get_model_version(model_version)
     gmcm_from_xml = model.gmm_logic_tree_from_xml
     gmcm_from_json = model.gmm_logic_tree
