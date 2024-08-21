@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 
 import nzshm_model.psha_adapter.openquake.simple_nrml
-from nzshm_model import NshmModel, get_model_version
 from nzshm_model.logic_tree import GMCMLogicTree, SourceLogicTree
 from nzshm_model.psha_adapter.openquake import OpenquakeGMCMPshaAdapter, OpenquakeModelPshaAdapter
 

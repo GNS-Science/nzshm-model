@@ -2,20 +2,15 @@
 NshmModel class describes a complete National Seismic Hazard Model.
 """
 import json
-import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, Type, Union, Any
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Type, Union
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.model_versions import versions
 from nzshm_model.psha_adapter import ModelPshaAdapterInterface
-from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeGMCMPshaAdapter
 
 if TYPE_CHECKING:
-    # from nzshm_model import psha_adapter
-    from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree as OQLogicTree
-
     from .psha_adapter.hazard_config import HazardConfig
 
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
@@ -50,7 +45,6 @@ class NshmModel:
         self.hazard_config = hazard_config
         self.source_logic_tree = source_logic_tree
         self.gmm_logic_tree = gmcm_logic_tree
-
 
     @classmethod
     def from_files(
