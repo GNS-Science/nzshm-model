@@ -11,7 +11,8 @@ from nzshm_model.psha_adapter.openquake import OpenquakeSourcePshaAdapter
 MODEL = nzshm_model.model.NshmModel.get_model_version('NSHM_v1.0.4')
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
 
-
+@pytest.mark.skip("""this requres a NrmlDocument method to go from a GMCMLogic tree to a 
+                  nzshm_model.psha_adapter.openquake.logic_tree.LogicTree object""")
 def test_gmm_logic_tree_from_nrml():
 
     gmm_logic_tree = MODEL.gmm_logic_tree_nrml()

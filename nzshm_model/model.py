@@ -37,6 +37,14 @@ class NshmModel:
         gmcm_logic_tree: GMCMLogicTree,
         hazard_config: 'HazardConfig',
     ):
+        """
+        Arguments:
+            version: Describes version of the model being developed / used.
+            tite: A title for the model.
+            source_logic_tree: The seismicity rate model (SRM) logic tree.
+            gmcm_logic_tree: The ground motion characterization model (GMCM) logic tree.
+            hazard_config: The hazard engine (calculator) configuration.
+        """
         self.version = version
         self.title = title
         self.hazard_config = hazard_config
@@ -54,14 +62,20 @@ class NshmModel:
         hazard_config: 'HazardConfig',
     ) -> 'NshmModel':
         """
-        Create a new NshmModel instance.
+        Create a new NshmModel instance from files.
 
         NB library users will typically never use this, rather they will obtain a model instance
         using static method: `get_model_version`.
         """
 
-        source_logic_tree = NshmModel.source_logic_tree_from_file(slt_json)
-        gmcm_logic_tree = NshmModel.gmm_logic_tree_from_file(gmm_json)
+        # backwards compatatilbity for v1 SourceLogicTree
+        # v1 is not versioned
+        data = NshmModel._slt_data_from_file(slt_json)
+        if data.get("logic_tree_version") is None:
+            source_logic_tree = NshmModel._source_logic_tree_from_v1_json(slt_json)
+
+        source_logic_tree = SourceLogicTree.from_json(slt_json)
+        gmcm_logic_tree = GMCMLogicTree.from_json(gmm_json)
         return cls(version, title, source_logic_tree, gmcm_logic_tree, hazard_config)
 
     @staticmethod
@@ -71,15 +85,9 @@ class NshmModel:
         return data
 
     @staticmethod
-    def _glt_data_from_file(filepath: Union[str, Path]) -> Dict[Any, Any]:
-        with Path(filepath).open('r') as jsonfile:
-            data = json.load(jsonfile)
-        return data
-
-    @staticmethod
-    def source_logic_tree_from_file(filepath: Union[str, Path]) -> SourceLogicTree:
+    def _source_logic_tree_from_v1_json(filepath: Union[str, Path]) -> SourceLogicTree:
         """
-        Create a SourceLogicTree from a json file. If an old, version1, type file is provided, conversion to current SourceLogicTree type will be performed.
+        Create a SourceLogicTree from an old v1 json file; convert to new type.
 
         Arguments:
             filepath: the path to the json file specifying the source logic tree
@@ -88,36 +96,7 @@ class NshmModel:
             a source logic tree
 
         """
-        data = NshmModel._slt_data_from_file(filepath)
-        ltv = data.get("logic_tree_version")
-        if ltv is None:  # original json is unversioned
-            return SourceLogicTree.from_source_logic_tree(SourceLogicTreeV1.from_dict(data))
-        elif ltv == 2:
-            return SourceLogicTree.from_dict(data)
-        raise ValueError("Unsupported logic_tree_version.")
-
-
-    @staticmethod
-    def gmm_logic_tree_from_file(filepath: Union[str, Path]) -> GMCMLogicTree:
-        """
-        the ground motion logic tree for this model.
-
-        Returns:
-            a gmcm_logic_tree
-
-        """
-        data = NshmModel._glt_data_from_file(filepath)
-        return GMCMLogicTree.from_dict(data)
-
-    def gmm_logic_tree_nrml(self) -> "OQLogicTree":
-        """
-        the ground motion characterisation model (gmcm) logic tree for this model as a OpenQuake nrml compatiable type.
-
-        Returns:
-            a gmm_logic_tree.
-        """
-        doc = NrmlDocument.from_xml_file(self._gmm_xml)
-        return doc.logic_trees[0]
+        return SourceLogicTree.from_source_logic_tree(SourceLogicTreeV1.from_json(filepath))
 
     @classmethod
     def get_model_version(cls, version: str) -> 'NshmModel':
@@ -141,15 +120,14 @@ class NshmModel:
             the model instance.
         """
 
-        # self._slt_json = SLT_SOURCE_PATH / slt_json
-        # self._gmm_json = GMM_JSON_SOURCE_PATH / gmm_json
-        # self._gmm_xml = GMM_SOURCE_PATH / gmm_xml
-
         model_args_factory = versions.get(version)
         if not model_args_factory:
             raise ValueError(f"{version} is not a valid model version.")
 
-        return cls.from_files(**model_args_factory())
+        model_args = model_args_factory()
+        model_args['slt_json'] = SLT_SOURCE_PATH / model_args['slt_json']
+        model_args['gmm_json'] = GMM_JSON_SOURCE_PATH / model_args['gmm_json']
+        return cls.from_files(**model_args)
 
     def get_source_branch_sets(self, short_names: Union[List[str], str, None] = None) -> Iterator['SourceBranchSet']:
         """
