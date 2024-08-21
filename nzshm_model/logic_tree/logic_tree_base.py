@@ -28,6 +28,7 @@ from .correlation import LogicTreeCorrelations
 # - should we use FilteredBranch for correlation so the branches can be traced back to the BranchSet?
 
 # https://github.com/python/mypy/issues/8495
+# This can be done more simply with typing.Self in python3.11+
 LogicTreeType = TypeVar("LogicTreeType", bound="LogicTree")
 
 
@@ -139,7 +140,7 @@ class LogicTree(ABC):
             yield composite_branch
 
     @classmethod
-    def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
+    def from_json(cls: Type[LogicTreeType], json_path: Union[Path, str]) -> LogicTreeType:
         """
         Create LogicTree object from json file
 

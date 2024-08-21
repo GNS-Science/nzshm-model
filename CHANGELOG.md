@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.13.0] 2024-08-21
+
+### Changed
+ - `NhsmModel` initialized with component objects (i.e. LogicTree objects) rather than files
+ - Creating `NshmModel` object from files handled by classmethod `from_files`
+
+### Removed
+ - `NshmModel.gmm_logic_tree_from_xml` method. Use `OpenquakeGMCMPshaAdapter.gmcm_logic_tree_from_xml` instead
+
 ## [0.12.1] 2024-08-20
 
 ### Added 

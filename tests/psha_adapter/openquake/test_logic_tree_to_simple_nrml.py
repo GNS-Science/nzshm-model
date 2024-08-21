@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 
 import nzshm_model.psha_adapter.openquake.simple_nrml
-from nzshm_model import NshmModel, get_model_version
 from nzshm_model.logic_tree import GMCMLogicTree, SourceLogicTree
 from nzshm_model.psha_adapter.openquake import OpenquakeGMCMPshaAdapter, OpenquakeModelPshaAdapter
 
@@ -42,32 +41,12 @@ def test_fetch_resources(monkeypatch, tmp_path):
         json.dump(result, jsonfile)
 
 
-# @pytest.mark.skip("WIP: need way to compare xml without being exact (or create fixture for exact match)")
 def test_gmcm_logic_tree_to_xml(tmp_path):
-
-    # xml_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example_b.xml'
     gmcm_json_filepath = Path(__file__).parent / 'fixtures' / 'gmcm_logic_tree_example.json'
-    slt_json_filepath = FIXTURE_PATH / 'source_logic_tree_sample_2.json'
 
     gmcm_logic_tree = GMCMLogicTree.from_json(gmcm_json_filepath)
-    model_v104 = get_model_version('NSHM_v1.0.4')
-    model = NshmModel(
-        "version",
-        "title",
-        slt_json_filepath,
-        gmcm_json_filepath,
-        model_v104._gmm_xml,
-        model_v104.hazard_config,
-    )
-    adapter = model.gmm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
-    # gmcm_logic_tree_expected = adapter.logic_tree_from_xml(xml_filepath)
-    # adapter = gmcm_logic_tree
+    adapter = gmcm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
     xml_str = adapter.build_gmcm_xml()
-    # gmcm_logic_tree_deserialized = adapter.logic_tree_from_xml(xml_filepath)
-
-    with Path(Path(__file__).parent / 'fixtures' / 'gmcm.xml').open('w') as xmlfile:
-        xmlfile.write(adapter.build_gmcm_xml())
-
     with (tmp_path / 'gmcm_lt.xml').open('w') as xmlfile:
         xmlfile.write(xml_str)
     gmcm_logic_tree_deserialized = adapter.gmcm_logic_tree_from_xml(tmp_path / 'gmcm_lt.xml')

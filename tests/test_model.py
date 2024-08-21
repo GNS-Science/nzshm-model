@@ -10,6 +10,14 @@ def test_list_all_models(current_version):
     assert current_version in nm.all_model_versions()
 
 
+def test_mutable_model(current_version):
+    model = nm.get_model_version(current_version)
+    slt = model.source_logic_tree
+    slt.branch_sets = [bs for bs in slt.branch_sets if bs.short_name == "CRU"]
+    model.source_logic_tree.branch_sets = [bs for bs in model.source_logic_tree.branch_sets if bs.short_name == "CRU"]
+    assert len(model.source_logic_tree.branch_sets) == len(slt.branch_sets)
+
+
 class TestLoadModel:
     def test_load_model_104(self, current_version):
         model = nm.model.NshmModel.get_model_version(current_version)
