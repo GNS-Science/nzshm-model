@@ -22,6 +22,15 @@ def test_migrate_NSHM_v1_0_4(slt_version_1):
     v2 = SourceLogicTree.from_source_logic_tree(slt_version_1)
     assert v2.version == slt_version_1.version
 
+def test_migrate_serialize_deserialize(slt_version_1, tmp_path):
+
+    slt_filepath = tmp_path / 'slt.json'
+    v2 = SourceLogicTree.from_source_logic_tree(slt_version_1)
+    v2.to_json(slt_filepath)
+    v2_deserialized = SourceLogicTree.from_json(slt_filepath)
+
+    assert v2_deserialized == v2
+
 
 def test_migrate_NSHM_v1_0_4_fault_systems(slt_version_1):
     v2 = SourceLogicTree.from_source_logic_tree(slt_version_1)

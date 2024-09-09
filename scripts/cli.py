@@ -8,7 +8,9 @@ import click
 import nzshm_model
 
 # from nzshm_model.source_logic_tree import SourceLogicTree
+import nzshm_model.logic_tree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree
+from nzshm_model.logic_tree.source_logic_tree.version1.slt_config import from_config
 
 # from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids  # noqa
 from nzshm_model.psha_adapter.openquake import OpenquakeSourcePshaAdapter
@@ -53,6 +55,21 @@ def fetch(cache_folder, model_id):
         click.echo(item)
 
     click.echo('DONE')
+
+
+@cli.command()
+@click.argument('module-path')
+@click.argument('json-path')
+@click.option('--title', '-t')
+@click.option('--version', '-v')
+def convert(module_path, json_path, title, version):
+    """Convert an old-style source logic tree defined as a python module to a new style
+    JSON logic tree file.
+    """
+
+    slt_v1 = from_config(module_path, version=version, title=title)
+    slt = SourceLogicTree.from_source_logic_tree(slt_v1)
+    slt.to_json(json_path)
 
 
 @cli.command()
