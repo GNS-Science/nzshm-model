@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.13.1] 2024-09-09
+
+### Added
+ - cli command to convert SourceLogicTree v1 module files to v2 json files
+
+### Changed
+ - add branch_id when converting from SourceLogicTree v1 to v2
+
 ## [0.13.0] 2024-08-21
 
 ### Changed
