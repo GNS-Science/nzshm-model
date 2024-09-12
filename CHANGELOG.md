@@ -5,6 +5,9 @@
 ### Added
  - improved type hints
 
+### Changed
+ - moved version 1 source logic tree definitions out of package directory and into resources
+
 ## [0.13.1] 2024-09-09
 
 ### Added
