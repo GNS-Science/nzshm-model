@@ -202,9 +202,12 @@ class SourceLogicTree(LogicTree):
         slt = SourceLogicTree(version=original_slt.version, title=original_slt.title)
         for fslt in original_slt.fault_systems:
             new_fslt = SourceBranchSet(short_name=fslt.short_name, long_name=fslt.long_name)
+            branch_id = 0
             for branch in fslt.branches:
-                # TODO: handle rate scaling
-                new_branch = SourceBranch(values=copy.deepcopy(branch.values), weight=branch.weight)
+                new_branch = SourceBranch(
+                    values=copy.deepcopy(branch.values), weight=branch.weight, branch_id=str(branch_id)
+                )
+                branch_id += 1
                 if branch.onfault_nrml_id:
                     new_branch.sources.append(
                         InversionSource(

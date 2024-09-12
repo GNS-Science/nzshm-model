@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nzshm-model"
-version = "0.13.0"
+version = "0.13.1"
 description = "The logic tree definitions, final configurations, and versioning of the New Zealand | Aotearoa National Seismic Hazard Model"
 authors = ["Chris DiCaprio <c.dicaprio@gns.cri.nz>", "Chris Chamberlain <chrisbc@artisan.co.nz>"]
 license = "AGPL3"
@@ -14,6 +14,7 @@ packages = [
 
 [tool.poetry.scripts]
 slt = 'scripts.slt:slt'
+model = 'scripts.cli:cli'
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
