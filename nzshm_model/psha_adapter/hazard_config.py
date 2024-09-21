@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 
 HazardConfigType = TypeVar('HazardConfigType', bound='HazardConfig')
 
+
 class HazardConfig(ABC):
     @abstractmethod
     def is_complete(self) -> bool:

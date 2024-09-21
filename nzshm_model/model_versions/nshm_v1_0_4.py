@@ -10,16 +10,16 @@ The dict returned by the function is passed as keyword arguments to the NshmMode
 NB library users will typically never use this, rather they will obtain a model instance
 using function: `nzshm_model.get_model_version`.
 """
-from typing import Any, Dict
 from pathlib import Path
+from typing import Any, Dict
 
 from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
-from .model_definition import ModelDefinition
 
 
-def model_args_factory() -> ModelDefinition:
-    return ModelDefinition(
+
+def model_args_factory() -> Dict[str, Any]:
+    return dict(
         version='NSHM_v1.0.4',
         title="NSHM version 1.0.4, corrected fault geometry",
         slt_json=Path("nshm_v1.0.4_v2.json"),

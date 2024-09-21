@@ -1,19 +1,32 @@
-from nzshm_model import get_model_version, NshmModel
+"""
+can we get a type checker to correctly get the type of model.hazard_config
+"""
+
+from nzshm_model import NshmModel, get_model_version
 from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 
 model = get_model_version('NSHM_v1.0.4')
-# model.hazard_config.get_iml()
-model.hazard_config.get_iml()
-model.gmm_logic_tree
-
-oqconfig = OpenquakeConfig()
-oqconfig.get_iml()
-
-print(help(model.hazard_config))
+model.hazard_config  # Any
+model.gmm_logic_tree  # GMCMLogicTree
 
 slt = model.source_logic_tree
 gmcm = model.gmm_logic_tree
 
 model2 = NshmModel('', '', slt, gmcm, OpenquakeConfig())
+reveal_type(model2.hazard_config)  # OpenquakeConfig (acomplished by using HazardConfigType and Generic)
 model2.hazard_config
 
+model_from_files = NshmModel.from_files(
+    '',
+    '',
+    '/Users/dicaprio/NSHM/DEV/LIB/nzshm-model/resources/SRM_JSON/nshm_v1.0.4_v2.json',
+    '/Users/dicaprio/NSHM/DEV/LIB/nzshm-model/resources/GMM_JSON/gmcm_nshm_v1.0.4.json',
+    OpenquakeConfig(),
+)
+
+model_from_files.gmm_logic_tree
+reveal_type(
+    model_from_files.hazard_config
+)  # Any, even when explicitly creating an OpenquakeConfig object in the classmethod from_files()
+
+# something about using a classmethod kills the ability of the type checker to get the type of omdel.hazard_config
