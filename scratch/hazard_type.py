@@ -30,3 +30,32 @@ reveal_type(
 )  # Any, even when explicitly creating an OpenquakeConfig object in the classmethod from_files()
 
 # something about using a classmethod kills the ability of the type checker to get the type of omdel.hazard_config
+
+from typing import TypeVar, Generic
+
+AType = TypeVar("AType", bound="A")
+
+class A:
+
+    def a_method(self):
+        print("a_method")
+
+class B(A):
+
+    def b_method(self):
+        print("b_method")
+
+class M(Generic[AType]):
+
+    def __init__(self, a: AType):
+        self.a = a
+
+    @classmethod
+    def constructor(cls, a: AType) -> 'M[AType]':
+        return cls(a)
+
+b = B()
+m1 = M(b)
+reveal_type(m1.a)
+m2 = M.constructor(b)
+reveal_type(m2.a)         

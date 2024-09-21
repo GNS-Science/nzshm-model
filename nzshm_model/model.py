@@ -53,7 +53,7 @@ class NshmModel(Generic[HazardConfigType]):
         slt_json: Union[str, Path],
         gmm_json: Union[str, Path],
         hazard_config: HazardConfigType,
-    ) -> 'NshmModel':
+    ) -> 'NshmModel[HazardConfigType]':
         """
         Create a new NshmModel instance from files.
 
