@@ -46,7 +46,7 @@ class GMCMBranch(Branch):
 
 # TODO: protect from users changing TRT
 @dataclass
-class GMCMBranchSet(BranchSet):
+class GMCMBranchSet(BranchSet[GMCMBranch]):
     """A list of GMCM branches that apply to a particular tectonic region.
 
     Attributes:
@@ -67,7 +67,7 @@ class GMCMBranchSet(BranchSet):
 
 
 @dataclass
-class GMCMLogicTree(LogicTree):
+class GMCMLogicTree(LogicTree['GMCMFilteredBranch']):
     """A dataclass representing the ground motion characterisation model logic tree.
 
     Attributes:
