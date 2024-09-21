@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.13.2] 2024-09-22
+
+### Added
+ - improved type hints
+
 ## [0.13.1] 2024-09-09
 
 ### Added
