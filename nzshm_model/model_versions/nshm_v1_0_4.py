@@ -11,16 +11,18 @@ NB library users will typically never use this, rather they will obtain a model 
 using function: `nzshm_model.get_model_version`.
 """
 from typing import Any, Dict
+from pathlib import Path
 
 from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
+from .model_definition import ModelDefinition
 
 
-def model_args_factory() -> Dict[str, Any]:
-    return dict(
+def model_args_factory() -> ModelDefinition:
+    return ModelDefinition(
         version='NSHM_v1.0.4',
         title="NSHM version 1.0.4, corrected fault geometry",
-        slt_json="nshm_v1.0.4_v2.json",
-        gmm_json="gmcm_nshm_v1.0.4.json",
+        slt_json=Path("nshm_v1.0.4_v2.json"),
+        gmm_json=Path("gmcm_nshm_v1.0.4.json"),
         hazard_config=OpenquakeConfig(DEFAULT_HAZARD_CONFIG),
     )

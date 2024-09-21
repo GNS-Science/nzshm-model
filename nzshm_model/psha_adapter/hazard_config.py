@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, Optional, Sequence, Type
+from typing import TYPE_CHECKING, Dict, Optional, Sequence, Type, TypeVar
 
 from nzshm_model.psha_adapter import ConfigPshaAdapterInterface
 
 if TYPE_CHECKING:
     from nzshm_common import CodedLocation
 
+HazardConfigType = TypeVar('HazardConfigType', bound='HazardConfig')
 
 class HazardConfig(ABC):
     @abstractmethod
