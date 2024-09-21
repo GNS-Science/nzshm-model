@@ -17,7 +17,6 @@ from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
 
 
-
 def model_args_factory() -> Dict[str, Any]:
     return dict(
         version='NSHM_v1.0.0',

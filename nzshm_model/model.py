@@ -3,15 +3,12 @@ NshmModel class describes a complete National Seismic Hazard Model.
 """
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Type, Union, TypeVar, Generic
+from typing import Any, Dict, Generic, Iterator, List, Optional, Type, Union
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.model_versions import versions
 from nzshm_model.psha_adapter import ModelPshaAdapterInterface
-
-if TYPE_CHECKING:
-    from .psha_adapter.hazard_config import HazardConfig
 
 from .psha_adapter.hazard_config import HazardConfigType
 

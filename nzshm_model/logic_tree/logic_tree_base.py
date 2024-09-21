@@ -10,7 +10,7 @@ from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Generic, Iterator, List, Optional, Sequence, Type, TypeVar, Union
+from typing import Any, Dict, Generator, Generic, Iterator, List, Optional, Type, TypeVar, Union
 
 import dacite
 
