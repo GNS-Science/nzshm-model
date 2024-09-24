@@ -10,14 +10,14 @@ from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Optional, Sequence, Type, TypeVar, Union
+from typing import Any, Dict, Generator, Generic, Iterator, List, Optional, Type, TypeVar, Union
 
 import dacite
 
 import nzshm_model.logic_tree.helpers as helpers
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
-from .branch import Branch, CompositeBranch
+from .branch import Branch, BranchType, CompositeBranch
 from .correlation import LogicTreeCorrelations
 
 # TODO:
@@ -30,10 +30,12 @@ from .correlation import LogicTreeCorrelations
 # https://github.com/python/mypy/issues/8495
 # This can be done more simply with typing.Self in python3.11+
 LogicTreeType = TypeVar("LogicTreeType", bound="LogicTree")
+BranchSetType = TypeVar("BranchSetType", bound="BranchSet")
+FilteredBranchType = TypeVar("FilteredBranchType", bound="FilteredBranch")
 
 
 @dataclass
-class BranchSet:
+class BranchSet(Generic[BranchType]):
     """
     A group of branches that comprise their own sub-logic tree. Also known as a fault system logic
     tree (for source logic trees).
@@ -46,7 +48,7 @@ class BranchSet:
 
     short_name: str = ''
     long_name: str = ''
-    branches: Sequence[Any] = field(default_factory=list)
+    branches: List[BranchType] = field(default_factory=list)
 
     def __post_init__(self):
         helpers._validate_branchset_weights(self)
@@ -56,11 +58,11 @@ class BranchSet:
         string += '======BRANCHES======\n'
         return string + '\n'.join([str(branch) for branch in self])
 
-    def __iter__(self):
+    def __iter__(self: BranchSetType) -> BranchSetType:
         self.__counter = 0
         return self
 
-    def __next__(self):
+    def __next__(self) -> BranchType:
         if self.__counter >= len(self.branches):
             raise StopIteration
         else:
@@ -69,7 +71,7 @@ class BranchSet:
 
 
 @dataclass
-class LogicTree(ABC):
+class LogicTree(ABC, Generic[FilteredBranchType]):
     """
     Logic tree baseclass. Contains information about branch sets and correlations between branches of the branch sets.
 
@@ -234,7 +236,7 @@ class LogicTree(ABC):
         with file_path.open('w') as jsonfile:
             json.dump(self.to_dict(), jsonfile, indent=2)
 
-    def __all_branches__(self) -> Generator['FilteredBranch', None, None]:
+    def __all_branches__(self) -> Generator[FilteredBranchType, None, None]:
         """
         Yield all branches from all BranchSets, each with a shallow copy of its LogicTree and BranchSet parents
         for use in filtering.
@@ -262,7 +264,7 @@ class LogicTree(ABC):
                 )
 
     @classmethod
-    def from_branches(cls, branches: Iterator['FilteredBranch']) -> 'LogicTree':
+    def from_branches(cls, branches: Iterator[FilteredBranchType]) -> 'LogicTree':
         """
         Build a complete LogicTree from a iterable of branches.
 
@@ -299,7 +301,7 @@ class LogicTree(ABC):
         self.__branch_list = list(self.__all_branches__())
         return self
 
-    def __next__(self) -> 'FilteredBranch':
+    def __next__(self) -> FilteredBranchType:
         if self.__current_branch >= len(self.__branch_list):
             raise StopIteration
         else:

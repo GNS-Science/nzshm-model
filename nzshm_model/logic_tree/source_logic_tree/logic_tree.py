@@ -108,7 +108,7 @@ class SourceBranch(Branch):
 
 # TODO: protect from users changing tectonic_region_types
 @dataclass
-class SourceBranchSet(BranchSet):
+class SourceBranchSet(BranchSet[SourceBranch]):
     """A list of Source Branches.
 
     Attributes:
@@ -143,7 +143,7 @@ class SourceLogicTreeSpec:
 
 
 @dataclass
-class SourceLogicTree(LogicTree):
+class SourceLogicTree(LogicTree['SourceFilteredBranch']):
     """A dataclass representing a source logic tree
 
     Attributes:

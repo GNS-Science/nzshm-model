@@ -3,15 +3,14 @@ NshmModel class describes a complete National Seismic Hazard Model.
 """
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Type, Union
+from typing import Any, Dict, Generic, Iterator, List, Optional, Type, Union
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.model_versions import versions
 from nzshm_model.psha_adapter import ModelPshaAdapterInterface
 
-if TYPE_CHECKING:
-    from .psha_adapter.hazard_config import HazardConfig
+from .psha_adapter.hazard_config import HazardConfigType
 
 RESOURCES_PATH = Path(__file__).parent.parent / "resources"
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
@@ -19,7 +18,7 @@ GMM_JSON_SOURCE_PATH = RESOURCES_PATH / "GMM_JSON"
 GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
 
 
-class NshmModel:
+class NshmModel(Generic[HazardConfigType]):
     """
     An NshmModel instance represents a complete National Seismic Hazard Model version.
     """
@@ -30,7 +29,7 @@ class NshmModel:
         title: str,
         source_logic_tree: SourceLogicTree,
         gmcm_logic_tree: GMCMLogicTree,
-        hazard_config: 'HazardConfig',
+        hazard_config: HazardConfigType,
     ):
         """
         Arguments:
@@ -53,8 +52,8 @@ class NshmModel:
         title: str,
         slt_json: Union[str, Path],
         gmm_json: Union[str, Path],
-        hazard_config: 'HazardConfig',
-    ) -> 'NshmModel':
+        hazard_config: HazardConfigType,
+    ) -> 'NshmModel[HazardConfigType]':
         """
         Create a new NshmModel instance from files.
 
