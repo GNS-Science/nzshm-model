@@ -273,15 +273,20 @@ def test_toml_conversion():
     return io2.getvalue() == io1.getvalue()
     """
 
+
 def test_write_read_oq_config(tmp_path):
     config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
 
     json_filepath = tmp_path / 'hazard_config.json'
     config.to_json(json_filepath)
 
-    config_deser = OpenquakeConfig().from_json(json_filepath)
+    config_from_file = OpenquakeConfig().from_json(json_filepath)
 
-    assert config_deser == config
-    assert config_deser.locations == config.locations
-    assert config_deser._site_parameters == config._site_parameters
+    assert config_from_file.config.sections() == config.config.sections()
+    for section in config.config.sections():
+        assert config_from_file.config.options(section) == config.config.options(section)
+        for option in config.config.options(section):
+            assert config_from_file.config.get(section, option) == config.config.get(section, option)
 
+    assert config_from_file.locations == config.locations
+    assert config_from_file._site_parameters == config._site_parameters
