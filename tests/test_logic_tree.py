@@ -120,9 +120,7 @@ def test_serialise_slt():
 
 class TestSourceLogicTreeSpecification:
     def test_slt_v8(self):
-        config = (
-            Path(__file__).parent.parent / 'nzshm_model' / 'logic_tree' / 'source_logic_tree' / 'SLT_v8_gmm_v2_final.py'
-        )
+        config = Path(__file__).parent.parent / 'resources' / 'SRM_LTs' / 'python' / 'SLT_v8_gmm_v2_final.py'
         slt = from_config(config)
 
         slt_spec = slt.derive_spec()
