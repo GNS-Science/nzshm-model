@@ -123,7 +123,7 @@ class OpenquakeConfig(HazardConfig):
     def _deserialize_locations(locations):
         # check that all coordinates have the same resolution
         def get_resolution(x):
-            return len(x) - x.find('.') - 1
+            return 10**-(len(x) - x.find('.') - 1)
 
         all_coords = list(chain.from_iterable([loc.split('~') for loc in locations]))
         if len(set(map(get_resolution, all_coords))) != 1:
@@ -259,7 +259,7 @@ class OpenquakeConfig(HazardConfig):
             if not isinstance(v, Sequence):
                 raise TypeError("all keyword arguments must be sequence type")
             if not len(v) == len(locations):
-                raise ValueError("all keyword arguments must have the same lenth as locations")
+                raise ValueError("all keyword arguments must have the same length as locations")
             self._site_parameters[k] = tuple(v)
 
         self._locations = tuple(locations)

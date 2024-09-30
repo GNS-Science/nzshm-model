@@ -7,6 +7,8 @@ import io
 # import tomli
 import pytest
 
+from nzshm_common.location import CodedLocation
+
 import nzshm_model.psha_adapter.openquake.hazard_config as oqhc
 from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import (
@@ -290,3 +292,25 @@ def test_write_read_oq_config(tmp_path):
 
     assert config_from_file.locations == config.locations
     assert config_from_file._site_parameters == config._site_parameters
+
+
+
+def test_write_read_oq_config_site_params(tmp_path):
+    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    locations = [CodedLocation(lat, lon, 0.001) for lat, lon in zip(range(10), range(10))]
+    vs30s = [v / 10.0 for v in range(len(locations))]
+    config.set_sites(locations, vs30=vs30s)
+
+    json_filepath = tmp_path / 'hazard_config.json'
+    config.to_json(json_filepath)
+
+    config_from_file = OpenquakeConfig().from_json(json_filepath)
+
+    assert config_from_file.config.sections() == config.config.sections()
+    for section in config.config.sections():
+        assert config_from_file.config.options(section) == config.config.options(section)
+        for option in config.config.options(section):
+            assert config_from_file.config.get(section, option) == config.config.get(section, option)
+
+    assert config_from_file._site_parameters == config._site_parameters
+    assert config_from_file.locations == config.locations
