@@ -9,16 +9,17 @@ Module supporting managed openquake configuration files
 import ast
 import configparser
 import copy
+import json
 import logging
-import pathlib
-from typing import TYPE_CHECKING, Dict, List, Optional, Sequence, TextIO, Tuple, Union
+from itertools import chain
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Sequence, TextIO, Tuple, Type, Union, cast
 
-from nzshm_model.psha_adapter.hazard_config import HazardConfig
+from nzshm_common import CodedLocation
+
+from nzshm_model.psha_adapter.hazard_config import HazardConfig, HazardConfigType
 
 from .hazard_config_compat import check_invariants, compatible_hash_digest
-
-if TYPE_CHECKING:
-    from nzshm_common import CodedLocation
 
 log = logging.getLogger(__name__)
 
@@ -54,7 +55,7 @@ class OpenquakeConfig(HazardConfig):
     def __init__(self, default_config: Union[configparser.ConfigParser, Dict, None] = None):
 
         self._site_parameters: Optional[Dict[str, Tuple]] = None
-        self._locations: Optional[Tuple['CodedLocation']] = None
+        self._locations: Optional[Tuple[CodedLocation]] = None
 
         if isinstance(default_config, configparser.ConfigParser):
             self.config = copy.deepcopy(default_config)
@@ -73,6 +74,65 @@ class OpenquakeConfig(HazardConfig):
     def is_complete(self) -> bool:
         return bool(self.get_iml())
 
+    def _config_to_dict(self) -> Dict[str, Any]:
+        data: Dict[str, Any] = dict()
+        for section in self.config.sections():
+            data[section] = dict()
+            for k, v in self.config[section].items():
+                data[section][k] = v
+        return data
+
+    def _locations_to_strs(self) -> List[str]:
+        if not self.locations:
+            return []
+        return [loc.code for loc in self.locations]
+
+    def to_dict(self) -> Dict[str, Any]:
+        config_dict: Dict[str, Any] = dict(config=self._config_to_dict())
+        config_dict['locations'] = self._locations_to_strs()
+        config_dict['site_parameters'] = self._site_parameters
+        return config_dict
+
+    def to_json(self, file_path: Union[Path, str]) -> None:
+        data = self.to_dict()
+        with Path(file_path).open('w') as jsonfile:
+            json.dump(data, jsonfile)
+
+    @classmethod
+    def from_json(cls: Type[HazardConfigType], file_path: Union[Path, str]) -> 'OpenquakeConfig':
+        with Path(file_path).open('r') as jsonfile:
+            data = json.load(jsonfile)
+        site_parameters = data.pop('site_parameters')
+        locations = data.pop('locations')
+        hazard_config = cast('OpenquakeConfig', cls(data['config']))
+        if site_parameters:
+            hazard_config._site_parameters = hazard_config._deserialze_site_params(site_parameters)
+        if locations:
+            hazard_config._locations = hazard_config._deserialize_locations(locations)
+
+        return hazard_config
+
+    @staticmethod
+    def _deserialze_site_params(site_parameters):
+        data = dict()
+        for k, v in site_parameters.items():
+            data[k] = tuple(v)
+        return data
+
+    @staticmethod
+    def _deserialize_locations(locations):
+        # check that all coordinates have the same resolution
+        def get_resolution(x):
+            return 10**-(len(x) - x.find('.') - 1)
+
+        all_coords = list(chain.from_iterable([loc.split('~') for loc in locations]))
+        if len(set(map(get_resolution, all_coords))) != 1:
+            raise Exception("not all coordinates have the same resolution")
+
+        resolution = get_resolution(all_coords[0])
+        ll_pairs = [[float(ll_str) for ll_str in loc.split('~')] for loc in locations]
+        return tuple([CodedLocation.from_tuple(loc, resolution) for loc in ll_pairs])
+
     @staticmethod
     def read_file(config_file: TextIO) -> 'OpenquakeConfig':
         """produce a OpenquakeConfig from a file-like object
@@ -87,7 +147,7 @@ class OpenquakeConfig(HazardConfig):
         config.read_file(config_file)
         return OpenquakeConfig(config)
 
-    def set_source_logic_tree_file(self, source_lt_filepath: Union[str, pathlib.Path]) -> 'OpenquakeConfig':
+    def set_source_logic_tree_file(self, source_lt_filepath: Union[str, Path]) -> 'OpenquakeConfig':
         """setter for source_model file
 
         Arguments:
@@ -164,7 +224,7 @@ class OpenquakeConfig(HazardConfig):
         self.config.set("calculation", "maximum_distance", str(value_new))
         return self
 
-    def set_sites(self, locations: Sequence['CodedLocation'], **site_parameters) -> 'OpenquakeConfig':
+    def set_sites(self, locations: Sequence[CodedLocation], **site_parameters) -> 'OpenquakeConfig':
         """Setter for site_model file.
 
         If a vs30 values are specified, but a uniform vs30 has already been set a ValueError will be raised.
@@ -199,13 +259,13 @@ class OpenquakeConfig(HazardConfig):
             if not isinstance(v, Sequence):
                 raise TypeError("all keyword arguments must be sequence type")
             if not len(v) == len(locations):
-                raise ValueError("all keyword arguments must have the same lenth as locations")
+                raise ValueError("all keyword arguments must have the same length as locations")
             self._site_parameters[k] = tuple(v)
 
         self._locations = tuple(locations)
         return self
 
-    def set_site_filepath(self, site_file: Union[str, pathlib.Path]) -> 'OpenquakeConfig':
+    def set_site_filepath(self, site_file: Union[str, Path]) -> 'OpenquakeConfig':
         """
         Set the path to the site_model_file.
         """
@@ -213,12 +273,12 @@ class OpenquakeConfig(HazardConfig):
         self.set_parameter('site_params', 'site_model_file', str(site_file))
         return self
 
-    def get_site_filepath(self) -> Optional[pathlib.Path]:
+    def get_site_filepath(self) -> Optional[Path]:
         value = self.get_parameter('site_params', 'site_model_file')
-        return pathlib.Path(value) if value else None
+        return Path(value) if value else None
 
     @property
-    def locations(self) -> Optional[Tuple['CodedLocation']]:
+    def locations(self) -> Optional[Tuple[CodedLocation]]:
         return self._locations
 
     @property
@@ -387,7 +447,7 @@ class OpenquakeConfig(HazardConfig):
 
         return vs30, z1pt0, z2pt5
 
-    def set_gsim_logic_tree_file(self, filepath: Union[str, pathlib.Path]) -> 'OpenquakeConfig':
+    def set_gsim_logic_tree_file(self, filepath: Union[str, Path]) -> 'OpenquakeConfig':
         """Setter for ground motion model file.
 
         Arguments:

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, Optional, Sequence, Type, TypeVar
+from pathlib import Path
+from typing import TYPE_CHECKING, Dict, Optional, Sequence, Type, TypeVar, Union
 
 from nzshm_model.psha_adapter import ConfigPshaAdapterInterface
 
@@ -10,12 +11,24 @@ HazardConfigType = TypeVar('HazardConfigType', bound='HazardConfig')
 
 
 class HazardConfig(ABC):
+    def __init__(self, *args, **kwargs):
+        pass
+
     @abstractmethod
     def is_complete(self) -> bool:
         pass
 
     @abstractmethod
     def set_sites(self, locations: Sequence['CodedLocation'], **kwargs) -> 'HazardConfig':
+        pass
+
+    @abstractmethod
+    def to_json(self, file_path: Union[Path, str]) -> None:
+        pass
+
+    @classmethod
+    @abstractmethod
+    def from_json(cls: Type[HazardConfigType], file_path: Union[Path, str]) -> HazardConfigType:
         pass
 
     def psha_adapter(
