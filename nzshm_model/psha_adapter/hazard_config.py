@@ -29,6 +29,15 @@ class HazardConfig(ABC):
     @classmethod
     @abstractmethod
     def from_dict(cls: Type[HazardConfigType], data: Dict) -> HazardConfigType:
+        """
+        create a HazardConfig object from a dictionary
+
+        Args:
+            data: the dictionary representation of the HazardConfig object
+
+        Returns:
+            a HazardConfig object
+        """
         pass
 
     @classmethod
