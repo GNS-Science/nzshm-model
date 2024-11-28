@@ -6,7 +6,6 @@ import io
 
 # import tomli
 import pytest
-
 from nzshm_common.location import CodedLocation
 
 import nzshm_model.psha_adapter.openquake.hazard_config as oqhc
@@ -292,7 +291,6 @@ def test_write_read_oq_config(tmp_path):
 
     assert config_from_file.locations == config.locations
     assert config_from_file._site_parameters == config._site_parameters
-
 
 
 def test_write_read_oq_config_site_params(tmp_path):

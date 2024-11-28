@@ -28,6 +28,11 @@ class HazardConfig(ABC):
 
     @classmethod
     @abstractmethod
+    def from_dict(cls: Type[HazardConfigType], data: Dict) -> HazardConfigType:
+        pass
+
+    @classmethod
+    @abstractmethod
     def from_json(cls: Type[HazardConfigType], file_path: Union[Path, str]) -> HazardConfigType:
         pass
 

@@ -99,9 +99,7 @@ class OpenquakeConfig(HazardConfig):
             json.dump(data, jsonfile)
 
     @classmethod
-    def from_json(cls: Type[HazardConfigType], file_path: Union[Path, str]) -> 'OpenquakeConfig':
-        with Path(file_path).open('r') as jsonfile:
-            data = json.load(jsonfile)
+    def from_dict(cls: Type[HazardConfigType], data: Dict) -> 'OpenquakeConfig':
         site_parameters = data.pop('site_parameters')
         locations = data.pop('locations')
         hazard_config = cast('OpenquakeConfig', cls(data['config']))
@@ -111,6 +109,12 @@ class OpenquakeConfig(HazardConfig):
             hazard_config._locations = hazard_config._deserialize_locations(locations)
 
         return hazard_config
+
+    @classmethod
+    def from_json(cls: Type[HazardConfigType], file_path: Union[Path, str]) -> 'OpenquakeConfig':
+        with Path(file_path).open('r') as jsonfile:
+            data = json.load(jsonfile)
+        return cast('OpenquakeConfig', cls.from_dict(data))
 
     @staticmethod
     def _deserialze_site_params(site_parameters):
@@ -123,7 +127,7 @@ class OpenquakeConfig(HazardConfig):
     def _deserialize_locations(locations):
         # check that all coordinates have the same resolution
         def get_resolution(x):
-            return 10**-(len(x) - x.find('.') - 1)
+            return 10 ** -(len(x) - x.find('.') - 1)
 
         all_coords = list(chain.from_iterable([loc.split('~') for loc in locations]))
         if len(set(map(get_resolution, all_coords))) != 1:
