@@ -96,7 +96,7 @@ class OpenquakeConfig(HazardConfig):
     def to_json(self, file_path: Union[Path, str]) -> None:
         data = self.to_dict()
         with Path(file_path).open('w') as jsonfile:
-            json.dump(data, jsonfile)
+            json.dump(data, jsonfile, indent=2)
 
     @classmethod
     def from_dict(cls: Type[HazardConfigType], data: Dict) -> 'OpenquakeConfig':
