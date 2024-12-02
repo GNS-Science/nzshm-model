@@ -183,9 +183,9 @@ def test_site_errors(locations):
     config = OpenquakeConfig()
     n_locs = len(locations)
 
-    # vs30 values must be Sequence type
+    # vs30 values must be Iterable type
     with pytest.raises(TypeError):
-        config.set_sites(locations, vs30=set(range(n_locs)))
+        config.set_sites(locations, vs30=1)
 
     # vs30 must have same lenth as locations
     with pytest.raises(ValueError):

@@ -13,7 +13,7 @@ import json
 import logging
 from itertools import chain
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, TextIO, Tuple, Type, Union, cast
+from typing import Any, Dict, Iterable, List, Optional, TextIO, Tuple, Type, Union, cast
 
 from nzshm_common import CodedLocation
 
@@ -228,7 +228,7 @@ class OpenquakeConfig(HazardConfig):
         self.config.set("calculation", "maximum_distance", str(value_new))
         return self
 
-    def set_sites(self, locations: Sequence[CodedLocation], **site_parameters) -> 'OpenquakeConfig':
+    def set_sites(self, locations: Iterable[CodedLocation], **site_parameters) -> 'OpenquakeConfig':
         """Setter for site_model file.
 
         If a vs30 values are specified, but a uniform vs30 has already been set a ValueError will be raised.
@@ -259,14 +259,16 @@ class OpenquakeConfig(HazardConfig):
             )
 
         self._site_parameters = {}
+        locations = tuple(locations)
         for k, v in site_parameters.items():
-            if not isinstance(v, Sequence):
-                raise TypeError("all keyword arguments must be sequence type")
-            if not len(v) == len(locations):
-                raise ValueError("all keyword arguments must have the same length as locations")
-            self._site_parameters[k] = tuple(v)
+            values = tuple(v)
+            if not isinstance(v, Iterable):
+                raise TypeError("all keyword arguments must be iterable type")
+            if not len(values) == len(locations):
+                raise ValueError("all keyword arguments must have the same number of elements as locations")
+            self._site_parameters[k] = values
 
-        self._locations = tuple(locations)
+        self._locations = locations
         return self
 
     def set_site_filepath(self, site_file: Union[str, Path]) -> 'OpenquakeConfig':
