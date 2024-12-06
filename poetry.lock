@@ -2144,13 +2144,13 @@ files = [
 
 [[package]]
 name = "nzshm-common"
-version = "0.8.1"
+version = "0.8.4"
 description = "A small pure python library for shared NZ NSHM data like locations."
 optional = false
 python-versions = "<4.0.0,>=3.8"
 files = [
-    {file = "nzshm_common-0.8.1-py3-none-any.whl", hash = "sha256:f010b0684e1eddc2fef4cd583555e8448efe5351bcb13f9dba5a6f017b6391b8"},
-    {file = "nzshm_common-0.8.1.tar.gz", hash = "sha256:883884ce790477db0db67430f8cdbc2eb46429df22042baf13d3af954a8e54f8"},
+    {file = "nzshm_common-0.8.4-py3-none-any.whl", hash = "sha256:31d2c471fadb77eead19b1e7ad84ad9c07a02d9f2cd640881e5904afcf148b30"},
+    {file = "nzshm_common-0.8.4.tar.gz", hash = "sha256:91e445e957c5ca0d1074255050ec3a62b123cd1a62fb0cce9810d009208f689b"},
 ]
 
 [package.extras]
@@ -3450,4 +3450,4 @@ toshi = ["boto3", "nshm-toshi-client"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4.0"
-content-hash = "94e78dbe8a0c97679cedfde63386dd59d9c5956c3e0d16326df417367dae4d94"
+content-hash = "4cc18f5eb9eb2308d97c2321b9b2c6259e2a6a95b28f1902866e8b29f2d4afca"
