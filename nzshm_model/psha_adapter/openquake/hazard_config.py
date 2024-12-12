@@ -10,7 +10,7 @@ import ast
 import configparser
 import copy
 import json
-import logging
+import warnings
 from itertools import chain
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, TextIO, Tuple, Type, Union, cast
@@ -21,12 +21,10 @@ from nzshm_model.psha_adapter.hazard_config import HazardConfig, HazardConfigTyp
 
 from .hazard_config_compat import check_invariants, compatible_hash_digest
 
-log = logging.getLogger(__name__)
-
 try:
     from openquake.hazardlib.site import calculate_z1pt0, calculate_z2pt5
 except ImportError:
-    log.warning(
+    warnings.warn(
         """warning openquake module dependency not available, maybe you want to install
                 with nzshm-model[openquake]"""
     )
