@@ -20,11 +20,12 @@ from nzshm_model.logic_tree.source_logic_tree.version1 import (
     SourceLogicTreeCorrelation,
 )
 
-
 try:
     from .toshi_api import solution_rupt_set_id, toshi_api
 except ModuleNotFoundError:
-    warnings.warn("warning Toshi API module dependency not available, maybe you want to install with nzshm-model[toshi]")
+    warnings.warn(
+        "warning Toshi API module dependency not available, maybe you want to install with nzshm-model[toshi]"
+    )
 
 
 def get_config_groups(logic_tree_permutations) -> Generator:
