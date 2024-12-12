@@ -11,6 +11,9 @@ HazardConfigType = TypeVar('HazardConfigType', bound='HazardConfig')
 
 
 class HazardConfig(ABC):
+
+    hazard_type = "abstract"  # every child class should specify its type for use in loading from file
+
     def __init__(self, *args, **kwargs):
         pass
 

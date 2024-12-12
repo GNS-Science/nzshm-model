@@ -1,6 +1,7 @@
 """
 NshmModel class describes a complete National Seismic Hazard Model.
 """
+import importlib.resources as resources
 import json
 from pathlib import Path
 from typing import Any, Dict, Generic, Iterator, List, Optional, Type, Union
@@ -9,13 +10,16 @@ from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTr
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.model_versions import versions
 from nzshm_model.psha_adapter import ModelPshaAdapterInterface
+from nzshm_model.psha_adapter.hazard_config_factory import hazard_config_class_factory
 
-from .psha_adapter.hazard_config import HazardConfigType
+from .psha_adapter.hazard_config import HazardConfig, HazardConfigType
 
-RESOURCES_PATH = Path(__file__).parent.parent / "resources"
+RESOURCES_PATH = resources.files('resources')
+
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
 GMM_JSON_SOURCE_PATH = RESOURCES_PATH / "GMM_JSON"
 GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
+HAZARD_CONFIG_PATH = RESOURCES_PATH / "HAZARD_CONFIG_JSON"
 
 
 class NshmModel(Generic[HazardConfigType]):
@@ -29,7 +33,7 @@ class NshmModel(Generic[HazardConfigType]):
         title: str,
         source_logic_tree: SourceLogicTree,
         gmcm_logic_tree: GMCMLogicTree,
-        hazard_config: HazardConfigType,
+        hazard_config: HazardConfig,
     ):
         """
         Arguments:
@@ -52,7 +56,7 @@ class NshmModel(Generic[HazardConfigType]):
         title: str,
         slt_json: Union[str, Path],
         gmm_json: Union[str, Path],
-        hazard_config: HazardConfigType,
+        hazard_config_json: Union[str, Path],
     ) -> 'NshmModel[HazardConfigType]':
         """
         Create a new NshmModel instance from files.
@@ -69,6 +73,8 @@ class NshmModel(Generic[HazardConfigType]):
 
         source_logic_tree = SourceLogicTree.from_json(slt_json)
         gmcm_logic_tree = GMCMLogicTree.from_json(gmm_json)
+        HazardConfigClass = hazard_config_class_factory.get_hazard_config_class_from_file(hazard_config_json)
+        hazard_config = HazardConfigClass.from_json(hazard_config_json)
         return cls(version, title, source_logic_tree, gmcm_logic_tree, hazard_config)
 
     @staticmethod
@@ -120,6 +126,7 @@ class NshmModel(Generic[HazardConfigType]):
         model_args = model_args_factory()
         model_args['slt_json'] = SLT_SOURCE_PATH / model_args['slt_json']
         model_args['gmm_json'] = GMM_JSON_SOURCE_PATH / model_args['gmm_json']
+        model_args['hazard_config_json'] = HAZARD_CONFIG_PATH / model_args['hazard_config_json']
         return cls.from_files(**model_args)
 
     def get_source_branch_sets(self, short_names: Union[List[str], str, None] = None) -> Iterator['SourceBranchSet']:

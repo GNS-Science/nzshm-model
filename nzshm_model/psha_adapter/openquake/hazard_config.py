@@ -52,6 +52,8 @@ class OpenquakeConfig(HazardConfig):
         ... Hello openquake
     """
 
+    hazard_type = "openquake"
+
     def __init__(self, default_config: Union[configparser.ConfigParser, Dict, None] = None):
 
         self._site_parameters: Optional[Dict[str, Tuple]] = None
@@ -91,6 +93,7 @@ class OpenquakeConfig(HazardConfig):
         config_dict: Dict[str, Any] = dict(config=self._config_to_dict())
         config_dict['locations'] = self._locations_to_strs()
         config_dict['site_parameters'] = self._site_parameters
+        config_dict['hazard_type'] = self.hazard_type
         return config_dict
 
     def to_json(self, file_path: Union[Path, str]) -> None:
