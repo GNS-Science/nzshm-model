@@ -12,3 +12,7 @@ TODO: complete these docs
 ::: nzshm_model.psha_adapter.psha_adapter_interface
     options:
       show_docstring_classes: true
+
+::: nzshm_model.psha_adapter.hazard_config_factory
+    options:
+      show_docstring_classes: true
