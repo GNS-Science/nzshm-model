@@ -128,4 +128,4 @@ model_adapter.write_config('./tmp/cache', './tmp/model_input', source_map(model)
 ```
 
 ## Warnings
-There are a number of warnings issued if optional dependences are not availalbe. Warnings can be filtered following [the Python documentation guide](https://docs.python.org/3/library/warnings.html#the-warnings-filter)
+There are a number of warnings issued if optional dependencies are not available and for deprecated methods. Warnings can be filtered following [the Python documentation guide](https://docs.python.org/3/library/warnings.html#the-warnings-filter)
