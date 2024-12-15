@@ -40,15 +40,14 @@ scripts = [
 openquake = ["openquake-engine", "numba", "fiona", "tomli"]
 
 [tool.poetry.group.docs.dependencies]
-mkdocstrings-python = "^1.8.0"
 mkdocs = "^1.5.3"
-mkdocs-autorefs = {version = "^0.3.1"}
 mkdocs-include-markdown-plugin  = "^6.0.0"
 mkdocs-material  = "^9.1.21"
 mkdocs-material-extensions  = "^1.1.1"
 mkdocs-pymdownx-material-extras = "^2.0.3"
-mkdocstrings  = "^0.22.0"
 mkdocs-click = "^0.8.1"
+mkdocs-autorefs = "^1.2.0"
+mkdocstrings = {extras = ["python"], version = "^0.27.0"}
 
 [tool.poetry.group.dev.dependencies]
 black  = { version = "^22.3"}
