@@ -22,9 +22,9 @@ from nzshm_model.psha_adapter.hazard_config import HazardConfig, HazardConfigTyp
 from .hazard_config_compat import check_invariants, compatible_hash_digest
 
 
-# the z1pt0 and z2pt5 fucntions have been ported from openquake (openquake.hazardlib.site) to avoid incompatibility
+# the z1pt0 and z2pt5 functions have been ported from openquake (openquake.hazardlib.site) to avoid incompatibility
 # as the openquake API changes
-def calculate_z1pt0(vs30: float):
+def calculate_z1pt0(vs30: float) -> float:
     """
     Calculates z1.0 (depth to 1.0 km/s velocity horizon) in m. Assumes the California/global
     constants, not the Japan specific ones.
@@ -45,7 +45,7 @@ def calculate_z1pt0(vs30: float):
     return math.exp((-7.15 / 4.0) * math.log((vs30**4 + c1_glo) / (c2_glo + c1_glo)))
 
 
-def calculate_z2pt5(vs30: float):
+def calculate_z2pt5(vs30: float) -> float:
     """
     Calculates z2.5 (depth to 2.5 km/s velocity horizon) in km. Assumes the California constants,
     not the Japan specific ones.
