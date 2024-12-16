@@ -146,8 +146,7 @@ def example_config():
     yield config
 
 
-@pytest.mark.skipif(not hasattr(oqhc, 'calculate_z1pt0'), reason="requires openquake")
-def test_uniform_site_params(locations):
+def test_uniform_site_params():
     # default z values
     config = OpenquakeConfig()
     vs30_in = 100
@@ -167,8 +166,7 @@ def test_uniform_site_params(locations):
     assert z2pt5 == pytest.approx(round(z2pt5_in, 1))
 
 
-@pytest.mark.skipif(not hasattr(oqhc, 'calculate_z1pt0'), reason="requires openquake")
-def test_unset_uniform_site_params(locations):
+def test_unset_uniform_site_params():
     config = OpenquakeConfig()
     vs30_in = 100
     config.set_uniform_site_params(vs30_in)

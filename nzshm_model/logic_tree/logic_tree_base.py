@@ -202,7 +202,9 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         return dacite.from_dict(data_class=cls, data=data, config=config)
 
     def _to_dict(self) -> Dict[str, Any]:
-        """Create dict representation of logic tree. This creates an exact dict of the class and is not used for serialisation.
+        """
+        Create dict representation of logic tree. This creates an exact dict of the class and is not
+        used for serialisation.
 
         Returns:
             dict:

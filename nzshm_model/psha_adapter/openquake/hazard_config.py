@@ -10,7 +10,7 @@ import ast
 import configparser
 import copy
 import json
-import warnings
+import math
 from itertools import chain
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, TextIO, Tuple, Type, Union, cast
@@ -21,23 +21,48 @@ from nzshm_model.psha_adapter.hazard_config import HazardConfig, HazardConfigTyp
 
 from .hazard_config_compat import check_invariants, compatible_hash_digest
 
-try:
-    import numpy as np
-    import openquake.hazardlib.site
 
-    def calculate_z1pt0(vs30: float) -> float:
-        """wrap openquake calcualte_z1pt0 which accepts a numpy array of vs30 and list of countries"""
-        return openquake.hazardlib.site.calculate_z1pt0(np.array([vs30]), ['NZ'])[0]
+# the z1pt0 and z2pt5 fucntions have been ported from openquake (openquake.hazardlib.site) to avoid incompatibility
+# as the openquake API changes
+def calculate_z1pt0(vs30: float):
+    """
+    Calculates z1.0 (depth to 1.0 km/s velocity horizon) in m. Assumes the California/global
+    constants, not the Japan specific ones.
 
-    def calculate_z2pt5(vs30: float) -> float:
-        """wrap openquake calcualte_z2pt5 which accepts a numpy array of vs30 and list of countries"""
-        return openquake.hazardlib.site.calculate_z2pt5(np.array([vs30]), ['NZ'])[0]
+    Ref: Chiou, B. S.-J. and Youngs, R. R., 2014. 'Update of the Chiou and Youngs NGA model for the
+    average horizontal component of peak ground motion and response spectra.' Earthquake Spectra,
+    30(3), pp.1117–1153.
 
-except ImportError:
-    warnings.warn(
-        """warning openquake module dependency not available, maybe you want to install
-                with nzshm-model[openquake]"""
-    )
+    Arguments:
+        vs30: time averaged shear wave velocity from 0 to 30m depth (m/s)
+
+    Returns:
+        depth to 1.0 km/s velocity horizon in m
+    """
+
+    c1_glo = 571**4.0
+    c2_glo = 1360.0**4.0
+    return math.exp((-7.15 / 4.0) * math.log((vs30**4 + c1_glo) / (c2_glo + c1_glo)))
+
+
+def calculate_z2pt5(vs30: float):
+    """
+    Calculates z2.5 (depth to 2.5 km/s velocity horizon) in km. Assumes the California constants,
+    not the Japan specific ones.
+
+    Ref: Campbell, K.W. & Bozorgnia, Y., 2014. 'NGA-West2 ground motion model for the average
+    horizontal components of PGA, PGV, and 5pct damped linear acceleration response spectra.'
+    Earthquake Spectra, 30(3), pp.1087–1114.
+
+    Arguments:
+        vs30: time averaged shear wave velocity from 0 to 30m depth (m/s)
+
+    Returns:
+        depth to 2.5 km/s velocity horizon in km
+    """
+    c1_glo = 7.089
+    c2_glo = -1.144
+    return math.exp(c1_glo + math.log(vs30) * c2_glo)
 
 
 class OpenquakeConfig(HazardConfig):
