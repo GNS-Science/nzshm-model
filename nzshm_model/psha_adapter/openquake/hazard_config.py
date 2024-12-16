@@ -22,7 +22,17 @@ from nzshm_model.psha_adapter.hazard_config import HazardConfig, HazardConfigTyp
 from .hazard_config_compat import check_invariants, compatible_hash_digest
 
 try:
-    from openquake.hazardlib.site import calculate_z1pt0, calculate_z2pt5
+    import numpy as np
+    import openquake.hazardlib.site
+
+    def calculate_z1pt0(vs30: float) -> float:
+        """wrap openquake calcualte_z1pt0 which accepts a numpy array of vs30 and list of countries"""
+        return openquake.hazardlib.site.calculate_z1pt0(np.array([vs30]), ['NZ'])[0]
+
+    def calculate_z2pt5(vs30: float) -> float:
+        """wrap openquake calcualte_z2pt5 which accepts a numpy array of vs30 and list of countries"""
+        return openquake.hazardlib.site.calculate_z2pt5(np.array([vs30]), ['NZ'])[0]
+
 except ImportError:
     warnings.warn(
         """warning openquake module dependency not available, maybe you want to install
