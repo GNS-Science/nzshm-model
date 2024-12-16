@@ -10,6 +10,9 @@
 ### Changed
 - hazard config for model versions stored as file
 
+### Removed
+ - OpenQuake dependency
+
 ## [0.13.3] 2024-09-26
 
 ### Added
