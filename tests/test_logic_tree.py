@@ -155,7 +155,7 @@ class TestSourceLogicTreeSpecification:
 
 
 class TestFlattenedSourceLogicTree:
-    def setup(self):
+    def setup_method(self):
         ba0 = BranchAttributeSpec(name='C', long_name='area-magnitude scaling', value_options=[4.0, 4.1, 4.2])
         ba1 = BranchAttributeSpec(name='C', long_name='area-magnitude scaling', value_options=[4.1, 4.2, 4.3])
 
