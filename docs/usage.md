@@ -126,3 +126,6 @@ z2pt5 = [calculate_z2pt5(x) for x in vs30]
 model.hazard_config.set_sites(locations, backarc=backarc, vs30=vs30, z1pt0=z1pt0, z2pt5=z2pt5)
 model_adapter.write_config('./tmp/cache', './tmp/model_input', source_map(model))
 ```
+
+## Warnings
+There are a number of warnings issued if optional dependencies are not available and for deprecated methods. Warnings can be filtered following [the Python documentation guide](https://docs.python.org/3/library/warnings.html#the-warnings-filter)

@@ -12,9 +12,6 @@ using function: `nzshm_model.get_model_version`.
 """
 from typing import Any, Dict
 
-from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
-from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
-
 
 def model_args_factory() -> Dict[str, Any]:
     return dict(
@@ -22,5 +19,5 @@ def model_args_factory() -> Dict[str, Any]:
         title="Initial version",
         slt_json="nshm_v1.0.0_v2.json",
         gmm_json="gmcm_nshm_v1.0.0.json",
-        hazard_config=OpenquakeConfig(DEFAULT_HAZARD_CONFIG),
+        hazard_config_json="oq_config_nshm_v1.0.0.json",
     )

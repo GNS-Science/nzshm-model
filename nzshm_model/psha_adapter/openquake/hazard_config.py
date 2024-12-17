@@ -10,10 +10,10 @@ import ast
 import configparser
 import copy
 import json
-import logging
+import math
 from itertools import chain
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, TextIO, Tuple, Type, Union, cast
+from typing import Any, Dict, Iterable, List, Optional, TextIO, Tuple, Type, Union, cast
 
 from nzshm_common import CodedLocation
 
@@ -21,15 +21,48 @@ from nzshm_model.psha_adapter.hazard_config import HazardConfig, HazardConfigTyp
 
 from .hazard_config_compat import check_invariants, compatible_hash_digest
 
-log = logging.getLogger(__name__)
 
-try:
-    from openquake.hazardlib.site import calculate_z1pt0, calculate_z2pt5
-except ImportError:
-    log.warning(
-        """warning openquake module dependency not available, maybe you want to install
-                with nzshm-model[openquake]"""
-    )
+# the z1pt0 and z2pt5 functions have been ported from openquake (openquake.hazardlib.site) to avoid incompatibility
+# as the openquake API changes
+def calculate_z1pt0(vs30: float) -> float:
+    """
+    Calculates z1.0 (depth to 1.0 km/s velocity horizon) in m. Assumes the California/global
+    constants, not the Japan specific ones.
+
+    Ref: Chiou, B. S.-J. and Youngs, R. R., 2014. 'Update of the Chiou and Youngs NGA model for the
+    average horizontal component of peak ground motion and response spectra.' Earthquake Spectra,
+    30(3), pp.1117–1153.
+
+    Arguments:
+        vs30: time averaged shear wave velocity from 0 to 30m depth (m/s)
+
+    Returns:
+        depth to 1.0 km/s velocity horizon in m
+    """
+
+    c1_glo = 571**4.0
+    c2_glo = 1360.0**4.0
+    return math.exp((-7.15 / 4.0) * math.log((vs30**4 + c1_glo) / (c2_glo + c1_glo)))
+
+
+def calculate_z2pt5(vs30: float) -> float:
+    """
+    Calculates z2.5 (depth to 2.5 km/s velocity horizon) in km. Assumes the California constants,
+    not the Japan specific ones.
+
+    Ref: Campbell, K.W. & Bozorgnia, Y., 2014. 'NGA-West2 ground motion model for the average
+    horizontal components of PGA, PGV, and 5pct damped linear acceleration response spectra.'
+    Earthquake Spectra, 30(3), pp.1087–1114.
+
+    Arguments:
+        vs30: time averaged shear wave velocity from 0 to 30m depth (m/s)
+
+    Returns:
+        depth to 2.5 km/s velocity horizon in km
+    """
+    c1_glo = 7.089
+    c2_glo = -1.144
+    return math.exp(c1_glo + math.log(vs30) * c2_glo)
 
 
 class OpenquakeConfig(HazardConfig):
@@ -51,6 +84,8 @@ class OpenquakeConfig(HazardConfig):
         >>> oq_config.config.get('general', 'description')
         ... Hello openquake
     """
+
+    hazard_type = "openquake"
 
     def __init__(self, default_config: Union[configparser.ConfigParser, Dict, None] = None):
 
@@ -91,17 +126,16 @@ class OpenquakeConfig(HazardConfig):
         config_dict: Dict[str, Any] = dict(config=self._config_to_dict())
         config_dict['locations'] = self._locations_to_strs()
         config_dict['site_parameters'] = self._site_parameters
+        config_dict['hazard_type'] = self.hazard_type
         return config_dict
 
     def to_json(self, file_path: Union[Path, str]) -> None:
         data = self.to_dict()
         with Path(file_path).open('w') as jsonfile:
-            json.dump(data, jsonfile)
+            json.dump(data, jsonfile, indent=2)
 
     @classmethod
-    def from_json(cls: Type[HazardConfigType], file_path: Union[Path, str]) -> 'OpenquakeConfig':
-        with Path(file_path).open('r') as jsonfile:
-            data = json.load(jsonfile)
+    def from_dict(cls: Type[HazardConfigType], data: Dict) -> 'OpenquakeConfig':
         site_parameters = data.pop('site_parameters')
         locations = data.pop('locations')
         hazard_config = cast('OpenquakeConfig', cls(data['config']))
@@ -111,6 +145,12 @@ class OpenquakeConfig(HazardConfig):
             hazard_config._locations = hazard_config._deserialize_locations(locations)
 
         return hazard_config
+
+    @classmethod
+    def from_json(cls: Type[HazardConfigType], file_path: Union[Path, str]) -> 'OpenquakeConfig':
+        with Path(file_path).open('r') as jsonfile:
+            data = json.load(jsonfile)
+        return cast('OpenquakeConfig', cls.from_dict(data))
 
     @staticmethod
     def _deserialze_site_params(site_parameters):
@@ -123,7 +163,7 @@ class OpenquakeConfig(HazardConfig):
     def _deserialize_locations(locations):
         # check that all coordinates have the same resolution
         def get_resolution(x):
-            return 10**-(len(x) - x.find('.') - 1)
+            return 10 ** -(len(x) - x.find('.') - 1)
 
         all_coords = list(chain.from_iterable([loc.split('~') for loc in locations]))
         if len(set(map(get_resolution, all_coords))) != 1:
@@ -224,7 +264,7 @@ class OpenquakeConfig(HazardConfig):
         self.config.set("calculation", "maximum_distance", str(value_new))
         return self
 
-    def set_sites(self, locations: Sequence[CodedLocation], **site_parameters) -> 'OpenquakeConfig':
+    def set_sites(self, locations: Iterable[CodedLocation], **site_parameters) -> 'OpenquakeConfig':
         """Setter for site_model file.
 
         If a vs30 values are specified, but a uniform vs30 has already been set a ValueError will be raised.
@@ -255,14 +295,16 @@ class OpenquakeConfig(HazardConfig):
             )
 
         self._site_parameters = {}
+        locations = tuple(locations)
         for k, v in site_parameters.items():
-            if not isinstance(v, Sequence):
-                raise TypeError("all keyword arguments must be sequence type")
-            if not len(v) == len(locations):
-                raise ValueError("all keyword arguments must have the same length as locations")
-            self._site_parameters[k] = tuple(v)
+            values = tuple(v)
+            if not isinstance(v, Iterable):
+                raise TypeError("all keyword arguments must be iterable type")
+            if not len(values) == len(locations):
+                raise ValueError("all keyword arguments must have the same number of elements as locations")
+            self._site_parameters[k] = values
 
-        self._locations = tuple(locations)
+        self._locations = locations
         return self
 
     def set_site_filepath(self, site_file: Union[str, Path]) -> 'OpenquakeConfig':

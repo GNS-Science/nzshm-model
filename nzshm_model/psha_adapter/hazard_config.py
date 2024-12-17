@@ -11,6 +11,9 @@ HazardConfigType = TypeVar('HazardConfigType', bound='HazardConfig')
 
 
 class HazardConfig(ABC):
+
+    hazard_type = "abstract"  # every child class should specify its type for use in loading from file
+
     def __init__(self, *args, **kwargs):
         pass
 
@@ -24,6 +27,20 @@ class HazardConfig(ABC):
 
     @abstractmethod
     def to_json(self, file_path: Union[Path, str]) -> None:
+        pass
+
+    @classmethod
+    @abstractmethod
+    def from_dict(cls: Type[HazardConfigType], data: Dict) -> HazardConfigType:
+        """
+        create a HazardConfig object from a dictionary
+
+        Args:
+            data: the dictionary representation of the HazardConfig object
+
+        Returns:
+            a HazardConfig object
+        """
         pass
 
     @classmethod

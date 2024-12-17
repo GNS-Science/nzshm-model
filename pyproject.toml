@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nzshm-model"
-version = "0.13.3"
+version = "0.13.4"
 description = "The logic tree definitions, final configurations, and versioning of the New Zealand | Aotearoa National Seismic Hazard Model"
 authors = ["Chris DiCaprio <c.dicaprio@gns.cri.nz>", "Chris Chamberlain <chrisbc@artisan.co.nz>"]
 license = "AGPL3"
@@ -20,14 +20,10 @@ model = 'scripts.cli:cli'
 python = ">=3.9,<4.0"
 dacite = "^1.6.0"
 lxml = "^4.9.3"
-tomli = {version = "^2.0.1", optional = true}
-openquake-engine = {version = "^3.19.0", optional = true}
-numba = {version = "^0.59.0", optional = true}
-fiona = {version = "^1.9.6", optional = true}
 nshm-toshi-client = {version = "^1.0.1", extras = ["toshi"], optional = true}
 boto3 = {version = "^1.26.28", optional = true}
 click = {version = "^8.1.3", optional = true}
-nzshm-common = "^0.8.1"
+nzshm-common = "^0.8.4"
 
 [tool.poetry.extras]
 toshi = [
@@ -37,29 +33,27 @@ toshi = [
 scripts = [
     "click"
 ]
-openquake = ["openquake-engine", "numba", "fiona", "tomli"]
 
 [tool.poetry.group.docs.dependencies]
-mkdocstrings-python = "^1.8.0"
 mkdocs = "^1.5.3"
-mkdocs-autorefs = {version = "^0.3.1"}
 mkdocs-include-markdown-plugin  = "^6.0.0"
 mkdocs-material  = "^9.1.21"
 mkdocs-material-extensions  = "^1.1.1"
 mkdocs-pymdownx-material-extras = "^2.0.3"
-mkdocstrings  = "^0.22.0"
 mkdocs-click = "^0.8.1"
+mkdocs-autorefs = "^1.2.0"
+mkdocstrings = {extras = ["python"], version = "^0.27.0"}
 
 [tool.poetry.group.dev.dependencies]
 black  = { version = "^22.3"}
 bump2version = "^1.0.1"
 isort  = { version = "^5.8.0"}
-flake8  = { version = "^3.9.2"}
-flake8-docstrings = { version = "^1.6.0", optional = true}
 pytest = { version = "^6.2.4"}
 pytest-cov  = { version = "^2.12.0"}
 tox = "^4.2.8"
 mypy = "^1.8.0"
+flake8 = "^7.1.1"
+flake8-docstrings = {version = "^1.7.0", optional = true}
 
 [tool.black]
 line-length = 120

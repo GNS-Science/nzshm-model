@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.13.4] 2024-12-12
+
+### Added
+- from_dict method to HazardConfig and OpenquakeConfig classes
+- factory method for obtaining HazardConfig type
+- z1.0 and z2.5 calculation function ported from openquake
+
+### Changed
+- hazard config for model versions stored as file
+
+### Removed
+ - OpenQuake dependency
+
 ## [0.13.3] 2024-09-26
 
 ### Added

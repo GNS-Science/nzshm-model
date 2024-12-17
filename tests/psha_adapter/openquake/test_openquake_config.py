@@ -6,7 +6,6 @@ import io
 
 # import tomli
 import pytest
-
 from nzshm_common.location import CodedLocation
 
 import nzshm_model.psha_adapter.openquake.hazard_config as oqhc
@@ -147,8 +146,7 @@ def example_config():
     yield config
 
 
-@pytest.mark.skipif(not hasattr(oqhc, 'calculate_z1pt0'), reason="requires openquake")
-def test_uniform_site_params(locations):
+def test_uniform_site_params():
     # default z values
     config = OpenquakeConfig()
     vs30_in = 100
@@ -168,8 +166,7 @@ def test_uniform_site_params(locations):
     assert z2pt5 == pytest.approx(round(z2pt5_in, 1))
 
 
-@pytest.mark.skipif(not hasattr(oqhc, 'calculate_z1pt0'), reason="requires openquake")
-def test_unset_uniform_site_params(locations):
+def test_unset_uniform_site_params():
     config = OpenquakeConfig()
     vs30_in = 100
     config.set_uniform_site_params(vs30_in)
@@ -184,9 +181,9 @@ def test_site_errors(locations):
     config = OpenquakeConfig()
     n_locs = len(locations)
 
-    # vs30 values must be Sequence type
+    # vs30 values must be Iterable type
     with pytest.raises(TypeError):
-        config.set_sites(locations, vs30=set(range(n_locs)))
+        config.set_sites(locations, vs30=1)
 
     # vs30 must have same lenth as locations
     with pytest.raises(ValueError):
@@ -292,7 +289,6 @@ def test_write_read_oq_config(tmp_path):
 
     assert config_from_file.locations == config.locations
     assert config_from_file._site_parameters == config._site_parameters
-
 
 
 def test_write_read_oq_config_site_params(tmp_path):
