@@ -7,14 +7,12 @@ license = "AGPL3"
 readme = "README.md"
 packages = [
 	{include = "nzshm_model"},
-	{include = "resources"},
-	{include = "scripts"},
     {include = "tests", format = "sdist" }
 ]
 
 [tool.poetry.scripts]
-slt = 'scripts.slt:slt'
-model = 'scripts.cli:cli'
+slt = 'nzshm_model.scripts.slt:slt'
+model = 'nzshm_model.scripts.cli:cli'
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
