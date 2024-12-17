@@ -14,7 +14,7 @@ from nzshm_model.psha_adapter.hazard_config_factory import hazard_config_class_f
 
 from .psha_adapter.hazard_config import HazardConfig, HazardConfigType
 
-RESOURCES_PATH = resources.files('resources')
+RESOURCES_PATH = resources.files('nzshm_model.resources')
 
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
 GMM_JSON_SOURCE_PATH = RESOURCES_PATH / "GMM_JSON"

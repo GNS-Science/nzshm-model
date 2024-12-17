@@ -6,7 +6,6 @@ repo_name: GNS-Science/nzshm-model
 watch:
   - nzshm_model
   - docs
-  - scripts
 nav:
   - Home: index.md
   - Installation: installation.md

@@ -16,15 +16,14 @@ Functions:
 
 import csv
 import hashlib
-
-# import io
-import pathlib
+import importlib.resources as resources
 from dataclasses import asdict, dataclass
 from typing import IO, Any, Optional
 
 HEADERS = ['hash_digest', 'identity', 'extra']
-GMM_REGISTRY_CSV = pathlib.Path(__file__).parent.parent / 'resources' / 'gmm_branches.csv'
-SOURCE_REGISTRY_CSV = pathlib.Path(__file__).parent.parent / 'resources' / 'source_branches.csv'
+RESOURCES_DIR = resources.files('nzshm_model.resources')
+GMM_REGISTRY_CSV = RESOURCES_DIR / 'gmm_branches.csv'
+SOURCE_REGISTRY_CSV = RESOURCES_DIR / 'source_branches.csv'
 
 
 def identity_digest(identity: str) -> str:
@@ -53,13 +52,13 @@ class Registry:
     @property
     def gmm_registry(self) -> 'BranchRegistry':
         if not self._gmms:
-            self._gmms = BranchRegistry().load(open(GMM_REGISTRY_CSV, 'r'))
+            self._gmms = BranchRegistry().load(GMM_REGISTRY_CSV.open('r'))
         return self._gmms
 
     @property
     def source_registry(self) -> 'BranchRegistry':
         if not self._sources:
-            self._sources = BranchRegistry().load(open(SOURCE_REGISTRY_CSV, 'r'))
+            self._sources = BranchRegistry().load(SOURCE_REGISTRY_CSV.open('r'))
         return self._sources
 
 
