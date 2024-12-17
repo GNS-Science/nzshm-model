@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.13.5] 2024-17-12
+
+### Changed
+- moved scripts and resources packages to be under nzshm_model package
+
 ## [0.13.4] 2024-12-12
 
 ### Added
