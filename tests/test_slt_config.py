@@ -1,5 +1,6 @@
 #! test_module_import
 import dataclasses
+import importlib.resources as resources
 import json
 from pathlib import Path
 
@@ -87,7 +88,7 @@ class TestStructure:
 class TestConfigSerialisation:
     @pytest.mark.parametrize("python_module", ['SLT_v9p0p0.py', 'SLT_v8_gmm_v2_final.py'])
     def test_slt_dict_to_json(self, python_module):
-        config = Path(__file__).parent.parent / 'resources' / 'SRM_LTs' / 'python' / python_module
+        config = resources.files('nzshm_model.resources') / 'SRM_LTs' / 'python' / python_module
         slt = from_config(config)
         obj = dataclasses.asdict(slt)
         jsonish = json.dumps(obj, indent=2)
@@ -97,7 +98,7 @@ class TestConfigSerialisation:
     @pytest.mark.parametrize("python_module", ['SLT_v9p0p0.py', 'SLT_v8_gmm_v2_final.py'])
     def test_slt_v8_round_trip(self, python_module):
 
-        config = Path(__file__).parent.parent / 'resources' / 'SRM_LTs' / 'python' / python_module
+        config = resources.files('nzshm_model.resources') / 'SRM_LTs' / 'python' / python_module
         slt = from_config(config)
         obj = dataclasses.asdict(slt)
         jsonish = json.dumps(obj, indent=2)
@@ -119,7 +120,7 @@ class TestConfigSerialisation:
 
 class TestFromConfig:
     def test_slt_v8(self):
-        config = Path(__file__).parent.parent / 'resources' / 'SRM_LTs' / 'python' / 'SLT_v8_gmm_v2_final.py'
+        config = resources.files('nzshm_model.resources') / 'SRM_LTs' / 'python' / 'SLT_v8_gmm_v2_final.py'
         slt = from_config(config)
         print(slt)
         assert slt.fault_system_lts[0].branches[-1].values[0].name == 'dm'
