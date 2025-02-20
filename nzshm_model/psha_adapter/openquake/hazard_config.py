@@ -107,7 +107,7 @@ class OpenquakeConfig(HazardConfig):
         return NotImplemented
 
     def is_complete(self) -> bool:
-        return bool(self.get_iml())
+        return bool(self.get_iml() or self.get_iml_disagg())
 
     def _config_to_dict(self) -> Dict[str, Any]:
         data: Dict[str, Any] = dict()
@@ -326,8 +326,8 @@ class OpenquakeConfig(HazardConfig):
         Get the intensity measure types and levels. Returns None if not set.
 
         Returns:
-            IMTs: The intensity measure types.
-            IMTLs: The intensity measure levels.
+            a tuple of (IMTs, IMTLs) where IMTs is a list of intensity measure types and
+            IMTLs is a list of intensity measure levels
         """
 
         value = self.get_parameter('calculation', 'intensity_measure_types_and_levels')
@@ -340,6 +340,19 @@ class OpenquakeConfig(HazardConfig):
 
         return imts, imtls
 
+    def get_iml_disagg(self) -> Optional[Tuple[str, float]]:
+        """Get the intensity measure type and level for the disaggregation. Returns None if not set.
+
+        Returns:
+            a tuple of (IMT, and IMTL) where IMT is a intensity measure type and IMTL is an intensity measure level
+        """
+        value = self.get_parameter('disagg', 'iml_disagg')
+        if not value:
+            return None
+
+        iml_imtl = ast.literal_eval(value)
+        return list(iml_imtl.items())[0]
+
     # TODO disagg configs might warrant a separate class, and separate defaults ??
     def set_disagg_site_model(self) -> 'OpenquakeConfig':
         raise NotImplementedError()
@@ -351,7 +364,7 @@ class OpenquakeConfig(HazardConfig):
         # self.set_parameter('site_params', 'sites', f'{lon} {lat}')
         return self
 
-    def set_iml_disagg(self, imt, level) -> 'OpenquakeConfig':
+    def set_iml_disagg(self, imt: str, level: float) -> 'OpenquakeConfig':
         self.set_parameter('disagg', 'iml_disagg', str({imt: level}))
         return self
 
