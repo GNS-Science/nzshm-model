@@ -1,8 +1,13 @@
 # Changelog
 
-## [0.13.5] 2024-17-12
+## [0.13.5] 2025-*
+
+### Added 
+- str representation of HazardConfig objects
 
 ### Changed
+- OpenquakeConfig.is_complete() works for disaggregation configurations
+- OpenquakeConfig.set_parameter() coerces value to str
 - moved scripts and resources packages to be under nzshm_model package
 
 ## [0.13.4] 2024-12-12
