@@ -1,7 +1,7 @@
+import json
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional, Sequence, Type, TypeVar, Union, Any
-import json
+from typing import TYPE_CHECKING, Any, Dict, Optional, Sequence, Type, TypeVar, Union
 
 from nzshm_model.psha_adapter import ConfigPshaAdapterInterface
 
@@ -41,6 +41,7 @@ class HazardConfig(ABC):
             json.dump(data, jsonfile, indent=2)
         pass
 
+    @abstractmethod
     def to_dict(self) -> Dict[str, Any]:
         """Convert HazardConfig object to dict
 
