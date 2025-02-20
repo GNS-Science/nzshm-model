@@ -129,11 +129,6 @@ class OpenquakeConfig(HazardConfig):
         config_dict['hazard_type'] = self.hazard_type
         return config_dict
 
-    def to_json(self, file_path: Union[Path, str]) -> None:
-        data = self.to_dict()
-        with Path(file_path).open('w') as jsonfile:
-            json.dump(data, jsonfile, indent=2)
-
     @classmethod
     def from_dict(cls: Type[HazardConfigType], data: Dict) -> 'OpenquakeConfig':
         site_parameters = data.pop('site_parameters')
@@ -199,8 +194,8 @@ class OpenquakeConfig(HazardConfig):
         self.set_parameter("calculation", "source_model_logic_tree_file", str(source_lt_filepath))
         return self
 
-    def set_parameter(self, section: str, key: str, value: str) -> 'OpenquakeConfig':
-        """a setter for arbitrary string values
+    def set_parameter(self, section: str, key: str, value: Any) -> 'OpenquakeConfig':
+        """a setter for arbitrary values
 
         Arguments:
             section: The config table name eg.[site_params].
@@ -210,10 +205,9 @@ class OpenquakeConfig(HazardConfig):
         Returns:
             The OpenquakeConfig instance.
         """
-        assert isinstance(value, str)
         if not self.config.has_section(section):
             self.config.add_section(section)
-        self.config.set(section, key, value)
+        self.config.set(section, key, str(value))
         return self
 
     def get_parameter(self, section: str, key: str) -> Optional[str]:
