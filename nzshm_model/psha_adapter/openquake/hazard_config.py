@@ -107,7 +107,7 @@ class OpenquakeConfig(HazardConfig):
         return NotImplemented
 
     def is_complete(self) -> bool:
-        return bool(self.get_iml())
+        return bool(self.get_iml() or self.get_iml_disagg())
 
     def _config_to_dict(self) -> Dict[str, Any]:
         data: Dict[str, Any] = dict()
@@ -128,11 +128,6 @@ class OpenquakeConfig(HazardConfig):
         config_dict['site_parameters'] = self._site_parameters
         config_dict['hazard_type'] = self.hazard_type
         return config_dict
-
-    def to_json(self, file_path: Union[Path, str]) -> None:
-        data = self.to_dict()
-        with Path(file_path).open('w') as jsonfile:
-            json.dump(data, jsonfile, indent=2)
 
     @classmethod
     def from_dict(cls: Type[HazardConfigType], data: Dict) -> 'OpenquakeConfig':
@@ -199,8 +194,8 @@ class OpenquakeConfig(HazardConfig):
         self.set_parameter("calculation", "source_model_logic_tree_file", str(source_lt_filepath))
         return self
 
-    def set_parameter(self, section: str, key: str, value: str) -> 'OpenquakeConfig':
-        """a setter for arbitrary string values
+    def set_parameter(self, section: str, key: str, value: Any) -> 'OpenquakeConfig':
+        """a setter for arbitrary values
 
         Arguments:
             section: The config table name eg.[site_params].
@@ -210,10 +205,9 @@ class OpenquakeConfig(HazardConfig):
         Returns:
             The OpenquakeConfig instance.
         """
-        assert isinstance(value, str)
         if not self.config.has_section(section):
             self.config.add_section(section)
-        self.config.set(section, key, value)
+        self.config.set(section, key, str(value))
         return self
 
     def get_parameter(self, section: str, key: str) -> Optional[str]:
@@ -332,8 +326,8 @@ class OpenquakeConfig(HazardConfig):
         Get the intensity measure types and levels. Returns None if not set.
 
         Returns:
-            IMTs: The intensity measure types.
-            IMTLs: The intensity measure levels.
+            a tuple of (IMTs, IMTLs) where IMTs is a list of intensity measure types and
+            IMTLs is a list of intensity measure levels
         """
 
         value = self.get_parameter('calculation', 'intensity_measure_types_and_levels')
@@ -346,6 +340,19 @@ class OpenquakeConfig(HazardConfig):
 
         return imts, imtls
 
+    def get_iml_disagg(self) -> Optional[Tuple[str, float]]:
+        """Get the intensity measure type and level for the disaggregation. Returns None if not set.
+
+        Returns:
+            a tuple of (IMT, and IMTL) where IMT is a intensity measure type and IMTL is an intensity measure level
+        """
+        value = self.get_parameter('disagg', 'iml_disagg')
+        if not value:
+            return None
+
+        iml_imtl = ast.literal_eval(value)
+        return list(iml_imtl.items())[0]
+
     # TODO disagg configs might warrant a separate class, and separate defaults ??
     def set_disagg_site_model(self) -> 'OpenquakeConfig':
         raise NotImplementedError()
@@ -357,7 +364,7 @@ class OpenquakeConfig(HazardConfig):
         # self.set_parameter('site_params', 'sites', f'{lon} {lat}')
         return self
 
-    def set_iml_disagg(self, imt, level) -> 'OpenquakeConfig':
+    def set_iml_disagg(self, imt: str, level: float) -> 'OpenquakeConfig':
         self.set_parameter('disagg', 'iml_disagg', str({imt: level}))
         return self
 

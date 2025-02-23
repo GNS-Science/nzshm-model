@@ -57,6 +57,43 @@ individual_curves = true
 """  # noqa
 
 
+def test_get_iml():
+    config = OpenquakeConfig()
+    imts = ["PGA", "SA(0.5)"]
+    imtls = list(range(10))
+    config.set_iml(imts, imtls)
+    assert (imts, imtls) == config.get_iml()
+
+
+def test_get_iml_disagg():
+    config = OpenquakeConfig()
+    imt = "PGA"
+    imtl = 0.1
+    config.set_iml_disagg(imt, imtl)
+    assert (imt, imtl) == config.get_iml_disagg()
+
+
+def test_is_complete():
+    config = OpenquakeConfig()
+    assert not config.is_complete()
+
+    imts = ["PGA", "SA(0.5)"]
+    imtls = list(range(10))
+    config.set_iml(imts, imtls)
+    assert config.is_complete()
+
+    config = OpenquakeConfig()
+    imt = "PGA"
+    imtl = 0.1
+    config.set_iml_disagg(imt, imtl)
+    assert config.is_complete()
+
+
+def test_str():
+    config = OpenquakeConfig()
+    assert str(config)
+
+
 def test_config_from_runzi(iml):
     config = (
         OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
@@ -130,7 +167,6 @@ def test_default_config():
     assert config.config == expected
 
 
-@pytest.mark.TODO('why is this a string ??')
 def test_set_maximum_distance():
     config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)  # the default config
     dists = {'Active Shallow Crust': 300.0, 'Volcanic': 300, 'Subduction Interface': 400, 'default': 400}
