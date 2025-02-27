@@ -4,15 +4,14 @@ Defines source logic tree structures used in NSHM.
 import copy
 import warnings
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Type, Union
+from typing import List, Tuple, Union
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
-from nzshm_model.psha_adapter import PshaAdapterInterface
 
-from .. import BranchAttributeValue
-from ..core import BranchSetSpec
-from ..version1 import SourceLogicTree as SourceLogicTreeV1
+from . import BranchAttributeValue
+from .fault_system_branch_set import BranchSetSpec
+from .version1 import SourceLogicTree as SourceLogicTreeV1
 
 
 @dataclass
@@ -109,7 +108,7 @@ class SourceBranch(Branch):
 
 # TODO: protect from users changing tectonic_region_types
 @dataclass
-class SourceBranchSet(BranchSet):
+class SourceBranchSet(BranchSet[SourceBranch]):
     """A list of Source Branches.
 
     Attributes:
@@ -144,7 +143,7 @@ class SourceLogicTreeSpec:
 
 
 @dataclass
-class SourceLogicTree(LogicTree):
+class SourceLogicTree(LogicTree['SourceFilteredBranch']):
     """A dataclass representing a source logic tree
 
     Attributes:
@@ -203,9 +202,12 @@ class SourceLogicTree(LogicTree):
         slt = SourceLogicTree(version=original_slt.version, title=original_slt.title)
         for fslt in original_slt.fault_systems:
             new_fslt = SourceBranchSet(short_name=fslt.short_name, long_name=fslt.long_name)
+            branch_id = 0
             for branch in fslt.branches:
-                # TODO: handle rate scaling
-                new_branch = SourceBranch(values=copy.deepcopy(branch.values), weight=branch.weight)
+                new_branch = SourceBranch(
+                    values=copy.deepcopy(branch.values), weight=branch.weight, branch_id=str(branch_id)
+                )
+                branch_id += 1
                 if branch.onfault_nrml_id:
                     new_branch.sources.append(
                         InversionSource(
@@ -253,18 +255,6 @@ class SourceLogicTree(LogicTree):
         """
         warnings.warn("Please use branch_sets property instead", DeprecationWarning)
         return self.branch_sets
-
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
-        """get a PSHA adapter for this instance.
-
-        Arguments:
-            provider: the adapter class
-            **kwargs: additional arguments required by the provider class
-
-        Returns:
-            a PSHA Adapter instance
-        """
-        return provider(source_logic_tree=self)
 
 
 @dataclass

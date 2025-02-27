@@ -1,6 +1,7 @@
 #! python test_logic_tree.py
 
 import dataclasses
+import importlib.resources as resources
 import itertools
 from pathlib import Path
 
@@ -120,9 +121,7 @@ def test_serialise_slt():
 
 class TestSourceLogicTreeSpecification:
     def test_slt_v8(self):
-        config = (
-            Path(__file__).parent.parent / 'nzshm_model' / 'logic_tree' / 'source_logic_tree' / 'SLT_v8_gmm_v2_final.py'
-        )
+        config = resources.files('nzshm_model.resources') / 'SRM_LTs' / 'python' / 'SLT_v8_gmm_v2_final.py'
         slt = from_config(config)
 
         slt_spec = slt.derive_spec()
@@ -156,7 +155,7 @@ class TestSourceLogicTreeSpecification:
 
 
 class TestFlattenedSourceLogicTree:
-    def setup(self):
+    def setup_method(self):
         ba0 = BranchAttributeSpec(name='C', long_name='area-magnitude scaling', value_options=[4.0, 4.1, 4.2])
         ba1 = BranchAttributeSpec(name='C', long_name='area-magnitude scaling', value_options=[4.1, 4.2, 4.3])
 

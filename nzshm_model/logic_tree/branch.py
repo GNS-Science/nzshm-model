@@ -6,10 +6,12 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import reduce
 from operator import mul
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Sequence, TypeVar
 
 if TYPE_CHECKING:
     from .logic_tree_base import BranchSet, FilteredBranch, LogicTree
+
+BranchType = TypeVar("BranchType", bound="Branch")
 
 
 @dataclass

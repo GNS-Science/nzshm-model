@@ -4,20 +4,20 @@ This module contains base classes (some of which are abstract) common to both **
 """
 import copy
 import json
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterator, List, Sequence, Type, TypeVar, Union
+from typing import Any, Dict, Generator, Generic, Iterator, List, Optional, Type, TypeVar, Union
 
 import dacite
 
 import nzshm_model.logic_tree.helpers as helpers
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
-from .branch import Branch, CompositeBranch
+from .branch import Branch, BranchType, CompositeBranch
 from .correlation import LogicTreeCorrelations
 
 # TODO:
@@ -28,11 +28,14 @@ from .correlation import LogicTreeCorrelations
 # - should we use FilteredBranch for correlation so the branches can be traced back to the BranchSet?
 
 # https://github.com/python/mypy/issues/8495
+# This can be done more simply with typing.Self in python3.11+
 LogicTreeType = TypeVar("LogicTreeType", bound="LogicTree")
+BranchSetType = TypeVar("BranchSetType", bound="BranchSet")
+FilteredBranchType = TypeVar("FilteredBranchType", bound="FilteredBranch")
 
 
 @dataclass
-class BranchSet:
+class BranchSet(Generic[BranchType]):
     """
     A group of branches that comprise their own sub-logic tree. Also known as a fault system logic
     tree (for source logic trees).
@@ -45,14 +48,30 @@ class BranchSet:
 
     short_name: str = ''
     long_name: str = ''
-    branches: Sequence[Any] = field(default_factory=list)
+    branches: List[BranchType] = field(default_factory=list)
 
     def __post_init__(self):
         helpers._validate_branchset_weights(self)
 
+    def __str__(self) -> str:
+        string = f'short_name: {self.short_name}, long_name: {self.long_name}\n'
+        string += '======BRANCHES======\n'
+        return string + '\n'.join([str(branch) for branch in self])
+
+    def __iter__(self: BranchSetType) -> BranchSetType:
+        self.__counter = 0
+        return self
+
+    def __next__(self) -> BranchType:
+        if self.__counter >= len(self.branches):
+            raise StopIteration
+        else:
+            self.__counter += 1
+            return self.branches[self.__counter - 1]
+
 
 @dataclass
-class LogicTree(ABC):
+class LogicTree(ABC, Generic[FilteredBranchType]):
     """
     Logic tree baseclass. Contains information about branch sets and correlations between branches of the branch sets.
 
@@ -79,6 +98,13 @@ class LogicTree(ABC):
         super().__setattr__(__name, __value)
         if __name == "correlations":
             helpers._validate_correlation_weights(self)
+
+    def __str__(self) -> str:
+        string = f'LogicTree type: {type(self)}\n'
+        string += f'title: {self.title}, version:{self.version}\n'
+        string += '==========BRANCH SETS==========\n\n'
+        string += '\n\n'.join([str(bs) for bs in self.branch_sets])
+        return string
 
     def _composite_branches(self) -> Generator[CompositeBranch, None, None]:
         """
@@ -116,7 +142,7 @@ class LogicTree(ABC):
             yield composite_branch
 
     @classmethod
-    def from_json(cls, json_path: Union[Path, str]) -> 'LogicTree':
+    def from_json(cls: Type[LogicTreeType], json_path: Union[Path, str]) -> LogicTreeType:
         """
         Create LogicTree object from json file
 
@@ -176,7 +202,9 @@ class LogicTree(ABC):
         return dacite.from_dict(data_class=cls, data=data, config=config)
 
     def _to_dict(self) -> Dict[str, Any]:
-        """Create dict representation of logic tree. This creates an exact dict of the class and is not used for serialisation.
+        """
+        Create dict representation of logic tree. This creates an exact dict of the class and is not
+        used for serialisation.
 
         Returns:
             dict:
@@ -210,23 +238,7 @@ class LogicTree(ABC):
         with file_path.open('w') as jsonfile:
             json.dump(self.to_dict(), jsonfile, indent=2)
 
-    # would like this to actully do the work, but not sure how to pass the logic trees wihtout knowning the type.
-    # Could check for type in PshaAdaptorInterface, but then we have a circular import.
-    @abstractmethod
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs):
-        """
-        Provide an adapter object for translating LogicTrees to/from specific formats
-
-        Parameters:
-            provider: the interface object that defines a specific implimenation
-            **kwargs:
-
-        Returns:
-            An adapter object
-        """
-        pass
-
-    def __all_branches__(self) -> Generator['FilteredBranch', None, None]:
+    def __all_branches__(self) -> Generator[FilteredBranchType, None, None]:
         """
         Yield all branches from all BranchSets, each with a shallow copy of its LogicTree and BranchSet parents
         for use in filtering.
@@ -254,7 +266,7 @@ class LogicTree(ABC):
                 )
 
     @classmethod
-    def from_branches(cls, branches: Iterator['FilteredBranch']) -> 'LogicTree':
+    def from_branches(cls, branches: Iterator[FilteredBranchType]) -> 'LogicTree':
         """
         Build a complete LogicTree from a iterable of branches.
 
@@ -291,12 +303,24 @@ class LogicTree(ABC):
         self.__branch_list = list(self.__all_branches__())
         return self
 
-    def __next__(self) -> 'FilteredBranch':
+    def __next__(self) -> FilteredBranchType:
         if self.__current_branch >= len(self.__branch_list):
             raise StopIteration
         else:
             self.__current_branch += 1
             return self.__branch_list[self.__current_branch - 1]
+
+    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
+        """get a PSHA adapter for this instance.
+
+        Arguments:
+            provider: the adapter class
+            **kwargs: additional arguments required by the provider class
+
+        Returns:
+            a PSHA Adapter instance
+        """
+        return provider(target=self)
 
 
 @dataclass

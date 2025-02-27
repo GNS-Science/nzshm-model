@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, Generator, List
 
-from ..branch_attribute import BranchAttributeSpec, BranchAttributeValue
+from .branch_attribute import BranchAttributeSpec, BranchAttributeValue
 
 
 @dataclass

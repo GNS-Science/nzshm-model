@@ -45,10 +45,7 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
-          poetry install --no-interaction --no-root --with dev --extras openquake
-      - name: show openquake-engine details
-        run:
-          poetry show openquake-engine
+          poetry install --no-interaction --no-root --with dev
       - name: test with tox (uses tox-gh-actions to select correct environment)
         run:
           poetry run tox

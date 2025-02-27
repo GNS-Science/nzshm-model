@@ -1,5 +1,5 @@
 ::: mkdocs-click
-    :module: scripts.cli
+    :module: nzshm_model.scripts.cli
     :command: cli
     :prog_name: cli
 

@@ -1,143 +1,104 @@
 """
 NshmModel class describes a complete National Seismic Hazard Model.
 """
+import importlib.resources as resources
 import json
-import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, List, Union, cast
+from typing import Any, Dict, Generic, Iterator, List, Optional, Type, Union
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
-from nzshm_model.psha_adapter.openquake import NrmlDocument, OpenquakeSimplePshaAdapter
+from nzshm_model.model_versions import versions
+from nzshm_model.psha_adapter import ModelPshaAdapterInterface
+from nzshm_model.psha_adapter.hazard_config_factory import hazard_config_class_factory
 
-if TYPE_CHECKING:
-    from nzshm_model import psha_adapter
+from .psha_adapter.hazard_config import HazardConfig, HazardConfigType
 
-RESOURCES_PATH = Path(__file__).parent.parent / "resources"
+RESOURCES_PATH = resources.files('nzshm_model.resources')
+
 SLT_SOURCE_PATH = RESOURCES_PATH / "SRM_JSON"
 GMM_JSON_SOURCE_PATH = RESOURCES_PATH / "GMM_JSON"
 GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
-
-versions = {
-    "NSHM_v1.0.0": 'nzshm_model.nshm_v1_0_0',
-    "NSHM_v1.0.4": 'nzshm_model.nshm_v1_0_4',
-}
+HAZARD_CONFIG_PATH = RESOURCES_PATH / "HAZARD_CONFIG_JSON"
 
 
-# https://stackoverflow.com/questions/48976499/mypy-importlib-module-functions
-class ModuleInterface:
-    """a type interface for this module
-
-    it doesn't have to be instantiated, it'll just help mypy figure things out)
-    """
-
-    model: 'NshmModel'
-
-
-def import_module_with_interface(modname: str) -> ModuleInterface:
-    return __import__(modname, fromlist=['_trash'])  # type: ignore
-
-
-class NshmModel:
+class NshmModel(Generic[HazardConfigType]):
     """
     An NshmModel instance represents a complete National Seismic Hazard Model version.
     """
 
-    def __init__(self, version, title, slt_json, gmm_json, gmm_xml, slt_config):
+    def __init__(
+        self,
+        version: str,
+        title: str,
+        source_logic_tree: SourceLogicTree,
+        gmcm_logic_tree: GMCMLogicTree,
+        hazard_config: HazardConfig,
+    ):
         """
-        Create a new NshmModel instance.
+        Arguments:
+            version: Describes version of the model being developed / used.
+            tite: A title for the model.
+            source_logic_tree: The seismicity rate model (SRM) logic tree.
+            gmcm_logic_tree: The ground motion characterization model (GMCM) logic tree.
+            hazard_config: The hazard engine (calculator) configuration.
+        """
+        self.version = version
+        self.title = title
+        self.hazard_config = hazard_config
+        self.source_logic_tree = source_logic_tree
+        self.gmm_logic_tree = gmcm_logic_tree
+
+    @classmethod
+    def from_files(
+        cls,
+        version: str,
+        title: str,
+        slt_json: Union[str, Path],
+        gmm_json: Union[str, Path],
+        hazard_config_json: Union[str, Path],
+    ) -> 'NshmModel[HazardConfigType]':
+        """
+        Create a new NshmModel instance from files.
 
         NB library users will typically never use this, rather they will obtain a model instance
         using static method: `get_model_version`.
         """
-        self.version = version
-        self.title = title
-        self.slt_config = slt_config
 
-        self._slt_json = SLT_SOURCE_PATH / slt_json
-        self._gmm_json = GMM_JSON_SOURCE_PATH / gmm_json
-        self._gmm_xml = GMM_SOURCE_PATH / gmm_xml
-        assert self._slt_json.exists()
-        assert self._gmm_json.exists()
-        assert self._gmm_xml.exists()
+        # backwards compatatilbity for v1 SourceLogicTree
+        # v1 is not versioned
+        data = NshmModel._slt_data_from_file(slt_json)
+        if data.get("logic_tree_version") is None:
+            source_logic_tree = NshmModel._source_logic_tree_from_v1_json(slt_json)
 
-    @property
-    def _slt_data(self):
-        with open(self._slt_json, 'r') as jsonfile:
-            data = json.load(jsonfile)
-        return data
-
-    @property
-    def _glt_data(self):
-        with open(self._gmm_json, 'r') as jsonfile:
-            data = json.load(jsonfile)
-        return data
-
-    @property
-    def source_logic_tree(self) -> "SourceLogicTree":
-        """
-        the source logic tree for this model.
-
-        Returns:
-            a source_logic_tree
-
-        """
-        data = self._slt_data
-        ltv = data.get("logic_tree_version")
-        if ltv is None:  # original json is unversioned
-            return SourceLogicTree.from_source_logic_tree(SourceLogicTreeV1.from_dict(data))
-        elif ltv == 2:
-            return SourceLogicTree.from_dict(data)
-        raise ValueError("Unsupported logic_tree_version.")
-
-    def source_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
-        """
-        the Source logic tree for this model as a OpenQuake nrml compatiable type.
-
-        Returns:
-            a source_logic_tree
-        """
-        warnings.warn("use NshmModel.source_logic_tree().psha_adapter().config() instead", DeprecationWarning)
-        slt = self.source_logic_tree
-        return slt.psha_adapter(provider=OpenquakeSimplePshaAdapter).config()
-
-    @property
-    def gmm_logic_tree_from_xml(self) -> "GMCMLogicTree":
-        """
-        the ground motion logic tree for this model.
-
-        Returns:
-            a gmcm_logic_tree
-
-        """
-        warnings.warn("use NshmModel.gmm_logic_tree instead", DeprecationWarning)
-        adapter = GMCMLogicTree().psha_adapter(OpenquakeSimplePshaAdapter)
-        return adapter.logic_tree_from_xml(self._gmm_xml)  # type: ignore
-
-    @property
-    def gmm_logic_tree(self) -> "GMCMLogicTree":
-        """
-        the ground motion logic tree for this model.
-
-        Returns:
-            a gmcm_logic_tree
-
-        """
-        data = self._glt_data
-        return GMCMLogicTree.from_dict(data)
-
-    def gmm_logic_tree_nrml(self) -> "psha_adapter.openquake.logic_tree.LogicTree":
-        """
-        the ground motion characterisation model (gmcm) logic tree for this model as a OpenQuake nrml compatiable type.
-
-        Returns:
-            a gmm_logic_tree.
-        """
-        doc = NrmlDocument.from_xml_file(self._gmm_xml)
-        return doc.logic_trees[0]
+        source_logic_tree = SourceLogicTree.from_json(slt_json)
+        gmcm_logic_tree = GMCMLogicTree.from_json(gmm_json)
+        HazardConfigClass = hazard_config_class_factory.get_hazard_config_class_from_file(hazard_config_json)
+        hazard_config = HazardConfigClass.from_json(hazard_config_json)
+        return cls(version, title, source_logic_tree, gmcm_logic_tree, hazard_config)
 
     @staticmethod
-    def get_model_version(version: str) -> 'NshmModel':
+    def _slt_data_from_file(filepath: Union[str, Path]) -> Dict[Any, Any]:
+        with Path(filepath).open('r') as jsonfile:
+            data = json.load(jsonfile)
+        return data
+
+    @staticmethod
+    def _source_logic_tree_from_v1_json(filepath: Union[str, Path]) -> SourceLogicTree:
+        """
+        Create a SourceLogicTree from an old v1 json file; convert to new type.
+
+        Arguments:
+            filepath: the path to the json file specifying the source logic tree
+
+        Returns:
+            a source logic tree
+
+        """
+        return SourceLogicTree.from_source_logic_tree(SourceLogicTreeV1.from_json(filepath))
+
+    @classmethod
+    def get_model_version(cls, version: str) -> 'NshmModel':
         """
         Retrieve an existing model by its specific version
 
@@ -157,14 +118,16 @@ class NshmModel:
         Returns:
             the model instance.
         """
-        model_spec_module = versions.get(version)
-        if not model_spec_module:
+
+        model_args_factory = versions.get(version)
+        if not model_args_factory:
             raise ValueError(f"{version} is not a valid model version.")
-        # module = importlib.import_module(model_spec_module)
-        module = import_module_with_interface(model_spec_module)
-        # return module.model
-        return cast('NshmModel', module.model)
-        # return cast('NshmModel', model)
+
+        model_args = model_args_factory()
+        model_args['slt_json'] = SLT_SOURCE_PATH / model_args['slt_json']
+        model_args['gmm_json'] = GMM_JSON_SOURCE_PATH / model_args['gmm_json']
+        model_args['hazard_config_json'] = HAZARD_CONFIG_PATH / model_args['hazard_config_json']
+        return cls.from_files(**model_args)
 
     def get_source_branch_sets(self, short_names: Union[List[str], str, None] = None) -> Iterator['SourceBranchSet']:
         """
@@ -205,27 +168,16 @@ class NshmModel:
                 except StopIteration:
                     raise ValueError("The branch " + short_name + " was not found.")
 
-    # def get_source_branches(self, short_names: list = None) -> Iterator['SourceBranch']:
-    #     """
-    #     get an iterator for the SourceBranches matching the specified branch set(s)
+    def psha_adapter(
+        self, provider: Type[ModelPshaAdapterInterface], **kwargs: Optional[Dict]
+    ) -> "ModelPshaAdapterInterface":
+        """get a PSHA adapter for this instance.
 
-    #     Examples:
-    #         >>>  model = get_model_version("NSHM_v1.0.4")
-    #         >>>  for branch in model.get_source_branches(['CRU', 'PUY']):
-    #                 print(branch.tag, branch.weight)
-    #         >>>
-    #         [dm0.7, bN[0.902, 4.6], C4.0, s0.28] 0.21
-    #         ...
+        Arguments:
+            provider: the adapter class
+            **kwargs: additional arguments required by the provider class
 
-    #     Parameters:
-    #         short_names: list of short_names for branch_set(s) (eg. HIK, CRU, PUY, SLAB)
-
-    #     Raises:
-    #         ValueError: when a branch short_name is not found.
-
-    #     Yields:
-    #         iterator of branch objects
-    #     """
-    #     for branch_set in self.get_source_branch_sets(short_names):
-    #         for branch in branch_set.branches:
-    #             yield (branch)
+        Returns:
+            a PSHA Adapter instance
+        """
+        return provider(target=self)

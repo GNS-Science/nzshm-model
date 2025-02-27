@@ -11,4 +11,10 @@ Attributes:
 from .hazard_config import OpenquakeConfig
 from .hazard_config_compat import DEFAULT_HAZARD_CONFIG
 from .logic_tree import NrmlDocument
-from .simple_nrml import OpenquakeSimplePshaAdapter, gmcm_branch_from_element_text
+from .simple_nrml import (
+    OpenquakeConfigPshaAdapter,
+    OpenquakeGMCMPshaAdapter,
+    OpenquakeModelPshaAdapter,
+    OpenquakeSourcePshaAdapter,
+    gmcm_branch_from_element_text,
+)

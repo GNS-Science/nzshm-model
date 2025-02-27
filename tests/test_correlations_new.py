@@ -1,5 +1,5 @@
+import importlib.resources as resources
 import json
-from pathlib import Path
 
 from nzshm_model.logic_tree import SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
@@ -8,7 +8,7 @@ from nzshm_model.logic_tree.source_logic_tree.version1.logic_tree import Flatten
 
 def test_v2_correlations():
 
-    slt_filepath = Path(__file__).parent.parent / "resources" / "SRM_JSON" / "nshm_v1.0.4.json"
+    slt_filepath = resources.files('nzshm_model.resources') / "SRM_JSON" / "nshm_v1.0.4.json"
     with slt_filepath.open() as slt_file:
         slt_v1 = SourceLogicTreeV1.from_dict(json.load(slt_file))
     slt_v2 = SourceLogicTree.from_source_logic_tree(slt_v1)

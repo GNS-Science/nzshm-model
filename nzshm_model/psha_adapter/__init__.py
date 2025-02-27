@@ -1,2 +1,8 @@
 # from .openquake import NrmlDocument, OpenquakeSimplePshaAdapter
-from .psha_adapter_interface import PshaAdapterInterface
+from .psha_adapter_interface import (
+    ConfigPshaAdapterInterface,
+    GMCMPshaAdapterInterface,
+    ModelPshaAdapterInterface,
+    PshaAdapterInterface,
+    SourcePshaAdapterInterface,
+)

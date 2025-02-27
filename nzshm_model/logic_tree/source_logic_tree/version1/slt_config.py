@@ -8,7 +8,7 @@ NB: this is needed only for version 1 logic trees, Version 2 are defined directl
 
 import copy
 import importlib.util
-import logging
+import warnings
 from pathlib import Path
 from typing import Any, Dict, Generator, Iterable, List, Union
 
@@ -20,12 +20,12 @@ from nzshm_model.logic_tree.source_logic_tree.version1 import (
     SourceLogicTreeCorrelation,
 )
 
-log = logging.getLogger(__name__)
-
 try:
     from .toshi_api import solution_rupt_set_id, toshi_api
 except ModuleNotFoundError:
-    log.warning("warning Toshi API module dependency not available, maybe you want to install with nzshm-model[toshi]")
+    warnings.warn(
+        "warning Toshi API module dependency not available, maybe you want to install with nzshm-model[toshi]"
+    )
 
 
 def get_config_groups(logic_tree_permutations) -> Generator:
