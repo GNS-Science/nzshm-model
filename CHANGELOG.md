@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.13.5] 2025-*
+## [0.13.5] 2025-02-28
 
 ### Added 
 - str representation of HazardConfig objects
