@@ -18,7 +18,7 @@ import csv
 import hashlib
 import importlib.resources as resources
 from dataclasses import asdict, dataclass
-from typing import IO, Any, Optional
+from typing import IO, Any, Optional, Union
 
 HEADERS = ['hash_digest', 'identity', 'extra']
 RESOURCES_DIR = resources.files('nzshm_model.resources')
@@ -90,6 +90,7 @@ class BranchRegistry:
     def __init__(self):
         self._branches_by_hash = dict()
         self._branches_by_identity = dict()
+        self._branches_by_extra = dict()
 
     def _load_row(self, row):
         entry = BranchRegistryEntry(**row)
@@ -98,6 +99,9 @@ class BranchRegistry:
 
         self._branches_by_hash[entry.hash_digest] = entry
         self._branches_by_identity[entry.identity] = entry
+        if entry.extra:
+            self._branches_by_extra[entry.extra] = entry
+
 
     def load(self, registry_file: IO[Any]) -> 'BranchRegistry':
         """Load the entries contained in a CSV file.
@@ -156,6 +160,19 @@ class BranchRegistry:
             identity: the identity string.
         """
         return self._branches_by_identity[identity]
+
+    def get_by_extra(self, extra: str) -> Union[BranchRegistryEntry, None]:
+        """Get a registry entry by the extra string.
+
+        Notes:
+         - this may return None. 
+         - only used a workaroound becuase some post NSHM hazard jobs used the extra value
+           instead of the identity string in the HDF% ( e.g. `T3BlbnF1YWtlSGF6YXJkVGFzazo2OTMxODkz` )
+
+        Arguments:
+            extra: the extra string.
+        """
+        return self._branches_by_extra.get(extra)
 
     def __len__(self):
         return len(self._branches_by_hash.keys())
