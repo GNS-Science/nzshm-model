@@ -1,8 +1,8 @@
 # Changelog
 
 ## [0.13.6] 2025-04-01
- - get_by_extra method on BranchRegistry to cope with hazard jobs
- 
+ - get_by_extra method on BranchRegistry to cope with errant hazard jobs (ref T3BlbnF1YWtlSGF6YXJkVGFzazo2OTMxODkz)
+
 ### Added 
 - str representation of HazardConfig objects
 

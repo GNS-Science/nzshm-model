@@ -87,9 +87,3 @@ class TestRegistryClass:
         entry = registry.source_registry.get_by_extra("[dmgeodetic, tdFalse, bN[0.823, 2.7], C4.2, s0.66]")
         assert entry.hash_digest == "ef55f8757069"
         assert entry.identity == "RmlsZToxMzA3MDc=|SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MDE="
-
-
-# class Test_Source_Branches():
-
-#     def test_list_source_branches(self, sources_csv_fixture):
-#         pass
