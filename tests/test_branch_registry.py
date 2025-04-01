@@ -77,8 +77,13 @@ class TestRegistryClass:
         entry = registry.source_registry.get_by_identity("RmlsZToxMzA3NTM=|SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE2NTc=")
         assert entry.hash_digest == "af9ec2b004d7"
 
-
-# class Test_Source_Branches():
-
-#     def test_list_source_branches(self, sources_csv_fixture):
-#         pass
+    def test_source_registry_by_extra(self):
+        """
+        ef55f8757069,RmlsZToxMzA3MDc=|SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MDE=,
+        "[dmgeodetic, tdFalse, bN[0.823, 2.7], C4.2, s0.66]"
+        """
+        registry = branch_registry.Registry()
+        assert len(registry.source_registry) == 49
+        entry = registry.source_registry.get_by_extra("[dmgeodetic, tdFalse, bN[0.823, 2.7], C4.2, s0.66]")
+        assert entry.hash_digest == "ef55f8757069"
+        assert entry.identity == "RmlsZToxMzA3MDc=|SW52ZXJzaW9uU29sdXRpb25Ocm1sOjEyOTE1MDE="
