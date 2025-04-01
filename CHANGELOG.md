@@ -3,9 +3,6 @@
 ## [0.13.6] 2025-04-01
  - get_by_extra method on BranchRegistry to cope with errant hazard jobs (ref T3BlbnF1YWtlSGF6YXJkVGFzazo2OTMxODkz)
 
-### Added 
-- str representation of HazardConfig objects
-
 ## [0.13.5] 2025-02-28
 
 ### Added 
