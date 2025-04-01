@@ -102,7 +102,6 @@ class BranchRegistry:
         if entry.extra:
             self._branches_by_extra[entry.extra] = entry
 
-
     def load(self, registry_file: IO[Any]) -> 'BranchRegistry':
         """Load the entries contained in a CSV file.
 
@@ -165,7 +164,7 @@ class BranchRegistry:
         """Get a registry entry by the extra string.
 
         Notes:
-         - this may return None. 
+         - this may return None.
          - only used a workaroound becuase some post NSHM hazard jobs used the extra value
            instead of the identity string in the HDF% ( e.g. `T3BlbnF1YWtlSGF6YXJkVGFzazo2OTMxODkz` )
 
