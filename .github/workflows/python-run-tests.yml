@@ -1,0 +1,148 @@
+name: Run Python Tests 
+
+# Reusable workflow for Python projects that runs tests
+#
+# For each combination of `python-versions` and `operating-systems`:
+#    - runs `tox` for the current Python installation
+#    - uploads coverage data to Codecov - only for the first Python version and a Linux OS to avoid double-ups
+# 
+# Matrix arrays `operating-systems` and `python-versions` are required and need to be provided as stringified JSON. 
+# See default values for examples. This is because reusable workflows cannot take arrays as arguments.
+ 
+
+on:
+  workflow_call:
+    inputs:
+      operating-systems:
+        description: A stringified JSON array of all operating systems to use
+        required: true
+        type: string
+        default: "['ubuntu-latest', 'windows-latest', 'macos-latest']"
+      python-versions:
+        description: A stringified JSON array of all Python versions to use
+        required: true
+        type: string
+        default: "['3.10', '3.11']"
+      fail-fast:
+        description: Set to false if you want all jobs finish running even if one fails. See https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategyfail-fast
+        required: false
+        type: boolean
+        default: true
+      poetry-version:
+        description: The poetry version to use
+        required: false
+        type: string
+        default: "latest"
+      fail-on-codecov-error:
+        description: Whether to fail if Codecov upload encounters an error
+        required: false
+        type: boolean
+        default: true
+      working-directory:
+        description: The working directory
+        required: false
+        type: string
+        default: .
+
+
+jobs:
+  run_unit_tests:
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: ${{ inputs.fail-fast}}
+      matrix:
+        python-version: ${{ fromJson(inputs.python-versions) }}
+        os: ${{ fromJson(inputs.operating-systems) }}
+
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.working-directory }}
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: ${{ matrix.python-version }}
+    steps:
+
+      #----------------------------------------------
+      #       check out repo
+      #----------------------------------------------
+      - uses: actions/checkout@v4
+
+      #----------------------------------------------
+      #       install Python
+      #----------------------------------------------
+      - uses: actions/setup-python@v5
+        id: pythonInstallStep
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      #----------------------------------------------
+      #       install Poetry
+      #----------------------------------------------
+      - name: Install and configure Poetry
+        uses: GNS-Science/install-poetry@main
+        with:
+          version: ${{ inputs.poetry-version }}
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      #----------------------------------------------
+      #       load cached venv if cache exists
+      #----------------------------------------------
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.pythonInstallStep.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-python-run-tests
+
+      #----------------------------------------------
+      #        install dependencies if cache does not exist
+      #----------------------------------------------
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: 
+          poetry install --no-interaction --no-root --with dev --all-extras
+
+      #----------------------------------------------
+      #        Install tox-gh-actions. 
+      #        We can't always rely on the cache for this.
+      #----------------------------------------------
+      - name: Install tox-gh-actions
+        run: |
+          if poetry run pip list | grep tox-gh-actions; then
+            echo "tox-gh-actions is already installed"
+          else
+            poetry add tox-gh-actions
+          fi
+
+      #----------------------------------------------
+      #       Test with tox
+      #----------------------------------------------         
+      - name: test with tox (uses tox-gh-actions to select correct environment)
+        run: |
+          poetry run tox -v -v
+
+      #----------------------------------------------
+      #       list files
+      #----------------------------------------------          
+      - name: list files
+        run: ls -l .
+
+      #----------------------------------------------
+      #       upload coverage report to Codecov
+      #----------------------------------------------        
+      - name: Submit coverage report
+        if: fromJson(inputs.python-versions)[0] == matrix.python-version && runner.os == 'Linux'
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.xml 
+          flags: unittests 
+          name: codecov-umbrella 
+          token: ${{ secrets.CODECOV_TOKEN }} 
+          verbose: true
+          env_vars: OS,PYTHON
+          fail_ci_if_error: ${{ inputs.fail-on-codecov-error }}
