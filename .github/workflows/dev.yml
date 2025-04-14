@@ -14,6 +14,6 @@ jobs:
     uses: GNS-Science/nshm-github-actions/.github/workflows/python-run-tests.yml@main
     with:
       # Windows disabled until https://github.com/GNS-Science/nzshm-model/issues/129 is fixed
-      operating-systems: "['ubuntu-latest', 'macos-latest']" #"['ubuntu-latest', 'macos-latest', 'windows-latest']"
+      operating-systems: "['ubuntu-latest', 'macos-latest', 'windows-latest']"
       python-versions: "['3.9', '3.10', '3.11']"
     secrets: inherit
