@@ -92,18 +92,18 @@ jobs:
       #----------------------------------------------
       #       load cached venv if cache exists
       #----------------------------------------------
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.pythonInstallStep.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-python-run-tests
+    #   - name: Load cached venv
+    #     id: cached-poetry-dependencies
+    #     uses: actions/cache@v4
+    #     with:
+    #       path: .venv
+    #       key: venv-${{ runner.os }}-${{ steps.pythonInstallStep.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-python-run-tests
 
       #----------------------------------------------
       #        install dependencies if cache does not exist
       #----------------------------------------------
       - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        # if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: 
           poetry install --no-interaction --no-root --with dev --all-extras
 
@@ -125,6 +125,7 @@ jobs:
       - name: test with tox (uses tox-gh-actions to select correct environment)
         run: |
           poetry build
+          echo "tox---------------------------------"
           poetry run tox -v -v
 
       #----------------------------------------------
