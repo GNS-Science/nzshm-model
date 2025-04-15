@@ -129,7 +129,7 @@ jobs:
           poetry build
           # poetry run mkdocs build -q
           echo "tox---------------------------------"
-          poetry run tox
+          poetry -vvv run tox -vv
 
 #          poetry run tox -v -v
 
