@@ -123,6 +123,8 @@ jobs:
       #       Test with tox
       #----------------------------------------------         
       - name: test with tox (uses tox-gh-actions to select correct environment)
+        env:
+            PLATFORM: ${{ matrix.os }}
         run: |
           poetry build
           echo "tox---------------------------------"
