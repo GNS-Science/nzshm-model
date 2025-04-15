@@ -124,6 +124,7 @@ jobs:
       #----------------------------------------------         
       - name: test with tox (uses tox-gh-actions to select correct environment)
         run: |
+          poetry build
           poetry run tox -v -v
 
       #----------------------------------------------
