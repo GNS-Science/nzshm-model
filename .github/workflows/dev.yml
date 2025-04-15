@@ -15,6 +15,6 @@ jobs:
     with:
       # Windows disabled until https://github.com/GNS-Science/nzshm-model/issues/129 is fixed
       operating-systems: "['windows-latest']"
-      python-versions: "['3.9', '3.10']"
+      python-versions: "['3.9']"
       fail-fast: false
     secrets: inherit

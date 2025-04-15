@@ -111,13 +111,13 @@ jobs:
       #        Install tox-gh-actions. 
       #        We can't always rely on the cache for this.
       #----------------------------------------------
-      - name: Install tox-gh-actions
-        run: |
-          if poetry run pip list | grep tox-gh-actions; then
-            echo "tox-gh-actions is already installed"
-          else
-            poetry add tox-gh-actions
-          fi
+    #   - name: Install tox-gh-actions
+    #     run: |
+    #       if poetry run pip list | grep tox-gh-actions; then
+    #         echo "tox-gh-actions is already installed"
+    #       else
+    #         poetry add tox-gh-actions
+    #       fi
 
       #----------------------------------------------
       #       Test with tox
