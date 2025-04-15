@@ -92,18 +92,18 @@ jobs:
       #----------------------------------------------
       #       load cached venv if cache exists
       #----------------------------------------------
-    #   - name: Load cached venv
-    #     id: cached-poetry-dependencies
-    #     uses: actions/cache@v4
-    #     with:
-    #       path: .venv
-    #       key: venv-${{ runner.os }}-${{ steps.pythonInstallStep.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-python-run-tests
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.pythonInstallStep.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-python-run-tests
 
       #----------------------------------------------
       #        install dependencies if cache does not exist
       #----------------------------------------------
       - name: Install dependencies
-        # if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: 
           poetry install --no-interaction --no-root --with dev --all-extras
 
@@ -111,13 +111,13 @@ jobs:
       #        Install tox-gh-actions. 
       #        We can't always rely on the cache for this.
       #----------------------------------------------
-    #   - name: Install tox-gh-actions
-    #     run: |
-    #       if poetry run pip list | grep tox-gh-actions; then
-    #         echo "tox-gh-actions is already installed"
-    #       else
-    #         poetry add tox-gh-actions
-    #       fi
+      - name: Install tox-gh-actions
+        run: |
+          if poetry run pip list | grep tox-gh-actions; then
+            echo "tox-gh-actions is already installed"
+          else
+            poetry add tox-gh-actions
+          fi
 
       #----------------------------------------------
       #       Test with tox
