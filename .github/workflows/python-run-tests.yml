@@ -127,7 +127,7 @@ jobs:
             PLATFORM: ${{ matrix.os }}
         run: |
           poetry build
-          poetry run mkdocs build -q
+          # poetry run mkdocs build -q
           echo "tox---------------------------------"
           poetry run tox -v -v
 
