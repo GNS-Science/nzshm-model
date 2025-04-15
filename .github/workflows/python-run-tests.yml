@@ -129,7 +129,9 @@ jobs:
           poetry build
           # poetry run mkdocs build -q
           echo "tox---------------------------------"
-          poetry run tox -v -v
+          poetry run tox
+
+#          poetry run tox -v -v
 
       #----------------------------------------------
       #       list files
