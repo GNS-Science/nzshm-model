@@ -343,7 +343,7 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
             raise Exception("locations not yet set in configuration")
 
         with site_file.open('w') as fout:
-            site_writer = csv.writer(fout)
+            site_writer = csv.writer(fout, lineterminator='\n')
             header = ['lon', 'lat']
             if site_params:
                 header += list(site_params.keys())
