@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.14.0] 2025-05-02
+
+### Added
+ - `config_from_oq_ini` method in `OpenquakeConfigPshaAdapter` class to create an `OpenquakeConfig` object from an OpenQuake ini configuration file.
+
 ## [0.13.6] 2025-04-01
  - get_by_extra method on BranchRegistry to cope with errant hazard jobs (ref T3BlbnF1YWtlSGF6YXJkVGFzazo2OTMxODkz)
 
