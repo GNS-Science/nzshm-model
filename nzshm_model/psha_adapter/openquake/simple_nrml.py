@@ -1,22 +1,22 @@
+import configparser
 import csv
 import logging
 import pathlib
 import warnings
 import zipfile
-import configparser
 from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Union
 
 from lxml import etree
 from lxml.builder import ElementMaker
 
 from nzshm_model.logic_tree import GMCMBranch, GMCMBranchSet, GMCMLogicTree
-from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter import (
     ConfigPshaAdapterInterface,
     GMCMPshaAdapterInterface,
     ModelPshaAdapterInterface,
     SourcePshaAdapterInterface,
 )
+from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 
 if TYPE_CHECKING:
@@ -320,10 +320,10 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
         self._sources_file: Optional[pathlib.Path] = None
         self._gmcm_file: Optional[pathlib.Path] = None
         self._site_file: Optional[pathlib.Path] = None
-    
+
     def config_from_oq_ini(self, ini_filepath: Union[pathlib.Path, str]) -> OpenquakeConfig:
         """get an OpenquakeConfig from an OpenQuake ini configuration file
-        
+
         Args:
             ini_filepath: path to OpenQuake ini config file
 

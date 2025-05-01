@@ -1,19 +1,18 @@
 import importlib.resources as resources
-import pytest
 
+import pytest
 from nzshm_common.location import CodedLocation
 
 from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
-from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeConfigPshaAdapter
-
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG, ENTRIES_INVARIANT
+from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeConfigPshaAdapter
 
 
 @pytest.mark.parametrize("ini_filename", ["job_0.ini", "job_1.ini", "job_2.ini", "job_3.ini"])
 def test_read_oqini(ini_filename):
-    
+
     fixtures_dir = resources.files('tests.psha_adapter.openquake.fixtures.openquake_hazard_configs')
-    ini_filepath =  fixtures_dir / ini_filename
+    ini_filepath = fixtures_dir / ini_filename
 
     config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
     locations = [CodedLocation(lat, lon, 0.001) for lat, lon in zip(range(10), range(10))]
@@ -23,6 +22,8 @@ def test_read_oqini(ini_filename):
     assert adapter.config_from_oq_ini(ini_filepath)
 
 
+# NB locations and site parameters are not preserved in round trip.
+# This is because when writing an ini file they are seperate files
 def test_read_oqini_roundtrip(tmp_path):
 
     config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
@@ -36,6 +37,10 @@ def test_read_oqini_roundtrip(tmp_path):
     adapter: OpenquakeConfigPshaAdapter = config.psha_adapter(OpenquakeConfigPshaAdapter)
     ini_filepath = adapter.write_config(tmp_path)
     config_from_ini: OpenquakeConfig = adapter.config_from_oq_ini(ini_filepath)
+    print("=" * 50)
+    print(config)
+    print("=" * 50)
+    print(config_from_ini)
 
     # which equality should be used?
     assert config_from_ini.compatible_hash_digest() == config.compatible_hash_digest()
