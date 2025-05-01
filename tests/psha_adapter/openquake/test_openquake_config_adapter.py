@@ -34,6 +34,36 @@ def test_read_oqini_roundtrip(tmp_path):
     vs30s = [v / 10.0 for v in range(len(locations))]
     config.set_sites(locations, vs30=vs30s)
 
+    imts = ["PGA", "SA(0.5)"]
+    imtls = list(range(10))
+    config.set_iml(imts, imtls)
+
+    adapter: OpenquakeConfigPshaAdapter = config.psha_adapter(OpenquakeConfigPshaAdapter)
+    ini_filepath = adapter.write_config(tmp_path)
+    config_from_ini: OpenquakeConfig = adapter.config_from_oq_ini(ini_filepath)
+    print("=" * 50)
+    print(config)
+    print("=" * 50)
+    print(config_from_ini)
+
+    # which equality should be used?
+    assert config_from_ini.compatible_hash_digest() == config.compatible_hash_digest()
+    assert config_from_ini == config
+
+def test_read_oqini_roundtrip_uniform_site(tmp_path):
+
+    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    for entry in ENTRIES_INVARIANT:
+        config.set_parameter(*entry)
+
+    locations = [CodedLocation(lat, lon, 0.001) for lat, lon in zip(range(10), range(10))]
+    config.set_sites(locations)
+    config.set_uniform_site_params(vs30=500)
+
+    imts = ["PGA", "SA(0.5)"]
+    imtls = list(range(10))
+    config.set_iml(imts, imtls)
+
     adapter: OpenquakeConfigPshaAdapter = config.psha_adapter(OpenquakeConfigPshaAdapter)
     ini_filepath = adapter.write_config(tmp_path)
     config_from_ini: OpenquakeConfig = adapter.config_from_oq_ini(ini_filepath)
