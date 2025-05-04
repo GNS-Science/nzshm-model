@@ -463,12 +463,12 @@ class OpenquakeConfig(HazardConfig):
 
         if z1pt0:
             sect['reference_depth_to_1pt0km_per_sec'] = str(round(z1pt0, 0))
-        elif 'calculate_z1pt0' in globals():
+        else:
             sect['reference_depth_to_1pt0km_per_sec'] = str(round(calculate_z1pt0(vs30), 0))
 
         if z2pt5:
             sect['reference_depth_to_2pt5km_per_sec'] = str(round(z2pt5, 1))
-        elif 'calculate_z2pt5' in globals():
+        else:
             sect['reference_depth_to_2pt5km_per_sec'] = str(round(calculate_z2pt5(vs30), 1))
 
         return self
