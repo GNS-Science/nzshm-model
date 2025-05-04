@@ -19,7 +19,7 @@ def test_read_oqini(ini_filename):
     vs30s = [v / 10.0 for v in range(len(locations))]
     config.set_sites(locations, vs30=vs30s)
     adapter: OpenquakeConfigPshaAdapter = config.psha_adapter(OpenquakeConfigPshaAdapter)
-    assert adapter.config_from_oq_ini(ini_filepath)
+    assert adapter.read_config(ini_filepath)
 
 
 # NB locations and site parameters are not preserved in round trip.
@@ -40,7 +40,7 @@ def test_read_oqini_roundtrip(tmp_path):
 
     adapter: OpenquakeConfigPshaAdapter = config.psha_adapter(OpenquakeConfigPshaAdapter)
     ini_filepath = adapter.write_config(tmp_path)
-    config_from_ini: OpenquakeConfig = adapter.config_from_oq_ini(ini_filepath)
+    config_from_ini: OpenquakeConfig = adapter.read_config(ini_filepath)
     print("=" * 50)
     print(config)
     print("=" * 50)
@@ -49,6 +49,7 @@ def test_read_oqini_roundtrip(tmp_path):
     # which equality should be used?
     assert config_from_ini.compatible_hash_digest() == config.compatible_hash_digest()
     assert config_from_ini == config
+
 
 def test_read_oqini_roundtrip_uniform_site(tmp_path):
 
@@ -66,7 +67,7 @@ def test_read_oqini_roundtrip_uniform_site(tmp_path):
 
     adapter: OpenquakeConfigPshaAdapter = config.psha_adapter(OpenquakeConfigPshaAdapter)
     ini_filepath = adapter.write_config(tmp_path)
-    config_from_ini: OpenquakeConfig = adapter.config_from_oq_ini(ini_filepath)
+    config_from_ini: OpenquakeConfig = adapter.read_config(ini_filepath)
     print("=" * 50)
     print(config)
     print("=" * 50)

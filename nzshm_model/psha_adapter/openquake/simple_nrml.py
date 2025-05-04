@@ -321,7 +321,8 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
         self._gmcm_file: Optional[pathlib.Path] = None
         self._site_file: Optional[pathlib.Path] = None
 
-    def config_from_oq_ini(self, ini_filepath: Union[pathlib.Path, str]) -> OpenquakeConfig:
+    @staticmethod
+    def read_config(ini_filepath: Union[pathlib.Path, str]) -> OpenquakeConfig:
         """get an OpenquakeConfig from an OpenQuake ini configuration file
 
         Args:

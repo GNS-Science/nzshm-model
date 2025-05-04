@@ -3,7 +3,10 @@ This module defines the interface to be provided by a PshaAdapter implementation
 """
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+
+if TYPE_CHECKING:
+    from nzshm_model.psha_adapter.hazard_config import HazardConfig
 
 
 class PshaAdapterInterface(ABC):
@@ -71,6 +74,19 @@ class ConfigPshaAdapterInterface(PshaAdapterInterface):
     @abstractmethod
     def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
         """Build PSHA calculation config input files"""
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def read_config(filepath: Union[pathlib.Path, str]) -> 'HazardConfig':
+        """get a HazardConfig object from a configuration file for a specific hazard engine (e.g. OpenQuake)
+
+        Args:
+            filepath: path to hazard engine config file or directory
+
+        Returns:
+            a HazardConfig built from the content of the config file
+        """
         pass
 
 
