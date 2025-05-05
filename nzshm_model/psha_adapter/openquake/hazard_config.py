@@ -7,6 +7,7 @@ Module supporting managed openquake configuration files
 
 """
 import ast
+import copy
 import configparser
 import copy
 import json
@@ -258,14 +259,16 @@ class OpenquakeConfig(HazardConfig):
         self.config.set("calculation", "maximum_distance", str(value_new))
         return self
 
-    def set_sites(self, locations: Iterable[CodedLocation], **site_parameters) -> 'OpenquakeConfig':
-        """Setter for site_model file.
+    def set_sites(self, locations: Iterable[CodedLocation], **site_paramiterss) -> 'OpenquakeConfig':
+        """Set the site locations at which hazard is calculated. Optionally set site parameters.
 
-        If a vs30 values are specified, but a uniform vs30 has already been set a ValueError will be raised.
+        If vs30 is passed as a site_parameter but z1pt0 and/or z2pt5 are not passed they will be calculated
+        from vs30. z1.0 is caculated using Chiou & Youngs (2014) California model and z2.5 is caclualted using
+        Campbell & Bozorgnia 2014 NGA-West2 model.
 
         Arguments:
             locations: The surface locations of the sites.
-            kwargs: Additional site parameters to include in the OpenQuake site file.
+            kwargs: Additional site parameters to include.
                     Argument names will be used in the site file header. All entries
                     must be a sequence of the same length as locations.  See
                     https://docs.openquake.org/oq-engine/manual/latest/user-guide/inputs/site-model-inputs.html
@@ -273,25 +276,27 @@ class OpenquakeConfig(HazardConfig):
 
         Returns:
             The OpenquakeConfig instance.
+
+        References:
+            Campbell, K.W. & Bozorgnia, Y., 2014.
+            'NGA-West2 ground motion model for the average horizontal components of
+            PGA, PGV, and 5pct damped linear acceleration response spectra.' Earthquake Spectra,
+            30(3), pp.1087–1114.
+
+            Chiou, Brian & Youngs, Robert. (2014).
+            'Update of the Chiou and Youngs NGA Model for the Average Horizontal Component of Peak
+            Ground Motion and Response Spectra.' Earthquake Spectra. 30. 1117-1153. 
         """
 
-        if 'vs30' in site_parameters and self.config.has_option('site_params', 'reference_vs30_value'):
-            raise KeyError(
-                "Cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions."
-            )
-        if 'vs30' in site_parameters and 
-        if 'z1pt0' in site_parameters and self.config.has_option('site_params', 'reference_depth_to_1pt0km_per_sec'):
-            raise KeyError(
-                "Cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions."
-            )
-        if 'z2pt5' in site_parameters and self.config.has_option('site_params', 'reference_depth_to_2pt5km_per_sec'):
-            raise KeyError(
-                "Cannot set site specific vs30, z1.0, or, z2.5: configuration specifies uniform site conditions."
-            )
+        site_params = copy.copy(site_paramiterss)
+        if "vs30" in site_params and "z1pt0" not in site_params:
+            site_params["z1pt0"] = [calculate_z1pt0(vs30) for vs30 in site_params["vs30"]]
+        if "vs30" in site_params and "z2pt5" not in site_params:
+            site_params["z2pt5"] = [calculate_z2pt5(vs30) for vs30 in site_params["vs30"]]
 
         self._site_parameters = {}
         locations = tuple(locations)
-        for k, v in site_parameters.items():
+        for k, v in site_params.items():
             values = tuple(v)
             if not isinstance(v, Iterable):
                 raise TypeError("all keyword arguments must be iterable type")
@@ -450,9 +455,6 @@ class OpenquakeConfig(HazardConfig):
             Ground Motion and Response Spectra.' Earthquake Spectra. 30. 1117-1153.
         """
 
-        if (site_parameters := (self.site_parameters)) and 'vs30' in site_parameters:
-            raise KeyError("vs30 is already set as a site specific parameter")
-
         # clean up old settings
         self.unset_uniform_site_params()
         if not self.config.has_section('site_params'):
@@ -483,7 +485,7 @@ class OpenquakeConfig(HazardConfig):
             depth in m, and z2pt5 is the z2.5 reference depth in km. Returns None if uniform site parameters are not set
         """
 
-        if not self.config.has_section('site_params') or not self.config.get('site_params', 'reference_vs30_value', fallback=None):
+        if not self.config.has_section('site_params') or not self.config.has_option('site_params', 'reference_vs30_value'):
             return None
 
         vs30 = float(self.config.get('site_params', 'reference_vs30_value'))
