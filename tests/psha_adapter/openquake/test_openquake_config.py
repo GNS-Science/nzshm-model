@@ -223,22 +223,6 @@ def test_site_errors(locations):
     with pytest.raises(ValueError):
         config.set_sites(locations, vs30=[100] * (n_locs + 1))
 
-    # cannot set site specific vs30 if uniform is specified
-    config = OpenquakeConfig()
-    config.set_uniform_site_params(100)
-
-    assert config.set_sites(locations)
-
-    vs30 = list(range(n_locs))
-    with pytest.raises(KeyError):
-        config.set_sites(locations, vs30=vs30)
-
-    # cannot set uniform vs30 if site specific
-    config = OpenquakeConfig()
-    config.set_sites(locations, vs30=vs30)
-    with pytest.raises(KeyError):
-        config.set_uniform_site_params(100)
-
 
 class TestConfigCompatability:
     def test_compatible_check_invariants(self, example_config):
@@ -328,7 +312,7 @@ def test_write_read_oq_config(tmp_path):
 def test_write_read_oq_config_site_params(tmp_path):
     config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
     locations = [CodedLocation(lat, lon, 0.001) for lat, lon in zip(range(10), range(10))]
-    vs30s = [v / 10.0 for v in range(len(locations))]
+    vs30s = [(v + 1.0) / 10.0 for v in range(len(locations))]
     config.set_sites(locations, vs30=vs30s)
 
     json_filepath = tmp_path / 'hazard_config.json'

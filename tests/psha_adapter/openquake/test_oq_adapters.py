@@ -3,7 +3,7 @@ import warnings
 
 import pytest
 
-from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
+from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig, calculate_z1pt0, calculate_z2pt5
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
 from nzshm_model.psha_adapter.openquake.simple_nrml import (
     OpenquakeConfigPshaAdapter,
@@ -40,7 +40,7 @@ def test_config_adapter(tmp_path, locations):
 def test_config_sitefile(tmp_path, locations):
     site_file = tmp_path / 'sites1.csv'
     hazard_config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
-    vs30s = [v / 10.0 for v in range(len(locations))]
+    vs30s = [(v + 1) / 10.0 for v in range(len(locations))]
     hazard_config.set_sites(locations, vs30=vs30s)
     config_adapter = hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
     config_adapter.write_site_file(site_file)
@@ -48,11 +48,13 @@ def test_config_sitefile(tmp_path, locations):
     with site_file.open() as fin:
         reader = csv.reader(fin)
         header = next(reader)
-        assert header == ['lon', 'lat', 'vs30']
+        assert header == ['lon', 'lat', 'vs30', 'z1pt0', 'z2pt5']
         for loc, vs30, row in zip(locations, vs30s, reader):
             assert row[0] == str(loc.lon)
             assert row[1] == str(loc.lat)
             assert row[2] == str(vs30)
+            assert row[3] == str(calculate_z1pt0(vs30))
+            assert row[4] == str(calculate_z2pt5(vs30))
 
 
 @pytest.mark.filterwarnings("default")
