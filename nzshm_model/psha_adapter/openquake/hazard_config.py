@@ -463,36 +463,31 @@ class OpenquakeConfig(HazardConfig):
 
         if z1pt0:
             sect['reference_depth_to_1pt0km_per_sec'] = str(round(z1pt0, 0))
-        else:
+        elif 'calculate_z1pt0' in globals():
             sect['reference_depth_to_1pt0km_per_sec'] = str(round(calculate_z1pt0(vs30), 0))
 
         if z2pt5:
             sect['reference_depth_to_2pt5km_per_sec'] = str(round(z2pt5, 1))
-        else:
+        elif 'calculate_z2pt5' in globals():
             sect['reference_depth_to_2pt5km_per_sec'] = str(round(calculate_z2pt5(vs30), 1))
 
         return self
 
-    def get_uniform_site_params(self) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+    def get_uniform_site_params(self) -> Optional[Tuple[float, float, float]]:
         """
         The uniform site parameters of the model. Returns None if not set.
 
         Returns:
             (vs30, z1pt0, z2pt5) where vs30 is the vs30 applied to all sites, z1pt0 is the z1.0 reference
-            depth in m, and z2pt5 is the z2.5 reference depth in km.
+            depth in m, and z2pt5 is the z2.5 reference depth in km. Returns None if uniform site parameters are not set
         """
 
-        if not self.config.has_section('site_params'):
-            return None, None, None
+        if not self.config.has_section('site_params') or not self.config.get('site_params', 'reference_vs30_value'):
+            return None
 
-        value = self.get_parameter('site_params', 'reference_vs30_value')
-        vs30 = float(value) if value else None
-
-        value = self.config.get('site_params', 'reference_depth_to_1pt0km_per_sec', fallback=None)
-        z1pt0 = float(value) if value else None
-
-        value = self.config.get('site_params', 'reference_depth_to_2pt5km_per_sec', fallback=None)
-        z2pt5 = float(value) if value else None
+        vs30 = float(self.config.get('site_params', 'reference_vs30_value'))
+        z1pt0 = float(self.config.get('site_params', 'reference_depth_to_1pt0km_per_sec'))
+        z2pt5 = float(self.config.get('site_params', 'reference_depth_to_2pt5km_per_sec'))
 
         return vs30, z1pt0, z2pt5
 
