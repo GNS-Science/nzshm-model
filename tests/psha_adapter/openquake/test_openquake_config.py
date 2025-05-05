@@ -208,10 +208,7 @@ def test_unset_uniform_site_params():
     vs30_in = 100
     config.set_uniform_site_params(vs30_in)
     config.unset_uniform_site_params()
-    vs30, z1pt0, z2pt5 = config.get_uniform_site_params()
-    assert vs30 is None
-    assert z1pt0 is None
-    assert z2pt5 is None
+    assert config.get_uniform_site_params() is None
 
 
 def test_site_errors(locations):

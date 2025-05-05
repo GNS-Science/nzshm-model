@@ -482,7 +482,7 @@ class OpenquakeConfig(HazardConfig):
             depth in m, and z2pt5 is the z2.5 reference depth in km. Returns None if uniform site parameters are not set
         """
 
-        if not self.config.has_section('site_params') or not self.config.get('site_params', 'reference_vs30_value'):
+        if not self.config.has_section('site_params') or not self.config.get('site_params', 'reference_vs30_value', fallback=None):
             return None
 
         vs30 = float(self.config.get('site_params', 'reference_vs30_value'))
