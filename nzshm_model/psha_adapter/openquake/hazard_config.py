@@ -7,7 +7,6 @@ Module supporting managed openquake configuration files
 
 """
 import ast
-import copy
 import configparser
 import copy
 import json
@@ -285,7 +284,7 @@ class OpenquakeConfig(HazardConfig):
 
             Chiou, Brian & Youngs, Robert. (2014).
             'Update of the Chiou and Youngs NGA Model for the Average Horizontal Component of Peak
-            Ground Motion and Response Spectra.' Earthquake Spectra. 30. 1117-1153. 
+            Ground Motion and Response Spectra.' Earthquake Spectra. 30. 1117-1153.
         """
 
         site_params = copy.copy(site_paramiterss)
@@ -485,7 +484,9 @@ class OpenquakeConfig(HazardConfig):
             depth in m, and z2pt5 is the z2.5 reference depth in km. Returns None if uniform site parameters are not set
         """
 
-        if not self.config.has_section('site_params') or not self.config.has_option('site_params', 'reference_vs30_value'):
+        if not self.config.has_section('site_params') or not self.config.has_option(
+            'site_params', 'reference_vs30_value'
+        ):
             return None
 
         vs30 = float(self.config.get('site_params', 'reference_vs30_value'))
