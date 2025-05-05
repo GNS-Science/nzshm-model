@@ -258,7 +258,7 @@ class OpenquakeConfig(HazardConfig):
         self.config.set("calculation", "maximum_distance", str(value_new))
         return self
 
-    def set_sites(self, locations: Iterable[CodedLocation], **site_paramiterss) -> 'OpenquakeConfig':
+    def set_sites(self, locations: Iterable[CodedLocation], **site_paramiters) -> 'OpenquakeConfig':
         """Set the site locations at which hazard is calculated. Optionally set site parameters.
 
         If vs30 is passed as a site_parameter but z1pt0 and/or z2pt5 are not passed they will be calculated
@@ -267,11 +267,11 @@ class OpenquakeConfig(HazardConfig):
 
         Arguments:
             locations: The surface locations of the sites.
-            kwargs: Additional site parameters to include.
-                    Argument names will be used in the site file header. All entries
-                    must be a sequence of the same length as locations.  See
-                    https://docs.openquake.org/oq-engine/manual/latest/user-guide/inputs/site-model-inputs.html
-                    for a list of valid site parameters.
+            **site_parameters: Site parameters for the locations (optional). Keyword argument names will be used
+                as the parameter name in the site file header. All entries must be a sequence of the same
+                length as locations. See
+                https://docs.openquake.org/oq-engine/manual/latest/user-guide/inputs/site-model-inputs.html
+                for a list of valid site parameters.
 
         Returns:
             The OpenquakeConfig instance.
@@ -287,7 +287,7 @@ class OpenquakeConfig(HazardConfig):
             Ground Motion and Response Spectra.' Earthquake Spectra. 30. 1117-1153.
         """
 
-        site_params = copy.copy(site_paramiterss)
+        site_params = copy.copy(site_paramiters)
         if "vs30" in site_params and "z1pt0" not in site_params:
             site_params["z1pt0"] = [calculate_z1pt0(vs30) for vs30 in site_params["vs30"]]
         if "vs30" in site_params and "z2pt5" not in site_params:
