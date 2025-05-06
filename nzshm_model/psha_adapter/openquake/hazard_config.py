@@ -289,9 +289,9 @@ class OpenquakeConfig(HazardConfig):
 
         site_params = copy.copy(site_parameters)
         if "vs30" in site_params and "z1pt0" not in site_params:
-            site_params["z1pt0"] = [calculate_z1pt0(vs30) for vs30 in site_params["vs30"]]
+            site_params["z1pt0"] = [round(calculate_z1pt0(vs30), 0) for vs30 in site_params["vs30"]]
         if "vs30" in site_params and "z2pt5" not in site_params:
-            site_params["z2pt5"] = [calculate_z2pt5(vs30) for vs30 in site_params["vs30"]]
+            site_params["z2pt5"] = [round(calculate_z2pt5(vs30), 1) for vs30 in site_params["vs30"]]
 
         self._site_parameters = {}
         locations = tuple(locations)
