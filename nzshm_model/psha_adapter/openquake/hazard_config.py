@@ -261,6 +261,9 @@ class OpenquakeConfig(HazardConfig):
     def set_sites(self, locations: Iterable[CodedLocation], **site_parameters) -> 'OpenquakeConfig':
         """Set the site locations at which hazard is calculated. Optionally set site parameters.
 
+        Any site specific parameters will take precedence over the uniform values set with the
+        set_uniform_site_params method.
+
         If vs30 is passed as a site_parameter but z1pt0 and/or z2pt5 are not passed they will be calculated
         from vs30. z1.0 is caculated using Chiou & Youngs (2014) California model and z2.5 is calculated using
         Campbell & Bozorgnia 2014 NGA-West2 model.
@@ -429,7 +432,8 @@ class OpenquakeConfig(HazardConfig):
         self, vs30: float, z1pt0: Optional[float] = None, z2pt5: Optional[float] = None
     ) -> 'OpenquakeConfig':
         """
-        Setter for vs30, z1.0, and z2.5 site parameters.
+        Setter for uniform vs30, z1.0, and z2.5 site parameters. These parameters are applied to every
+        site unless any site specific values are set with the set_sites method which take precedence.
 
         This will set the vs30, z1.0, and z2.5 site parameters for all sites. If z1pt0 and/or z2pt5
         are not specified they will be calculated from vs30. z1.0 is caculated using Chiou & Youngs
