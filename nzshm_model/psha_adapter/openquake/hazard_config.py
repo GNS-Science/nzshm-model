@@ -258,11 +258,11 @@ class OpenquakeConfig(HazardConfig):
         self.config.set("calculation", "maximum_distance", str(value_new))
         return self
 
-    def set_sites(self, locations: Iterable[CodedLocation], **site_paramiters) -> 'OpenquakeConfig':
+    def set_sites(self, locations: Iterable[CodedLocation], **site_parameters) -> 'OpenquakeConfig':
         """Set the site locations at which hazard is calculated. Optionally set site parameters.
 
         If vs30 is passed as a site_parameter but z1pt0 and/or z2pt5 are not passed they will be calculated
-        from vs30. z1.0 is caculated using Chiou & Youngs (2014) California model and z2.5 is caclualted using
+        from vs30. z1.0 is caculated using Chiou & Youngs (2014) California model and z2.5 is calculated using
         Campbell & Bozorgnia 2014 NGA-West2 model.
 
         Arguments:
@@ -287,7 +287,7 @@ class OpenquakeConfig(HazardConfig):
             Ground Motion and Response Spectra.' Earthquake Spectra. 30. 1117-1153.
         """
 
-        site_params = copy.copy(site_paramiters)
+        site_params = copy.copy(site_parameters)
         if "vs30" in site_params and "z1pt0" not in site_params:
             site_params["z1pt0"] = [calculate_z1pt0(vs30) for vs30 in site_params["vs30"]]
         if "vs30" in site_params and "z2pt5" not in site_params:
