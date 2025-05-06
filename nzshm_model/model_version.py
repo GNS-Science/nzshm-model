@@ -5,6 +5,7 @@ Attributes:
     versions (Dict[str, str]): a mapping from model version string to its module name
 
 """
+
 from typing import List
 
 from .model import NshmModel

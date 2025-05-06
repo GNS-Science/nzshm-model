@@ -1,3 +1,4 @@
+import configparser
 import csv
 import logging
 import pathlib
@@ -15,14 +16,13 @@ from nzshm_model.psha_adapter import (
     ModelPshaAdapterInterface,
     SourcePshaAdapterInterface,
 )
+from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter.openquake.logic_tree import NrmlDocument
 
 if TYPE_CHECKING:
     from nzshm_model import NshmModel
     from nzshm_model.logic_tree import SourceLogicTree
     from nzshm_model.psha_adapter.openquake.logic_tree import LogicTree
-
-    from .hazard_config import OpenquakeConfig
 
 try:
     from .toshi import API_KEY, API_URL, SourceSolution
@@ -320,6 +320,20 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
         self._sources_file: Optional[pathlib.Path] = None
         self._gmcm_file: Optional[pathlib.Path] = None
         self._site_file: Optional[pathlib.Path] = None
+
+    @staticmethod
+    def read_config(ini_filepath: Union[pathlib.Path, str]) -> OpenquakeConfig:
+        """get an OpenquakeConfig from an OpenQuake ini configuration file
+
+        Args:
+            ini_filepath: path to OpenQuake ini config file
+
+        Returns:
+            an OpenquakeConfig built from the content of the OpenQuake ini file
+        """
+        config = configparser.ConfigParser()
+        config.read(ini_filepath)
+        return OpenquakeConfig(config)
 
     def set_source_file(self, sources_file: Union[pathlib.Path, str]):
         self._sources_file = pathlib.Path(sources_file)

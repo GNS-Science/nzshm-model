@@ -1,6 +1,7 @@
 """
 Classes for enforcing correlations between branches in logic trees
 """
+
 import collections
 import collections.abc
 from dataclasses import dataclass, field
@@ -70,12 +71,10 @@ class LogicTreeCorrelations(collections.abc.Sequence):
             yield cor.primary_branch
 
     @overload
-    def __getitem__(self, i: int) -> Correlation:
-        ...
+    def __getitem__(self, i: int) -> Correlation: ...
 
     @overload
-    def __getitem__(self, i: slice) -> Sequence[Correlation]:
-        ...
+    def __getitem__(self, i: slice) -> Sequence[Correlation]: ...
 
     def __getitem__(self, i):
         if isinstance(i, slice):
