@@ -1,6 +1,7 @@
 """
 Defines source logic tree structures used in NSHM.
 """
+
 import copy
 import warnings
 from dataclasses import dataclass, field

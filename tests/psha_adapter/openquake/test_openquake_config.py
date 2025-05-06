@@ -1,6 +1,7 @@
 """
 tests for the OpenquakeConfiguration class
 """
+
 import configparser
 import io
 

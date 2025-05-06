@@ -80,7 +80,7 @@ def build_crustal_branches():
     )
 
     crustal_branches = FaultSystemLogicTree('Cru', 'Crustal')
-    for (a, b, c, d) in itertools.product(C, s, bN, dm):
+    for a, b, c, d in itertools.product(C, s, bN, dm):
         crustal_branches.branches.append(Branch(values=[a, b, c, d], weight=0.125, onfault_nrml_id='ABC'))
     return crustal_branches
 
