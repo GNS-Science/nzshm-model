@@ -22,7 +22,7 @@ def config_site_specific(locations) -> OpenquakeConfig:
     imtls = [float(i) for i in list(range(10))]
     config.set_iml(imts, imtls)
 
-    vs30s = [v / 10.0 for v in range(len(locations))]
+    vs30s = [(v + 1.0) / 10.0 for v in range(len(locations))]
     config.set_sites(locations, vs30=vs30s)
 
     return config

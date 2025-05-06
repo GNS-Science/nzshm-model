@@ -5,6 +5,11 @@
 ### Added
  - `config_from_oq_ini` method in `OpenquakeConfigPshaAdapter` class to create an `OpenquakeConfig` object from an OpenQuake ini configuration file.
 
+### Changed
+ - `OpenquakeConfig.set_sites` calculates z-values (z1pt0 and z2pt5) if vs30 provided but z-values are not.
+ - `OpenquakeConfig.set_sites` will not raise an exception if uniform site parameters have been set.
+ - `OpenquakeConfig.set_uniform_site_params` will not raise an exception if site-specific parameters have been set.
+
  ### Removed
  - python3.9 support
 
