@@ -53,8 +53,8 @@ def test_config_sitefile(tmp_path, locations):
             assert row[0] == str(loc.lon)
             assert row[1] == str(loc.lat)
             assert row[2] == str(vs30)
-            assert row[3] == str(calculate_z1pt0(vs30))
-            assert row[4] == str(calculate_z2pt5(vs30))
+            assert row[3] == str(round(calculate_z1pt0(vs30), 0))
+            assert row[4] == str(round(calculate_z2pt5(vs30), 1))
 
 
 @pytest.mark.filterwarnings("default")
