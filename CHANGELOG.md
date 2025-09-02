@@ -4,14 +4,16 @@
 
 ### Added
  - `config_from_oq_ini` method in `OpenquakeConfigPshaAdapter` class to create an `OpenquakeConfig` object from an OpenQuake ini configuration file.
+ - Python 3.12 and 3.13 support
 
 ### Changed
  - `OpenquakeConfig.set_sites` calculates z-values (z1pt0 and z2pt5) if vs30 provided but z-values are not.
  - `OpenquakeConfig.set_sites` will not raise an exception if uniform site parameters have been set.
  - `OpenquakeConfig.set_uniform_site_params` will not raise an exception if site-specific parameters have been set.
+ - upgrade `lxml` lib (for python 3.13 support)
 
  ### Removed
- - python3.9 support
+ - Python 3.9 support
 
 ## [0.13.6] 2025-04-01
  - get_by_extra method on BranchRegistry to cope with errant hazard jobs (ref T3BlbnF1YWtlSGF6YXJkVGFzazo2OTMxODkz)
