@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.13.7] 2050-08-TBC
+## [0.13.7] 2025-09-25
 ## Changed
  - add support for python 312 and 313
  - upgrade lxml lib (for python 3.13 support)
