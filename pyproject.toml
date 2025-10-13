@@ -15,7 +15,7 @@ requires-python = ">=3.10,<4.0"
 dependencies = [
     "dacite (>=1.6.0)",
     "lxml (>=6.0)",
-    "nzshm-common (>=0.8.4)"
+    "nzshm-common (>=0.9.0)"
 ]
 
 [tool.poetry]
