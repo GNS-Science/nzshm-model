@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0] 2025-10-13
+### Changed
+- migrated `pyproject.toml` to [PEP 508](https://peps.python.org/pep-0508) as per poetry v2.2 docs.
+- updated setup.cfg
+- ensureCI/CD workflows use minimum install footprints
+- drop python <3.10
+
 ## [0.13.6] 2025-04-01
  - get_by_extra method on BranchRegistry to cope with errant hazard jobs (ref T3BlbnF1YWtlSGF6YXJkVGFzazo2OTMxODkz)
 
