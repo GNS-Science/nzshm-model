@@ -6,6 +6,7 @@
 - updated setup.cfg
 - ensureCI/CD workflows use minimum install footprints
 - drop python <3.10
+- update to `nzshm-common (>=0.9.0)`
 
 ## [0.13.6] 2025-04-01
  - get_by_extra method on BranchRegistry to cope with errant hazard jobs (ref T3BlbnF1YWtlSGF6YXJkVGFzazo2OTMxODkz)
