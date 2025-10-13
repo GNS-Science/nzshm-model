@@ -2,6 +2,7 @@
 This module contains base classes (some of which are abstract) common to both **Source** and
 **Ground Motion Model (GMM)** logic trees.
 """
+
 import copy
 import json
 from abc import ABC

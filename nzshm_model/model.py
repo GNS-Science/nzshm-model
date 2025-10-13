@@ -1,6 +1,7 @@
 """
 NshmModel class describes a complete National Seismic Hazard Model.
 """
+
 import importlib.resources as resources
 import json
 from pathlib import Path

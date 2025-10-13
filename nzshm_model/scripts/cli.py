@@ -1,4 +1,5 @@
 """Console script for model users...."""
+
 # noqa
 import logging
 import os
