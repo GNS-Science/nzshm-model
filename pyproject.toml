@@ -29,17 +29,11 @@ slt = 'nzshm_model.scripts.slt:slt'
 model = 'nzshm_model.scripts.cli:cli'
 
 [project.optional-dependencies]
-scripts = [
+scripts = ["click"]
+toshi = [
     "boto3",
-    "nshm-toshi-client",
-    "click"
+    "nshm-toshi-client"
 ]
-
-[tool.poetry.group.doc]
-optional = true
-
-[tool.poetry.group.dev]
-optional = true
 
 [dependency-groups]
 dev = [
@@ -56,7 +50,6 @@ dev = [
     "tox",
 ]
 doc = [
-    "griffe (>=1.14.0,<2.0.0)",
     "mkdocs-autorefs",
     "mkdocs-click (>=0.9.0,<0.10.0)",
     "mkdocs-include-markdown-plugin",
