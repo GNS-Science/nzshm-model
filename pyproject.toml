@@ -45,13 +45,15 @@ optional = true
 dev = [
     "black",
     "bump2version",
-    "isort",
-    "tox",
-    "mypy",
-    "flake8", 
     "flake8-docstrings",
+    "flake8", 
+    "isort",
+    "mypy",
+    "pip-audit (>=2.9.0,<3.0.0)",
+    "pytest-cov",
     "pytest",
-    "pytest-cov"
+    "safety (>=3.6.2,<4.0.0)",
+    "tox",
 ]
 doc = [
     "griffe (>=1.14.0,<2.0.0)",
