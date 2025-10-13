@@ -1,6 +1,7 @@
 """
 test migration from slt v1 to v2
 """
+
 import pytest
 
 import nzshm_model

@@ -1,6 +1,7 @@
 """
 Classes for deserialising NRML XML hazard uncertainty models.
 """
+
 from dataclasses import dataclass, field
 from pathlib import PurePath
 from typing import TYPE_CHECKING, Iterator, List

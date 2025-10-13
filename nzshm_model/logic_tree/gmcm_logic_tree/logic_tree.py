@@ -1,6 +1,7 @@
 """
 Defines ground motion characterisation model logic tree structures used in NSHM.
 """
+
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
