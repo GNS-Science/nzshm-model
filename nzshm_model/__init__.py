@@ -44,4 +44,4 @@ from .model import NshmModel
 from .model_version import CURRENT_VERSION, all_model_versions, get_model_version, versions
 
 # Python package version is different than the NSHM MODEL version !!
-__version__ = '0.14.0'
+__version__ = '0.14.1'
