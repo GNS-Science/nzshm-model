@@ -3,6 +3,7 @@
 """
 Branch structures used in NSHM source logic trees
 """
+
 from dataclasses import dataclass, field
 from typing import Any, List
 

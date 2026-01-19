@@ -10,6 +10,7 @@ The dict returned by the function is passed as keyword arguments to the NshmMode
 NB library users will typically never use this, rather they will obtain a model instance
 using function: `nzshm_model.get_model_version`.
 """
+
 from typing import Any, Dict
 
 

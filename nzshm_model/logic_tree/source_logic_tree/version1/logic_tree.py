@@ -3,6 +3,7 @@
 """
 Define source logic tree structures used in NSHM.
 """
+
 import json
 import pathlib
 from copy import deepcopy
