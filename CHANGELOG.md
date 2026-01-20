@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1] 2026-01-20
+### Added
+ - `audit` environment for tox
+
+### Changed
+ - update dependencies for new advisories
+
 ## [0.14.0] 2025-10-13
 ### Changed
 - migrated `pyproject.toml` to [PEP 508](https://peps.python.org/pep-0508) as per poetry v2.2 docs.

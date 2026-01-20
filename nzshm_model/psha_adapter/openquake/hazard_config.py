@@ -6,6 +6,7 @@ Module supporting managed openquake configuration files
  - migrated from runzi /runzi/execute/openquake/util/oq_hazard_config.py
 
 """
+
 import ast
 import configparser
 import copy
