@@ -119,3 +119,4 @@ ENV/
 
 # mkdocs build dir
 site/
+.claude/settings.local.json
