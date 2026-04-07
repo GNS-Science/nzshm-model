@@ -1,6 +1,6 @@
 [project]
 name = "nzshm-model"
-version = "0.14.2"
+version = "0.15.0"
 description = "The logic tree definitions, final configurations, and versioning of the New Zealand | Aotearoa National Seismic Hazard Model"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
