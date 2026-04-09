@@ -237,7 +237,7 @@ class OpenquakeSourcePshaAdapter(SourcePshaAdapterInterface):
         for fs in self.source_logic_tree.branch_sets:
             ltbs = LTBS(uncertaintyType="sourceModel", branchSetID=fs.short_name)
             for branch in fs.branches:
-                branch_name = str(branch.values)
+                branch_name = branch.registry_identity
                 files = ""
                 ltv = getattr(self.source_logic_tree, "logic_tree_version", 0)
                 if ltv >= 2:

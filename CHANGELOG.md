@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.15.0] 2026-04-08
+### Changed
+ - `OpenquakeSourcePshaAdapter` uses branch `registry_identity` for branchID rather than `str(values)`
+
 ## [0.14.1] 2026-01-20
 ### Added
  - `audit` environment for tox
