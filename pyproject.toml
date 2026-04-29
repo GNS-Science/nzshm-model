@@ -62,7 +62,7 @@ packages = ["nzshm_model"]
 include = ["nzshm_model", "tests"]
 
 [tool.uv]
-exclude-newer = "2026-04-23T00:00:00Z"
+exclude-newer = "1 week"
 # nzshm-common ships fresh - always resolve to latest.
 exclude-newer-package = { "nzshm-common" = false, "nshm-toshi-client" = false }
 
