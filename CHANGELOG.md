@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+- deps: major: mkdocstrings-python 1.19.0→2.0.3; patch (safety-schemas 0.0.18): blocked by age cutoff; pip vuln GHSA-58qw-9mgm-455v: no fix available
+
 ## [0.15.0] 2026-04-08
 ### Changed
  - `OpenquakeSourcePshaAdapter` uses branch `registry_identity` for branchID rather than `str(values)`
