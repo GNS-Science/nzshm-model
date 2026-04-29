@@ -1,7 +1,9 @@
 # Changelog
 
-## [Unreleased]
-- deps: patch: nshm-toshi-client 1.1.1→1.1.2; major: mkdocstrings-python 1.19.0→2.0.3; skipped: safety-schemas (age cutoff), pip GHSA-58qw-9mgm-455v (no fix)
+## [0.15.1] TBD
+### Changed
+- Migrated from poetry to uv.
+- Upgraded dependencies.
 
 ## [0.15.0] 2026-04-08
 ### Changed
