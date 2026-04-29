@@ -26,15 +26,15 @@ def test_slt_aliases(source_logic_tree):
 
 def test_deprication_warning(source_logic_tree):
     with pytest.warns(DeprecationWarning):
-        source_logic_tree.fault_systems
+        source_logic_tree.fault_systems  # noqa: B018
 
     with pytest.warns(DeprecationWarning):
-        source_logic_tree.fault_system_lts
-
-    with pytest.warns(DeprecationWarning):
-        for filt_branch in source_logic_tree:
-            filt_branch.fslt
+        source_logic_tree.fault_system_lts  # noqa: B018
 
     with pytest.warns(DeprecationWarning):
         for filt_branch in source_logic_tree:
-            filt_branch.slt
+            filt_branch.fslt  # noqa: B018
+
+    with pytest.warns(DeprecationWarning):
+        for filt_branch in source_logic_tree:
+            filt_branch.slt  # noqa: B018

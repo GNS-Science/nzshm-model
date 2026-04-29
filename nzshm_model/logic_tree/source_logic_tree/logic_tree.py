@@ -5,7 +5,6 @@ Defines source logic tree structures used in NSHM.
 import copy
 import warnings
 from dataclasses import dataclass, field
-from typing import List, Tuple, Union
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
@@ -32,10 +31,10 @@ class InversionSource:
     """
 
     nrml_id: str
-    rupture_rate_scaling: Union[float, None] = None  # TODO: needed at this level??
-    inversion_id: Union[str, None] = ""
-    rupture_set_id: Union[str, None] = ""
-    inversion_solution_type: Union[str, None] = ""
+    rupture_rate_scaling: float | None = None  # TODO: needed at this level??
+    inversion_id: str | None = ""
+    rupture_set_id: str | None = ""
+    inversion_solution_type: str | None = ""
     type: str = "inversion"
 
 
@@ -53,7 +52,7 @@ class DistributedSource:
     """
 
     nrml_id: str
-    rupture_rate_scaling: Union[float, None] = None  # TODO: needed at this level??
+    rupture_rate_scaling: float | None = None  # TODO: needed at this level??
     type: str = "distributed"
 
 
@@ -70,10 +69,10 @@ class SourceBranch(Branch):
         rupture_rate_scaling: the scaling ratio.
     """
 
-    values: List[BranchAttributeValue] = field(default_factory=list)
-    sources: List[Union[DistributedSource, InversionSource]] = field(default_factory=list)
+    values: list[BranchAttributeValue] = field(default_factory=list)
+    sources: list[DistributedSource | InversionSource] = field(default_factory=list)
     rupture_rate_scaling: float = 1.0
-    tectonic_region_types: Tuple[str, ...] = field(default_factory=tuple)
+    tectonic_region_types: tuple[str, ...] = field(default_factory=tuple)
 
     def __post_init__(self):
         if not isinstance(self.tectonic_region_types, tuple):
@@ -116,7 +115,7 @@ class SourceBranchSet(BranchSet[SourceBranch]):
         branches: list of branches.
     """
 
-    branches: List[SourceBranch] = field(default_factory=list)
+    branches: list[SourceBranch] = field(default_factory=list)
 
     def __post_init__(self):
         trts = {frozenset(branch.tectonic_region_types) for branch in self.branches}
@@ -124,7 +123,7 @@ class SourceBranchSet(BranchSet[SourceBranch]):
             raise ValueError("all tectonic_region_types in a branch set must be the same")
 
     @property
-    def tectonic_region_types(self) -> Tuple[str, ...]:
+    def tectonic_region_types(self) -> tuple[str, ...]:
         return self.branches[0].tectonic_region_types if self.branches else ()
 
 
@@ -132,14 +131,14 @@ class SourceBranchSet(BranchSet[SourceBranch]):
 class SourceLogicTreeSpec:
     """Is this used anymore?"""
 
-    branch_sets: List[BranchSetSpec] = field(default_factory=list)
+    branch_sets: list[BranchSetSpec] = field(default_factory=list)
 
     @property
     def fault_systems(self):
         """
         API alias for branch_sets (deprecated)
         """
-        warnings.warn("Please use branch_sets property instead", DeprecationWarning)
+        warnings.warn("Please use branch_sets property instead", DeprecationWarning, stacklevel=2)
         return self.branch_sets
 
 
@@ -153,8 +152,8 @@ class SourceLogicTree(LogicTree['SourceFilteredBranch']):
 
     """
 
-    branch_sets: List[SourceBranchSet] = field(default_factory=list)  # branch_sets for this logic tree
-    logic_tree_version: Union[int, None] = 2
+    branch_sets: list[SourceBranchSet] = field(default_factory=list)  # branch_sets for this logic tree
+    logic_tree_version: int | None = 2
 
     def __post_init__(self) -> None:
 
@@ -246,7 +245,7 @@ class SourceLogicTree(LogicTree['SourceFilteredBranch']):
         """
         API alias for branch_sets (deprecated)
         """
-        warnings.warn("Please use branch_sets property instead", DeprecationWarning)
+        warnings.warn("Please use branch_sets property instead", DeprecationWarning, stacklevel=2)
         return self.branch_sets
 
     @property
@@ -254,7 +253,7 @@ class SourceLogicTree(LogicTree['SourceFilteredBranch']):
         """
         API alias for branch_sets (deprecated)
         """
-        warnings.warn("Please use branch_sets property instead", DeprecationWarning)
+        warnings.warn("Please use branch_sets property instead", DeprecationWarning, stacklevel=2)
         return self.branch_sets
 
 
@@ -280,7 +279,7 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
         """
         API alias for branch_set (deprecated)
         """
-        warnings.warn("Please use branch_set property instead", DeprecationWarning)
+        warnings.warn("Please use branch_set property instead", DeprecationWarning, stacklevel=2)
         return self.branch_set
 
     @property
@@ -288,5 +287,5 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
         """
         API alias for slt (deprecated)
         """
-        warnings.warn("Please use logic_tree property instead", DeprecationWarning)
+        warnings.warn("Please use logic_tree property instead", DeprecationWarning, stacklevel=2)
         return self.logic_tree

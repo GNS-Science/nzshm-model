@@ -3,7 +3,8 @@ import logging
 import pathlib
 import warnings
 import zipfile
-from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Union
+from collections.abc import Generator
+from typing import TYPE_CHECKING, Any
 
 from lxml import etree
 from lxml.builder import ElementMaker
@@ -56,7 +57,7 @@ def fetch_toshi_source(file_id: str, destination: pathlib.Path) -> pathlib.Path:
     return fname
 
 
-def process_gmm_args(args: List[str]) -> Dict[str, Any]:
+def process_gmm_args(args: list[str]) -> dict[str, Any]:
     def clean_string(string):
         return string.replace('"', '').replace("'", '').strip()
 
@@ -86,7 +87,7 @@ class OpenquakeGMCMPshaAdapter(GMCMPshaAdapterInterface):
     def __init__(self, target: GMCMLogicTree):
         self.gmcm_logic_tree = target
 
-    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+    def write_config(self, target_folder: pathlib.Path | str) -> pathlib.Path:
 
         target_folder = make_target(target_folder)
 
@@ -98,7 +99,7 @@ class OpenquakeGMCMPshaAdapter(GMCMPshaAdapterInterface):
         return gmcm_file
 
     @staticmethod
-    def gmcm_logic_tree_from_xml(xml_path: Union[pathlib.Path, str]) -> GMCMLogicTree:
+    def gmcm_logic_tree_from_xml(xml_path: pathlib.Path | str) -> GMCMLogicTree:
         """
         Build a GMCMLogicTree from an OpenQuake nrml gmcm logic tree file.
         """
@@ -183,9 +184,9 @@ class OpenquakeSourcePshaAdapter(SourcePshaAdapterInterface):
 
     def write_config(
         self,
-        cache_folder: Union[pathlib.Path, str],
-        target_folder: Union[pathlib.Path, str],
-        source_map: Union[None, Dict[str, list[pathlib.Path]]] = None,
+        cache_folder: pathlib.Path | str,
+        target_folder: pathlib.Path | str,
+        source_map: None | dict[str, list[pathlib.Path]] = None,
     ) -> pathlib.Path:
 
         target_folder = make_target(target_folder)
@@ -265,14 +266,14 @@ class OpenquakeSourcePshaAdapter(SourcePshaAdapterInterface):
         return etree.tostring(nrml, pretty_print=True).decode()
 
     def unpack_resources(
-        self, cache_folder: Union[pathlib.Path, str], target_folder: Union[pathlib.Path, str]
-    ) -> Dict[str, list[pathlib.Path]]:
+        self, cache_folder: pathlib.Path | str, target_folder: pathlib.Path | str
+    ) -> dict[str, list[pathlib.Path]]:
         target = pathlib.Path(target_folder)
         target.mkdir(parents=True, exist_ok=True)
         source_map = {}
         limit = 2
         count = 0
-        for file_id, filepath, uncertainty_model in self.fetch_resources(cache_folder):
+        for _file_id, filepath, uncertainty_model in self.fetch_resources(cache_folder):
             count += 1
             destination = target / uncertainty_model.path().parent
             destination.mkdir(parents=True, exist_ok=True)
@@ -298,9 +299,7 @@ class OpenquakeSourcePshaAdapter(SourcePshaAdapterInterface):
         #         prefixed = pathlib.Path(destination, f"{file_prefix}_{name}")
         #         extracted.rename(prefixed)
 
-    def fetch_resources(
-        self, cache_folder: Union[pathlib.Path, str]
-    ) -> Generator[tuple[Any, pathlib.Path, Any], None, None]:
+    def fetch_resources(self, cache_folder: pathlib.Path | str) -> Generator[tuple[Any, pathlib.Path, Any], None, None]:
         destination = pathlib.Path(cache_folder)
         destination.mkdir(parents=True, exist_ok=True)
         nrml_logic_tree = self.sources_document()
@@ -317,17 +316,17 @@ class OpenquakeSourcePshaAdapter(SourcePshaAdapterInterface):
 class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
     def __init__(self, target: 'OpenquakeConfig'):
         self.hazard_config = target
-        self._sources_file: Optional[pathlib.Path] = None
-        self._gmcm_file: Optional[pathlib.Path] = None
-        self._site_file: Optional[pathlib.Path] = None
+        self._sources_file: pathlib.Path | None = None
+        self._gmcm_file: pathlib.Path | None = None
+        self._site_file: pathlib.Path | None = None
 
-    def set_source_file(self, sources_file: Union[pathlib.Path, str]):
+    def set_source_file(self, sources_file: pathlib.Path | str):
         self._sources_file = pathlib.Path(sources_file)
 
-    def set_gmcm_file(self, gmcm_file: Union[pathlib.Path, str]):
+    def set_gmcm_file(self, gmcm_file: pathlib.Path | str):
         self._gmcm_file = pathlib.Path(gmcm_file)
 
-    def write_site_file(self, site_file: Union[pathlib.Path, str]):
+    def write_site_file(self, site_file: pathlib.Path | str):
         """
         writes the OpenQuake site_model_file
 
@@ -349,7 +348,7 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
                 header += list(site_params.keys())
             site_writer.writerow(header)
 
-            sites: Dict[str, tuple] = {
+            sites: dict[str, tuple] = {
                 'lon': tuple(loc.lon for loc in locations),
                 'lat': tuple(loc.lat for loc in locations),
             }
@@ -360,7 +359,7 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
 
         self._site_file = site_file
 
-    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+    def write_config(self, target_folder: pathlib.Path | str) -> pathlib.Path:
 
         target_folder = make_target(target_folder)
 
@@ -373,7 +372,7 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
 
         # check that required settings not included in default exist
         if not self.hazard_config.is_complete():
-            warnings.warn("hazard configuration is not complete; cannot be used to run OpenQuake job")
+            warnings.warn("hazard configuration is not complete; cannot be used to run OpenQuake job", stacklevel=2)
 
         sources_file = target_folder / '<path to source file>' if not self._sources_file else self._sources_file
         gmcm_file = target_folder / '<path to gmcm file>' if not self._gmcm_file else self._gmcm_file
@@ -399,9 +398,9 @@ class OpenquakeModelPshaAdapter(ModelPshaAdapterInterface):
 
     def write_config(
         self,
-        cache_folder: Union[pathlib.Path, str],
-        target_folder: Union[pathlib.Path, str],
-        source_map: Optional[Dict[str, list[pathlib.Path]]] = None,
+        cache_folder: pathlib.Path | str,
+        target_folder: pathlib.Path | str,
+        source_map: dict[str, list[pathlib.Path]] | None = None,
     ) -> pathlib.Path:
 
         target_folder = make_target(target_folder)

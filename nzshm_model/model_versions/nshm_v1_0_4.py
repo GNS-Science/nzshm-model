@@ -11,10 +11,10 @@ NB library users will typically never use this, rather they will obtain a model 
 using function: `nzshm_model.get_model_version`.
 """
 
-from typing import Any, Dict
+from typing import Any
 
 
-def model_args_factory() -> Dict[str, Any]:
+def model_args_factory() -> dict[str, Any]:
     return dict(
         version='NSHM_v1.0.4',
         title="NSHM version 1.0.4, corrected fault geometry",

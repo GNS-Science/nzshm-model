@@ -18,7 +18,7 @@ def source_map(current_model):
 
 @pytest.fixture
 def locations():
-    return [CodedLocation(lat, lon, 0.001) for lat, lon in zip(range(10), range(10))]
+    return [CodedLocation(lat, lon, 0.001) for lat, lon in zip(range(10), range(10), strict=False)]
 
 
 @pytest.fixture

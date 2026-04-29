@@ -5,14 +5,14 @@ Branch structures used in NSHM source logic trees
 """
 
 from dataclasses import dataclass, field
-from typing import Any, List
+from typing import Any
 
 
 @dataclass
 class BranchAttributeSpec:
     name: str
     long_name: str
-    value_options: List[Any] = field(default_factory=list)
+    value_options: list[Any] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

@@ -8,7 +8,6 @@ import base64
 import dataclasses
 import json
 import os
-from typing import Dict, List, Optional, Union
 
 import boto3
 from botocore.exceptions import ClientError
@@ -61,15 +60,17 @@ def get_secret(secret_name, region_name):
 
 @dataclasses.dataclass
 class InversionInfo:
-    typename: Union[str, None] = None
-    solution_id: Union[str, None] = None
+    typename: str | None = None
+    solution_id: str | None = None
 
 
 class SourceSolutionMap:
     """A mapping between nrml ids and hazard solution ids"""
 
-    def __init__(self, hazard_jobs: List[dict] = []) -> None:
-        self._dict: Dict[str, str] = {}
+    def __init__(self, hazard_jobs: list[dict] | None = None) -> None:
+        if hazard_jobs is None:
+            hazard_jobs = []
+        self._dict: dict[str, str] = {}
         if hazard_jobs:
             for job in hazard_jobs:
                 for arg in job['node']['child']['arguments']:
@@ -83,7 +84,7 @@ class SourceSolutionMap:
     def append(self, other: 'SourceSolutionMap'):
         self._dict.update(other._dict)
 
-    def get_solution_id(self, *, onfault_nrml_id: str, distributed_nrml_id: str) -> Optional[str]:
+    def get_solution_id(self, *, onfault_nrml_id: str, distributed_nrml_id: str) -> str | None:
         return self._dict.get(self.__key(onfault_nrml_id, distributed_nrml_id))
 
     @staticmethod

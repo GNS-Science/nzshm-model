@@ -3,7 +3,7 @@ Defines ground motion characterisation model logic tree structures used in NSHM.
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any
 
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 
@@ -22,7 +22,7 @@ class GMCMBranch(Branch):
     """
 
     gsim_name: str = ""
-    gsim_args: Dict[str, Any] = field(default_factory=dict)
+    gsim_args: dict[str, Any] = field(default_factory=dict)
     tectonic_region_type: str = ""  # need a default becasue base class has a memeber with a default
 
     def filtered_branch(self, logic_tree, branch_set) -> 'GMCMFilteredBranch':
@@ -55,7 +55,7 @@ class GMCMBranchSet(BranchSet[GMCMBranch]):
         branches: list of branches.
     """
 
-    branches: List[GMCMBranch] = field(default_factory=list)
+    branches: list[GMCMBranch] = field(default_factory=list)
 
     def __post_init__(self):
         trts = {branch.tectonic_region_type for branch in self.branches}
@@ -76,7 +76,7 @@ class GMCMLogicTree(LogicTree['GMCMFilteredBranch']):
     """
 
     # should we enforce that there is only one branch_set per TRT?
-    branch_sets: List[GMCMBranchSet] = field(default_factory=list)
+    branch_sets: list[GMCMBranchSet] = field(default_factory=list)
 
     def __post_init__(self):
         self._fix_args()

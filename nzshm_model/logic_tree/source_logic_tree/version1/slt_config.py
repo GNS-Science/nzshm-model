@@ -9,8 +9,9 @@ NB: this is needed only for version 1 logic trees, Version 2 are defined directl
 import copy
 import importlib.util
 import warnings
+from collections.abc import Generator, Iterable
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterable, List, Union
+from typing import Any
 
 from nzshm_model.logic_tree.source_logic_tree import BranchAttributeValue
 from nzshm_model.logic_tree.source_logic_tree.version1 import (
@@ -24,16 +25,16 @@ try:
     from .toshi_api import solution_rupt_set_id, toshi_api
 except ModuleNotFoundError:
     warnings.warn(
-        "warning Toshi API module dependency not available, maybe you want to install with nzshm-model[toshi]"
+        "warning Toshi API module dependency not available, maybe you want to install with nzshm-model[toshi]",
+        stacklevel=2,
     )
 
 
 def get_config_groups(logic_tree_permutations) -> Generator:
-    for permutation in logic_tree_permutations[0][0]['permute']:
-        yield permutation
+    yield from logic_tree_permutations[0][0]['permute']
 
 
-def get_config_group(logic_tree_permutations: Iterable, group_tag: str) -> Union[Dict, None]:
+def get_config_group(logic_tree_permutations: Iterable, group_tag: str) -> dict | None:
     for group in get_config_groups(logic_tree_permutations):
         # print(group["group"], group_tag)
         if group['group'].upper() == group_tag.upper():
@@ -48,7 +49,7 @@ def get_config_group_tag_permutations(logic_tree_permutations: Iterable, group_t
             yield member['tag']
 
 
-def common_tags(itm) -> Union[BranchAttributeValue, None]:
+def common_tags(itm) -> BranchAttributeValue | None:
     try:
         if itm[0] == 'N':
             _n, _b = itm.split('^')
@@ -184,7 +185,7 @@ def from_config(config_path: Path, version: str = "", title: str = "") -> Source
     return slt
 
 
-def build_correlations(src_correlations: Dict[str, Any]) -> List[SourceLogicTreeCorrelation]:
+def build_correlations(src_correlations: dict[str, Any]) -> list[SourceLogicTreeCorrelation]:
     def select_decompose(group_name):
         if group_name.upper() in ['PUY', 'HIK']:
             return decompose_subduction_tag

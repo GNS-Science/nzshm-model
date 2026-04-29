@@ -4,8 +4,9 @@ Classes for enforcing correlations between branches in logic trees
 
 import collections
 import collections.abc
+from collections.abc import Generator, Sequence
 from dataclasses import dataclass, field
-from typing import Generator, List, Optional, Sequence, overload
+from typing import overload
 
 from .branch import Branch
 
@@ -29,14 +30,14 @@ class Correlation:
     """
 
     primary_branch: Branch = field(default_factory=Branch)
-    associated_branches: List[Branch] = field(default_factory=list)
-    weight: Optional[float] = None
+    associated_branches: list[Branch] = field(default_factory=list)
+    weight: float | None = None
 
     def __post_init__(self):
         self.weight = self.primary_branch.weight if not self.weight else self.weight
 
     @property
-    def all_branches(self) -> List[Branch]:
+    def all_branches(self) -> list[Branch]:
         """
         list of all branches in a correlation; both the primary branch and the assiciated branches
 
@@ -55,7 +56,7 @@ class LogicTreeCorrelations(collections.abc.Sequence):
         correlation_groups: list of correlations to be applied to the logic tree branch sets.
     """
 
-    correlation_groups: List[Correlation] = field(default_factory=list)
+    correlation_groups: list[Correlation] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         _validate_correlations(self)

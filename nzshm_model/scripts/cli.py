@@ -111,7 +111,7 @@ def config(cache_folder, output_folder, model_id):
             if v.long_name == 'deformation model' and v.value == "geodetic":
                 return True
 
-    slt = SourceLogicTree.from_branches((fb for fb in slt if unscaled_filter(fb) and geodetic_filter(fb)))
+    slt = SourceLogicTree.from_branches(fb for fb in slt if unscaled_filter(fb) and geodetic_filter(fb))
 
     adapter = slt.psha_adapter(provider=OpenquakeSourcePshaAdapter)
 

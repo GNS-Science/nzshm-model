@@ -47,12 +47,12 @@ def test_model_trts():
 
     glt = model.gmm_logic_tree
     trts = ["Active Shallow Crust", "Subduction Interface", "Subduction Intraslab"]
-    for branch_set, trt in zip(glt.branch_sets, trts):
+    for branch_set, trt in zip(glt.branch_sets, trts, strict=False):
         assert branch_set.tectonic_region_type == trt
         assert branch_set.branches[0].tectonic_region_type == trt
 
     slt = model.source_logic_tree
     trts = ["Subduction Interface", "Subduction Interface", "Active Shallow Crust", "Subduction Intraslab"]
-    for branch_set, trt in zip(slt.branch_sets, trts):
+    for branch_set, trt in zip(slt.branch_sets, trts, strict=False):
         assert branch_set.tectonic_region_types == (trt,)
         assert branch_set.branches[0].tectonic_region_types == (trt,)

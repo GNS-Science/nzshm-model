@@ -1,5 +1,5 @@
 import math
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from .correlation import Correlation, LogicTreeCorrelations
 
@@ -39,7 +39,7 @@ def _validate_correlation_weights(logic_tree: 'LogicTree') -> None:
         raise ValueError("the weights of the logic tree do not sum to 1.0 when correlations are applied")
 
 
-def _validate_correlations_format(correlations: List[str]) -> None:
+def _validate_correlations_format(correlations: list[str]) -> None:
     # check that the correlations are lists of stings with ":"
     for correlation in correlations:
         for branch in correlation:
@@ -56,7 +56,7 @@ def _correlation_encoding(branch_set, branch):
     return f"{branch_set.short_name}:{branch.branch_id}"
 
 
-def _add_corellations(logic_tree: 'LogicTreeType', correlations: List[str]) -> 'LogicTreeType':
+def _add_corellations(logic_tree: 'LogicTreeType', correlations: list[str]) -> 'LogicTreeType':
 
     branches = [branch for branch in logic_tree]
     # branch_names = [f"{fbranch.branch_set.short_name}:{fbranch.name}" for fbranch in branches]
@@ -76,7 +76,7 @@ def _add_corellations(logic_tree: 'LogicTreeType', correlations: List[str]) -> '
     return logic_tree
 
 
-def _serialise_correlations(logic_tree: 'LogicTree') -> List[List[str]]:
+def _serialise_correlations(logic_tree: 'LogicTree') -> list[list[str]]:
     def find_branch_set(logic_tree, branch):
         for fbranch in logic_tree:
             if fbranch.to_branch() == branch:

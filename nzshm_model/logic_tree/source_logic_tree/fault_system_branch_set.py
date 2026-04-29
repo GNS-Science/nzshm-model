@@ -1,5 +1,6 @@
+from collections.abc import Generator
 from dataclasses import dataclass, field
-from typing import Any, Dict, Generator, List
+from typing import Any
 
 from .branch_attribute import BranchAttributeSpec, BranchAttributeValue
 
@@ -8,14 +9,14 @@ from .branch_attribute import BranchAttributeSpec, BranchAttributeValue
 class BranchSetSpec:
     short_name: str
     long_name: str
-    branches: List['BranchAttributeValue'] = field(default_factory=list)
+    branches: list['BranchAttributeValue'] = field(default_factory=list)
 
 
 @dataclass
 class BranchSetBase:
     short_name: str
     long_name: str
-    branches: List[Any] = field(
+    branches: list[Any] = field(
         default_factory=list
     )  # we use 'Any' so subclassed version implementations will override typing
 
@@ -28,7 +29,7 @@ class BranchSetBase:
     def derive_spec(self) -> BranchSetSpec:
         fslt_spec = BranchSetSpec(short_name=self.short_name, long_name=self.long_name)
 
-        options: Dict[str, set] = {}
+        options: dict[str, set] = {}
 
         # extract unique values in to options
         for branch in self.branches:
@@ -45,7 +46,7 @@ class BranchSetBase:
 
         # print(options)
 
-        def option_values(options: Dict) -> Generator:
+        def option_values(options: dict) -> Generator:
             # boil down the options values
             ret = {}
             for key, opt in options.items():
@@ -57,7 +58,7 @@ class BranchSetBase:
                     values.append(val.value)
                 ret[key].value_options = sorted(values)
 
-            for key, bas in ret.items():
+            for _key, bas in ret.items():
                 yield bas
 
         fslt_spec.branches = list(option_values(options))

@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from typing import Dict, Union
 
 from nzshm_model.psha_adapter.hazard_config import HazardConfig
 from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
@@ -18,7 +17,7 @@ class HazardConfigFactory:
     """
 
     def __init__(self):
-        self._config_types: Dict[str, type[HazardConfig]] = {}
+        self._config_types: dict[str, type[HazardConfig]] = {}
 
     def register_config_class(self, type_name: str, config_type: type[HazardConfig]):
         self._config_types[type_name.casefold()] = config_type
@@ -31,13 +30,13 @@ class HazardConfigFactory:
         return config_type
 
     @staticmethod
-    def detect_hazard_config_class_from_file(file_path: Union[str, Path]) -> str:
+    def detect_hazard_config_class_from_file(file_path: str | Path) -> str:
         """Get the concrete HazardConfig type from the json file representation of the object."""
         with Path(file_path).open() as config_file:
             data = json.load(config_file)
             return data["hazard_type"].casefold()
 
-    def get_hazard_config_class_from_file(self, file_path: Union[str, Path]) -> type[HazardConfig]:
+    def get_hazard_config_class_from_file(self, file_path: str | Path) -> type[HazardConfig]:
         """Get the concrete HazardConfig object by detecting the type from the json file
         representation of the object."""
         type_name = self.detect_hazard_config_class_from_file(file_path)

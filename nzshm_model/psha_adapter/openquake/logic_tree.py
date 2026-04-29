@@ -23,10 +23,11 @@ write source XML on the fly, using SLT python modules as inputs.
 
 """
 
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path, PurePath
-from typing import TYPE_CHECKING, Any, Iterator, List, Union
+from typing import TYPE_CHECKING, Any
 
 from lxml import objectify
 
@@ -56,7 +57,7 @@ def get_nrml_namespace(element):
 class LogicTreeBranch:
     parent: "LogicTreeBranchSet"
     branchID: str
-    uncertainty_models: List[Any] = field(default_factory=list)
+    uncertainty_models: list[Any] = field(default_factory=list)
     uncertainty_weight: float = 1.0
 
     @classmethod
@@ -105,7 +106,7 @@ class LogicTreeBranchSet:
     uncertaintyType: str  # assert ltbs.get('uncertaintyType') == "gmpeModel"
     applyToTectonicRegionType: str  # assert ltbs.get('applyToTectonicRegionType') == "Active Shallow Crust"
 
-    branches: List['LogicTreeBranch'] = field(default_factory=list)
+    branches: list['LogicTreeBranch'] = field(default_factory=list)
 
     @classmethod
     def from_parent_element(cls, logic_tree: objectify.Element, parent: "LogicTree") -> Iterator["LogicTreeBranchSet"]:
@@ -147,7 +148,7 @@ class LogicTreeBranchSet:
 @dataclass
 class LogicTree:
     logicTreeID: str
-    branch_sets: List['LogicTreeBranchSet'] = field(default_factory=list)
+    branch_sets: list['LogicTreeBranchSet'] = field(default_factory=list)
 
     @classmethod
     def from_parent_element(cls, root: objectify.Element) -> Iterator["LogicTree"]:
@@ -171,11 +172,11 @@ class LogicTree:
 
 @dataclass
 class NrmlDocument:
-    logic_trees: List[LogicTree] = field(default_factory=list)
+    logic_trees: list[LogicTree] = field(default_factory=list)
 
     @classmethod
     @lru_cache
-    def from_xml_file(cls, filepath: Union[Path, str]) -> "NrmlDocument":
+    def from_xml_file(cls, filepath: Path | str) -> "NrmlDocument":
         gmm_tree = objectify.parse(filepath)
         root = gmm_tree.getroot()
 

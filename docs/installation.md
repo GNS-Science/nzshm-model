@@ -11,10 +11,10 @@ terminal:
 $ pip install nzshm-model
 ```
 
-### using  poetry
+### using uv
 
 ``` console
-$ poetry add nzshm-model
+$ uv add nzshm-model
 ```
 
 These are the preferred method to install nzshm-model, as they will always install the most recent stable release.
@@ -44,7 +44,7 @@ $ pip install .
 or
 
 ```console
-$ poetry install
+$ uv sync --all-extras
 ```
 
 [pip]: https://pip.pypa.io

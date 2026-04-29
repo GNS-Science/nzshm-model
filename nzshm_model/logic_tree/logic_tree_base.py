@@ -6,12 +6,13 @@ This module contains base classes (some of which are abstract) common to both **
 import copy
 import json
 from abc import ABC
+from collections.abc import Generator, Iterator
 from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
-from typing import Any, Dict, Generator, Generic, Iterator, List, Optional, Type, TypeVar, Union
+from typing import Any, Generic, TypeVar
 
 import dacite
 
@@ -49,7 +50,7 @@ class BranchSet(Generic[BranchType]):
 
     short_name: str = ''
     long_name: str = ''
-    branches: List[BranchType] = field(default_factory=list)
+    branches: list[BranchType] = field(default_factory=list)
 
     def __post_init__(self):
         helpers._validate_branchset_weights(self)
@@ -88,7 +89,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
 
     title: str = ''
     version: str = ''
-    branch_sets: List[Any] = field(default_factory=list)
+    branch_sets: list[Any] = field(default_factory=list)
     correlations: LogicTreeCorrelations = field(default_factory=LogicTreeCorrelations)
 
     def __post_init__(self) -> None:
@@ -143,7 +144,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
             yield composite_branch
 
     @classmethod
-    def from_json(cls: Type[LogicTreeType], json_path: Union[Path, str]) -> LogicTreeType:
+    def from_json(cls: type[LogicTreeType], json_path: Path | str) -> LogicTreeType:
         """
         Create LogicTree object from json file
 
@@ -161,7 +162,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         return cls.from_dict(data)
 
     @classmethod
-    def from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
+    def from_dict(cls: type[LogicTreeType], data: dict) -> LogicTreeType:
         """
         Create LogicTree object from dict.
 
@@ -188,7 +189,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         return logic_tree
 
     @classmethod
-    def _from_dict(cls: Type[LogicTreeType], data: Dict) -> LogicTreeType:
+    def _from_dict(cls: type[LogicTreeType], data: dict) -> LogicTreeType:
         """
         Create LogicTree object from dict. Input dict must be a direct asdict() serialisation of the LogicTree object
 
@@ -202,7 +203,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         config = dacite.Config(strict=True, cast=[tuple])
         return dacite.from_dict(data_class=cls, data=data, config=config)
 
-    def _to_dict(self) -> Dict[str, Any]:
+    def _to_dict(self) -> dict[str, Any]:
         """
         Create dict representation of logic tree. This creates an exact dict of the class and is not
         used for serialisation.
@@ -212,7 +213,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         """
         return asdict(self)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Create dictionary representation of logic tree used for serialisation.
 
         Returns:
@@ -229,7 +230,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         data["correlations"] = helpers._serialise_correlations(self)
         return data
 
-    def to_json(self, file_path: Union[Path, str]) -> None:
+    def to_json(self, file_path: Path | str) -> None:
         """Serialze logic tree as json file.
 
         Parameters:
@@ -311,7 +312,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
             self.__current_branch += 1
             return self.__branch_list[self.__current_branch - 1]
 
-    def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
+    def psha_adapter(self, provider: type[PshaAdapterInterface], **kwargs: dict | None) -> "PshaAdapterInterface":
         """get a PSHA adapter for this instance.
 
         Arguments:
