@@ -1,7 +1,7 @@
 # Changelog
 
 ## [Unreleased]
-- deps: major: mkdocstrings-python 1.19.0→2.0.3; patch (safety-schemas 0.0.18): blocked by age cutoff; pip vuln GHSA-58qw-9mgm-455v: no fix available
+- deps: patch: nshm-toshi-client 1.1.1→1.1.2; major: mkdocstrings-python 1.19.0→2.0.3; skipped: safety-schemas (age cutoff), pip GHSA-58qw-9mgm-455v (no fix)
 
 ## [0.15.0] 2026-04-08
 ### Changed
