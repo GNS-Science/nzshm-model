@@ -11,6 +11,7 @@ exclude-newer = "2026-04-23T00:00:00Z"
 
 [options.exclude-newer-package]
 nzshm-common = false
+nshm-toshi-client = false
 
 [[package]]
 name = "annotated-doc"
@@ -1604,7 +1605,7 @@ wheels = [
 
 [[package]]
 name = "nshm-toshi-client"
-version = "1.1.1"
+version = "1.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "async-timeout" },
@@ -1613,9 +1614,9 @@ dependencies = [
     { name = "requests" },
     { name = "requests-toolbelt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/05/98/9b6de1c6b9cc8cb51011a99c08a09d809ee2ac241cdff046ce1b1aa54d61/nshm_toshi_client-1.1.1.tar.gz", hash = "sha256:86514ab4f792ae1b17fc892a68727c1fafbf060c183403fe9fad73c473ff8d0f", size = 22279, upload-time = "2026-01-20T01:49:43.079Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2a/84/367c399b2b906ba8991be2eae78a1aa728907f9ebbf3bfe4d4825bc0ff14/nshm_toshi_client-1.1.2.tar.gz", hash = "sha256:530dbb3e88511ec8d65abf95dbd6a5ad0a10feed838f577dba6e4739ce3b169b", size = 22635, upload-time = "2026-04-29T22:32:12.941Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/61/c3/2c3314442efb9ed7ff84c61bbe3eef476f034048248f2c4ceab70ce5f6ce/nshm_toshi_client-1.1.1-py3-none-any.whl", hash = "sha256:a8e2aaac03cceb996ba1a513afc91748b1465140e71cd05de2c9b59fc1a8f9bf", size = 23574, upload-time = "2026-01-20T01:49:40.94Z" },
+    { url = "https://files.pythonhosted.org/packages/42/38/035f70ead3cd64a885ff1cdd7d992afb5b4bb56c7681ef5e285180ba7fa5/nshm_toshi_client-1.1.2-py3-none-any.whl", hash = "sha256:5a8ad0a45f7c89f861c7a09f95207208d5102aa0957734d969c5f106e32bd424", size = 23563, upload-time = "2026-04-29T22:32:12.073Z" },
 ]
 
 [[package]]
