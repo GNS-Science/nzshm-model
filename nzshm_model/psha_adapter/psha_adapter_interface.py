@@ -4,7 +4,7 @@ This module defines the interface to be provided by a PshaAdapter implementation
 
 import pathlib
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 
 class PshaAdapterInterface(ABC):
@@ -38,16 +38,16 @@ class SourcePshaAdapterInterface(PshaAdapterInterface):
         pass
 
     @abstractmethod
-    def unpack_resources(self, cache_folder: Union[pathlib.Path, str], target_folder: Union[pathlib.Path, str]):
+    def unpack_resources(self, cache_folder: pathlib.Path | str, target_folder: pathlib.Path | str):
         """unpack resources from cache_folder to target folder returning mapping of unpacked filepaths"""
         pass
 
     @abstractmethod
     def write_config(
         self,
-        cache_folder: Union[pathlib.Path, str],
-        target_folder: Union[pathlib.Path, str],
-        resource_map: Optional[Dict[str, list[pathlib.Path]]] = None,
+        cache_folder: pathlib.Path | str,
+        target_folder: pathlib.Path | str,
+        resource_map: dict[str, list[pathlib.Path]] | None = None,
     ) -> pathlib.Path:
         """Build PSHA source input files"""
         pass
@@ -59,7 +59,7 @@ class GMCMPshaAdapterInterface(PshaAdapterInterface):
     """
 
     @abstractmethod
-    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+    def write_config(self, target_folder: pathlib.Path | str) -> pathlib.Path:
         """Build PSHA GMCM input files"""
         pass
 
@@ -70,7 +70,7 @@ class ConfigPshaAdapterInterface(PshaAdapterInterface):
     """
 
     @abstractmethod
-    def write_config(self, target_folder: Union[pathlib.Path, str]) -> pathlib.Path:
+    def write_config(self, target_folder: pathlib.Path | str) -> pathlib.Path:
         """Build PSHA calculation config input files"""
         pass
 
@@ -83,9 +83,9 @@ class ModelPshaAdapterInterface(PshaAdapterInterface):
     @abstractmethod
     def write_config(
         self,
-        cache_folder: Union[pathlib.Path, str],
-        target_folder: Union[pathlib.Path, str],
-        resource_map: Optional[Dict[str, list[pathlib.Path]]] = None,
+        cache_folder: pathlib.Path | str,
+        target_folder: pathlib.Path | str,
+        resource_map: dict[str, list[pathlib.Path]] | None = None,
     ) -> pathlib.Path:
         """Build all PSHA input files"""
         pass

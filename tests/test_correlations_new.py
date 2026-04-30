@@ -15,7 +15,7 @@ def test_v2_correlations():
 
     assert len(FlattenedSourceLogicTree.from_source_logic_tree(slt_v1).branches) == len(list(slt_v2.composite_branches))
     for branch_v1, branch_v2 in zip(
-        FlattenedSourceLogicTree.from_source_logic_tree(slt_v1).branches, slt_v2.composite_branches
+        FlattenedSourceLogicTree.from_source_logic_tree(slt_v1).branches, slt_v2.composite_branches, strict=False
     ):
         values_v1 = [b.values for b in branch_v1.branches]
         values_v2 = [b.values for b in branch_v2.branches]

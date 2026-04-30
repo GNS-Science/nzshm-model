@@ -6,13 +6,13 @@ Define source logic tree structures used in NSHM.
 
 import json
 import pathlib
+from collections.abc import Iterable
 from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import reduce
 from itertools import product
 from math import isclose
 from operator import add, mul
-from typing import Dict, Iterable, List, Union
 
 import dacite
 
@@ -22,26 +22,26 @@ from ..fault_system_branch_set import BranchSetBase, BranchSetSpec
 
 @dataclass
 class Branch:
-    values: List[BranchAttributeValue]
+    values: list[BranchAttributeValue]
     weight: float = 1.0
-    onfault_nrml_id: Union[str, None] = ""
-    distributed_nrml_id: Union[str, None] = ""
-    inversion_solution_id: Union[str, None] = ""
-    inversion_solution_type: Union[str, None] = ""
-    rupture_set_id: Union[str, None] = ""
+    onfault_nrml_id: str | None = ""
+    distributed_nrml_id: str | None = ""
+    inversion_solution_id: str | None = ""
+    inversion_solution_type: str | None = ""
+    rupture_set_id: str | None = ""
 
 
 @dataclass
 class FaultSystemLogicTree(BranchSetBase):
-    branches: List[Branch] = field(default_factory=list)
+    branches: list[Branch] = field(default_factory=list)
 
 
 @dataclass
 class SourceLogicTreeCorrelation:
     primary_short_name: str
     secondary_short_name: str
-    primary_values: List[BranchAttributeValue]
-    secondary_values: List[BranchAttributeValue]
+    primary_values: list[BranchAttributeValue]
+    secondary_values: list[BranchAttributeValue]
 
     # these methods enforce set compairson
     def is_primary(self, bavs: Iterable[BranchAttributeValue]) -> bool:
@@ -53,15 +53,15 @@ class SourceLogicTreeCorrelation:
 
 @dataclass
 class SourceLogicTreeSpec:
-    fault_system_lts: List[BranchSetSpec] = field(default_factory=list)
+    fault_system_lts: list[BranchSetSpec] = field(default_factory=list)
 
 
 @dataclass
 class SourceLogicTree:
     version: str
     title: str
-    fault_system_lts: List[FaultSystemLogicTree] = field(default_factory=list)
-    correlations: List[SourceLogicTreeCorrelation] = field(
+    fault_system_lts: list[FaultSystemLogicTree] = field(default_factory=list)
+    correlations: list[SourceLogicTreeCorrelation] = field(
         default_factory=list
     )  # to use for selecting branches and re-weighting when logic trees are correlated
 
@@ -76,14 +76,14 @@ class SourceLogicTree:
         return slt_spec
 
     @staticmethod
-    def from_dict(data: Dict):
+    def from_dict(data: dict):
         ltv = data.get("logic_tree_version")
         if ltv:
             raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
         return dacite.from_dict(data_class=SourceLogicTree, data=data, config=dacite.Config(strict=True))
 
     @staticmethod
-    def from_json(json_path: Union[pathlib.Path, str]):
+    def from_json(json_path: pathlib.Path | str):
         data = json.load(open(json_path))
         return SourceLogicTree.from_dict(data)
 
@@ -92,7 +92,7 @@ class SourceLogicTree:
 class CompositeBranch:
     """Combination of all fault type branches"""
 
-    branches: List[Branch]
+    branches: list[Branch]
     weight: float = 1.0
 
     def __post_init__(self) -> None:
@@ -105,12 +105,12 @@ class FlattenedSourceLogicTree:
 
     version: str
     title: str
-    branches: List[CompositeBranch]
+    branches: list[CompositeBranch]
 
     def __post_init__(self) -> None:
         total_weight = reduce(add, [branch.weight for branch in self.branches])
         if not isclose(total_weight, 1.0):
-            raise Exception('logic tree weights do not add to 1.0 (sum is %s)' % total_weight)
+            raise Exception(f'logic tree weights do not add to 1.0 (sum is {total_weight})')
 
     @classmethod
     def from_source_logic_tree(cls, slt: SourceLogicTree):
@@ -120,7 +120,7 @@ class FlattenedSourceLogicTree:
 
         def yield_cor(branches, slt_copy):
             nnames = [[faultsys_lt.short_name] * len(faultsys_lt.branches) for faultsys_lt in slt_copy.fault_system_lts]
-            for cb, names in zip(product(*branches), product(*nnames)):
+            for cb, names in zip(product(*branches), product(*nnames), strict=False):
                 has_correlation = False
                 for cor in slt_copy.correlations:
                     sindex = names.index(cor.secondary_short_name)

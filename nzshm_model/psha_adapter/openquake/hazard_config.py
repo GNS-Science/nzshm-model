@@ -12,9 +12,10 @@ import configparser
 import copy
 import json
 import math
+from collections.abc import Iterable
 from itertools import chain
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, TextIO, Tuple, Type, Union, cast
+from typing import Any, TextIO, cast
 
 from nzshm_common import CodedLocation
 
@@ -88,10 +89,10 @@ class OpenquakeConfig(HazardConfig):
 
     hazard_type = "openquake"
 
-    def __init__(self, default_config: Union[configparser.ConfigParser, Dict, None] = None):
+    def __init__(self, default_config: configparser.ConfigParser | dict | None = None):
 
-        self._site_parameters: Optional[Dict[str, Tuple]] = None
-        self._locations: Optional[Tuple[CodedLocation]] = None
+        self._site_parameters: dict[str, tuple] | None = None
+        self._locations: tuple[CodedLocation] | None = None
 
         if isinstance(default_config, configparser.ConfigParser):
             self.config = copy.deepcopy(default_config)
@@ -110,28 +111,28 @@ class OpenquakeConfig(HazardConfig):
     def is_complete(self) -> bool:
         return bool(self.get_iml() or self.get_iml_disagg())
 
-    def _config_to_dict(self) -> Dict[str, Any]:
-        data: Dict[str, Any] = dict()
+    def _config_to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = dict()
         for section in self.config.sections():
             data[section] = dict()
             for k, v in self.config[section].items():
                 data[section][k] = v
         return data
 
-    def _locations_to_strs(self) -> List[str]:
+    def _locations_to_strs(self) -> list[str]:
         if not self.locations:
             return []
         return [loc.code for loc in self.locations]
 
-    def to_dict(self) -> Dict[str, Any]:
-        config_dict: Dict[str, Any] = dict(config=self._config_to_dict())
+    def to_dict(self) -> dict[str, Any]:
+        config_dict: dict[str, Any] = dict(config=self._config_to_dict())
         config_dict['locations'] = self._locations_to_strs()
         config_dict['site_parameters'] = self._site_parameters
         config_dict['hazard_type'] = self.hazard_type
         return config_dict
 
     @classmethod
-    def from_dict(cls: Type[HazardConfigType], data: Dict) -> 'OpenquakeConfig':
+    def from_dict(cls: type[HazardConfigType], data: dict) -> 'OpenquakeConfig':
         site_parameters = data.pop('site_parameters')
         locations = data.pop('locations')
         hazard_config = cast('OpenquakeConfig', cls(data['config']))
@@ -143,7 +144,7 @@ class OpenquakeConfig(HazardConfig):
         return hazard_config
 
     @classmethod
-    def from_json(cls: Type[HazardConfigType], file_path: Union[Path, str]) -> 'OpenquakeConfig':
+    def from_json(cls: type[HazardConfigType], file_path: Path | str) -> 'OpenquakeConfig':
         with Path(file_path).open('r') as jsonfile:
             data = json.load(jsonfile)
         return cast('OpenquakeConfig', cls.from_dict(data))
@@ -183,7 +184,7 @@ class OpenquakeConfig(HazardConfig):
         config.read_file(config_file)
         return OpenquakeConfig(config)
 
-    def set_source_logic_tree_file(self, source_lt_filepath: Union[str, Path]) -> 'OpenquakeConfig':
+    def set_source_logic_tree_file(self, source_lt_filepath: str | Path) -> 'OpenquakeConfig':
         """setter for source_model file
 
         Arguments:
@@ -211,7 +212,7 @@ class OpenquakeConfig(HazardConfig):
         self.config.set(section, key, str(value))
         return self
 
-    def get_parameter(self, section: str, key: str) -> Optional[str]:
+    def get_parameter(self, section: str, key: str) -> str | None:
         """A getter for arbitrary values.
 
         Arguments:
@@ -302,7 +303,7 @@ class OpenquakeConfig(HazardConfig):
         self._locations = locations
         return self
 
-    def set_site_filepath(self, site_file: Union[str, Path]) -> 'OpenquakeConfig':
+    def set_site_filepath(self, site_file: str | Path) -> 'OpenquakeConfig':
         """
         Set the path to the site_model_file.
         """
@@ -310,19 +311,19 @@ class OpenquakeConfig(HazardConfig):
         self.set_parameter('site_params', 'site_model_file', str(site_file))
         return self
 
-    def get_site_filepath(self) -> Optional[Path]:
+    def get_site_filepath(self) -> Path | None:
         value = self.get_parameter('site_params', 'site_model_file')
         return Path(value) if value else None
 
     @property
-    def locations(self) -> Optional[Tuple[CodedLocation]]:
+    def locations(self) -> tuple[CodedLocation] | None:
         return self._locations
 
     @property
-    def site_parameters(self) -> Optional[Dict[str, tuple]]:
+    def site_parameters(self) -> dict[str, tuple] | None:
         return self._site_parameters
 
-    def get_iml(self) -> Optional[Tuple[List[str], List[float]]]:
+    def get_iml(self) -> tuple[list[str], list[float]] | None:
         """
         Get the intensity measure types and levels. Returns None if not set.
 
@@ -341,7 +342,7 @@ class OpenquakeConfig(HazardConfig):
 
         return imts, imtls
 
-    def get_iml_disagg(self) -> Optional[Tuple[str, float]]:
+    def get_iml_disagg(self) -> tuple[str, float] | None:
         """Get the intensity measure type and level for the disaggregation. Returns None if not set.
 
         Returns:
@@ -378,7 +379,7 @@ class OpenquakeConfig(HazardConfig):
         self.unset_parameter('calculation', 'intensity_measure_types_and_levels')
         return self
 
-    def set_iml(self, measures: List[str], levels: List[float]) -> 'OpenquakeConfig':
+    def set_iml(self, measures: list[str], levels: list[float]) -> 'OpenquakeConfig':
         """Setter for intensity_measure_types_and_levels
 
         Sets the same levels for all intensity measures.
@@ -422,7 +423,7 @@ class OpenquakeConfig(HazardConfig):
         return self
 
     def set_uniform_site_params(
-        self, vs30: float, z1pt0: Optional[float] = None, z2pt5: Optional[float] = None
+        self, vs30: float, z1pt0: float | None = None, z2pt5: float | None = None
     ) -> 'OpenquakeConfig':
         """
         Setter for vs30, z1.0, and z2.5 site parameters.
@@ -474,7 +475,7 @@ class OpenquakeConfig(HazardConfig):
 
         return self
 
-    def get_uniform_site_params(self) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+    def get_uniform_site_params(self) -> tuple[float | None, float | None, float | None]:
         """
         The uniform site parameters of the model. Returns None if not set.
 
@@ -497,7 +498,7 @@ class OpenquakeConfig(HazardConfig):
 
         return vs30, z1pt0, z2pt5
 
-    def set_gsim_logic_tree_file(self, filepath: Union[str, Path]) -> 'OpenquakeConfig':
+    def set_gsim_logic_tree_file(self, filepath: str | Path) -> 'OpenquakeConfig':
         """Setter for ground motion model file.
 
         Arguments:

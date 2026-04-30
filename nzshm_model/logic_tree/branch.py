@@ -3,10 +3,11 @@ Classes for defining logic tree branches
 """
 
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from functools import reduce
 from operator import mul
-from typing import TYPE_CHECKING, Sequence, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
     from .logic_tree_base import BranchSet, FilteredBranch, LogicTree

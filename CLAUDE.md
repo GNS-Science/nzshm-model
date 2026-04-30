@@ -10,36 +10,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Install (with all dev dependencies)
-poetry install -E test -E doc -E dev
+uv sync --all-extras --all-groups
 
 # Run all tests (multi-Python via tox)
-poetry run tox
+uv run tox
 
 # Run tests directly
-poetry run pytest tests/
+uv run pytest tests/
 
 # Run a single test file
-poetry run pytest tests/test_model.py
+uv run pytest tests/test_model.py
 
 # Run a specific test
-poetry run pytest tests/test_model.py::TestLoadModel::test_load_model_104
+uv run pytest tests/test_model.py::TestLoadModel::test_load_model_104
 
 # Format code
-poetry run tox -e format
-# or: poetry run black nzshm_model tests && poetry run isort nzshm_model tests
+uv run tox -e format
+# or: uv run ruff format nzshm_model tests
 
 # Lint
-poetry run tox -e lint
-# or: poetry run flake8 && poetry run mypy nzshm_model tests
+uv run tox -e lint
+# or: uv run ruff check nzshm_model tests && uv run mypy nzshm_model tests
 
 # Security audit
-poetry run tox -e audit
+uv run tox -e audit
 
 # Build package
-poetry build
+uv build
 
 # Bump version (patch/minor/major)
-poetry run bump2version patch
+uv run bump2version patch
 ```
 
 ## Code Style

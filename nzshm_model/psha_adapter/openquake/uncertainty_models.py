@@ -2,9 +2,10 @@
 Classes for deserialising NRML XML hazard uncertainty models.
 """
 
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import PurePath
-from typing import TYPE_CHECKING, Iterator, List
+from typing import TYPE_CHECKING
 
 from lxml import objectify
 
@@ -35,7 +36,7 @@ class GenericUncertaintyModel:
 class GroundMotionUncertaintyModel:
     parent: "LogicTreeBranch"
     gmpe_name: str
-    arguments: List[str]
+    arguments: list[str]
     text: str = ""
 
     @classmethod
@@ -55,7 +56,7 @@ class GroundMotionUncertaintyModel:
 @dataclass
 class SourcesUncertaintyModel:
     parent: "LogicTreeBranch"
-    source_files: List[str]
+    source_files: list[str]
     text: str = ""
 
     @classmethod
@@ -72,7 +73,7 @@ class SourcesUncertaintyModel:
 @dataclass
 class NshmSourceUncertaintyModel:
     parent: "LogicTreeBranch"
-    source_files: List[str] = field(
+    source_files: list[str] = field(
         default_factory=list
     )  # deferred , we must unpack these from the nrml_id (either direct source or zip file containing sources)
     toshi_nrml_id: str = ""  # in NZSHM22 this is toshi ID

@@ -4,8 +4,9 @@ NshmModel class describes a complete National Seismic Hazard Model.
 
 import importlib.resources as resources
 import json
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Dict, Generic, Iterator, List, Optional, Type, Union
+from typing import Any, Generic
 
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
@@ -55,9 +56,9 @@ class NshmModel(Generic[HazardConfigType]):
         cls,
         version: str,
         title: str,
-        slt_json: Union[str, Path],
-        gmm_json: Union[str, Path],
-        hazard_config_json: Union[str, Path],
+        slt_json: str | Path,
+        gmm_json: str | Path,
+        hazard_config_json: str | Path,
     ) -> 'NshmModel[HazardConfigType]':
         """
         Create a new NshmModel instance from files.
@@ -79,13 +80,13 @@ class NshmModel(Generic[HazardConfigType]):
         return cls(version, title, source_logic_tree, gmcm_logic_tree, hazard_config)
 
     @staticmethod
-    def _slt_data_from_file(filepath: Union[str, Path]) -> Dict[Any, Any]:
+    def _slt_data_from_file(filepath: str | Path) -> dict[Any, Any]:
         with Path(filepath).open('r') as jsonfile:
             data = json.load(jsonfile)
         return data
 
     @staticmethod
-    def _source_logic_tree_from_v1_json(filepath: Union[str, Path]) -> SourceLogicTree:
+    def _source_logic_tree_from_v1_json(filepath: str | Path) -> SourceLogicTree:
         """
         Create a SourceLogicTree from an old v1 json file; convert to new type.
 
@@ -130,7 +131,7 @@ class NshmModel(Generic[HazardConfigType]):
         model_args['hazard_config_json'] = HAZARD_CONFIG_PATH / model_args['hazard_config_json']
         return cls.from_files(**model_args)
 
-    def get_source_branch_sets(self, short_names: Union[List[str], str, None] = None) -> Iterator['SourceBranchSet']:
+    def get_source_branch_sets(self, short_names: list[str] | str | None = None) -> Iterator['SourceBranchSet']:
         """
         get an iterator for the SourceBranchSets matching the specified branch set(s)
 
@@ -152,25 +153,23 @@ class NshmModel(Generic[HazardConfigType]):
             iterator of branch_set objects
         """
         if isinstance(short_names, str):
-            list_short_names: List[str] = [short_names]
+            list_short_names: list[str] = [short_names]
         else:
             list_short_names = short_names if short_names is not None else []
 
         if not list_short_names:  # User passes either an empty list or None
-            for branch_set in self.source_logic_tree.branch_sets:
-                yield branch_set
+            yield from self.source_logic_tree.branch_sets
         else:
             # user has passes a list of short_names
             # check all the names are valid:
             for short_name in list_short_names:
                 try:
-                    for b in filter(lambda item: item.short_name == short_name, self.source_logic_tree.branch_sets):
-                        yield (b)
+                    yield from filter(lambda item: item.short_name == short_name, self.source_logic_tree.branch_sets)
                 except StopIteration:
-                    raise ValueError("The branch " + short_name + " was not found.")
+                    raise ValueError("The branch " + short_name + " was not found.") from None
 
     def psha_adapter(
-        self, provider: Type[ModelPshaAdapterInterface], **kwargs: Optional[Dict]
+        self, provider: type[ModelPshaAdapterInterface], **kwargs: dict | None
     ) -> "ModelPshaAdapterInterface":
         """get a PSHA adapter for this instance.
 

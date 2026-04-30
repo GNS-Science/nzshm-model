@@ -64,7 +64,7 @@ def test_nrml_gmm_logic_tree_paths():
         "lt1",
         "bs_slab",
         "Kuehn2020SS_GLO_lower",
-        '[KuehnEtAl2020SSlab]region="GLO"' 'sigma_mu_epsilon=-1.28155',
+        '[KuehnEtAl2020SSlab]region="GLO"sigma_mu_epsilon=-1.28155',
     )
 
 

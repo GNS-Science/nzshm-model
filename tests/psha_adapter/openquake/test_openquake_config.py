@@ -330,7 +330,7 @@ def test_write_read_oq_config(tmp_path):
 
 def test_write_read_oq_config_site_params(tmp_path):
     config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
-    locations = [CodedLocation(lat, lon, 0.001) for lat, lon in zip(range(10), range(10))]
+    locations = [CodedLocation(lat, lon, 0.001) for lat, lon in zip(range(10), range(10), strict=False)]
     vs30s = [v / 10.0 for v in range(len(locations))]
     config.set_sites(locations, vs30=vs30s)
 

@@ -66,7 +66,7 @@ def test_branchset(fixtures: Fixtures):
 
 
 def test_iterate_branchset(fixtures: Fixtures):
-    for branch1, branch2 in zip(fixtures.branchsetA.branches, fixtures.branchsetA):
+    for branch1, branch2 in zip(fixtures.branchsetA.branches, fixtures.branchsetA, strict=False):
         assert branch1 == branch2
 
 

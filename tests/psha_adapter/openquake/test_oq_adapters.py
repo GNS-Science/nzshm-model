@@ -49,7 +49,7 @@ def test_config_sitefile(tmp_path, locations):
         reader = csv.reader(fin)
         header = next(reader)
         assert header == ['lon', 'lat', 'vs30']
-        for loc, vs30, row in zip(locations, vs30s, reader):
+        for loc, vs30, row in zip(locations, vs30s, reader, strict=False):
             assert row[0] == str(loc.lon)
             assert row[1] == str(loc.lat)
             assert row[2] == str(vs30)

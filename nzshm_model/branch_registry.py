@@ -18,7 +18,7 @@ import csv
 import hashlib
 import importlib.resources as resources
 from dataclasses import asdict, dataclass
-from typing import IO, Any, Optional, Union
+from typing import IO, Any, Optional
 
 HEADERS = ['hash_digest', 'identity', 'extra']
 RESOURCES_DIR = resources.files('nzshm_model.resources')
@@ -73,8 +73,8 @@ class BranchRegistryEntry:
     """
 
     identity: str
-    hash_digest: Optional[str] = None
-    extra: Optional[str] = None
+    hash_digest: str | None = None
+    extra: str | None = None
 
     def __post_init__(self):
         if self.hash_digest:
@@ -160,7 +160,7 @@ class BranchRegistry:
         """
         return self._branches_by_identity[identity]
 
-    def get_by_extra(self, extra: str) -> Union[BranchRegistryEntry, None]:
+    def get_by_extra(self, extra: str) -> BranchRegistryEntry | None:
         """Get a registry entry by the extra string.
 
         Notes:

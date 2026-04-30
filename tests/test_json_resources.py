@@ -18,7 +18,7 @@ def branchset_names():
 source_json_files = ["nshm_v1.0.0_v2.json", "nshm_v1.0.4_v2.json"]
 
 
-@pytest.mark.parametrize("model_version, json_filename", zip(all_model_versions(), source_json_files))
+@pytest.mark.parametrize("model_version, json_filename", zip(all_model_versions(), source_json_files, strict=False))
 def test_json_source(model_version, json_filename):
     model = get_model_version(model_version)
     json_filepath = Path(__file__).parent / 'fixtures' / 'model_versions' / json_filename
@@ -30,7 +30,7 @@ def test_json_source(model_version, json_filename):
 gmcm_json_files = ["gmcm_nshm_v1.0.0.json", "gmcm_nshm_v1.0.4.json"]
 
 
-@pytest.mark.parametrize("model_version, json_filename", zip(all_model_versions(), gmcm_json_files))
+@pytest.mark.parametrize("model_version, json_filename", zip(all_model_versions(), gmcm_json_files, strict=False))
 def test_json_gmcm(model_version, json_filename):
     model = get_model_version(model_version)
     json_filepath = Path(__file__).parent / 'fixtures' / 'model_versions' / json_filename

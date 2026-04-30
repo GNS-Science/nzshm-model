@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.15.1] TBD
+### Changed
+- Migrated from poetry to uv.
+- Upgraded dependencies.
+
 ## [0.15.0] 2026-04-08
 ### Changed
  - `OpenquakeSourcePshaAdapter` uses branch `registry_identity` for branchID rather than `str(values)`

@@ -54,7 +54,7 @@ def test_list_comprehension_filtering_logic_tree_branches(full_slt):
 
 def test_generator_filtering_logic_tree_branches(full_slt):
     # most memory efficient & pythonic
-    assert sum((1 for filt_branch in full_slt if filt_branch.branch_set.short_name == "HIK")) == 9
+    assert sum(1 for filt_branch in full_slt if filt_branch.branch_set.short_name == "HIK") == 9
     assert sum(1 for filt_branch in full_slt if unscaled_filter_str(filt_branch)) == 16
     assert sum(1 for filt_branch in full_slt if unscaled_filter(filt_branch)) == 16
     assert sum(1 for filt_branch in full_slt if geodetic_filter(filt_branch)) == 18

@@ -73,7 +73,7 @@ def check_invariants(config: configparser.ConfigParser) -> bool:
         try:
             invariant = config.get(table, key)
         except configparser.NoOptionError:
-            raise ValueError(f'Expected entry "[{table}]" "{key}"" with value {value} was not found.')
+            raise ValueError(f'Expected entry "[{table}]" "{key}"" with value {value} was not found.') from None
         if invariant == value:
             continue
         raise ValueError(

@@ -1,7 +1,8 @@
 import json
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional, Sequence, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from nzshm_model.psha_adapter import ConfigPshaAdapterInterface
 
@@ -12,9 +13,9 @@ HazardConfigType = TypeVar('HazardConfigType', bound='HazardConfig')
 
 
 class HazardConfig(ABC):
-
     hazard_type = "abstract"  # every child class should specify its type for use in loading from file
 
+    @abstractmethod
     def __init__(self, *args, **kwargs):
         pass
 
@@ -29,7 +30,7 @@ class HazardConfig(ABC):
     def set_sites(self, locations: Sequence['CodedLocation'], **kwargs) -> 'HazardConfig':
         pass
 
-    def to_json(self, file_path: Union[Path, str]) -> None:
+    def to_json(self, file_path: Path | str) -> None:
         """serialized HazardConfig object to json file
 
         Args:
@@ -42,7 +43,7 @@ class HazardConfig(ABC):
         pass
 
     @abstractmethod
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert HazardConfig object to dict
 
         Returns:
@@ -52,7 +53,7 @@ class HazardConfig(ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls: Type[HazardConfigType], data: Dict) -> HazardConfigType:
+    def from_dict(cls: type[HazardConfigType], data: dict) -> HazardConfigType:
         """
         create a HazardConfig object from a dictionary
 
@@ -66,11 +67,11 @@ class HazardConfig(ABC):
 
     @classmethod
     @abstractmethod
-    def from_json(cls: Type[HazardConfigType], file_path: Union[Path, str]) -> HazardConfigType:
+    def from_json(cls: type[HazardConfigType], file_path: Path | str) -> HazardConfigType:
         pass
 
     def psha_adapter(
-        self, provider: Type[ConfigPshaAdapterInterface], **kwargs: Optional[Dict]
+        self, provider: type[ConfigPshaAdapterInterface], **kwargs: dict | None
     ) -> "ConfigPshaAdapterInterface":
         """get a PSHA adapter for this instance.
 
