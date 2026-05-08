@@ -55,7 +55,6 @@ ENTRIES_IGNORED = [
 ]
 
 ENTRIES_INVARIANT = [
-    ('general', 'calculation_mode', 'classical'),
     ('logic_tree', 'number_of_logic_tree_samples', '0'),
     ('site_params', 'reference_vs30_type', 'measured'),
     (

@@ -248,12 +248,12 @@ class TestConfigCompatability:
         assert check_invariants(example_config.config)
 
     def test_compatible_check_invariant_missing_raises(self, example_config):
-        example_config.config.remove_option('general', 'calculation_mode')
+        example_config.config.remove_option('logic_tree', 'number_of_logic_tree_samples')
         with pytest.raises(ValueError):
             check_invariants(example_config.config)
 
     def test_compatible_check_invariant_bad_value_raises(self, example_config):
-        example_config.config.set('general', 'calculation_mode', 'freddy flinstone')
+        example_config.config.set('logic_tree', 'number_of_logic_tree_samples', 'one million')
         with pytest.raises(ValueError):
             check_invariants(example_config.config)
 
