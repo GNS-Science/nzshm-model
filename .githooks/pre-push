@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Prevent pushing a version tag unless the changelog has a matching entry.
+# Override defaults via env vars: CHANGELOG_PATH, TAG_PREFIX
+CHANGELOG_PATH="${CHANGELOG_PATH:-CHANGELOG.md}"
+TAG_PREFIX="${TAG_PREFIX:-v}"
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "${local_ref}" in
+    refs/tags/${TAG_PREFIX}*)
+      version="${local_ref#refs/tags/${TAG_PREFIX}}"
+      if ! grep -qE "^## \[${version}\]" "${CHANGELOG_PATH}"; then
+        echo "ERROR: ${CHANGELOG_PATH} is missing a '## [${version}]' section for tag ${local_ref#refs/tags/}." >&2
+        echo "Update ${CHANGELOG_PATH}, delete the tag (git tag -d ${local_ref#refs/tags/}), commit, and re-tag." >&2
+        exit 1
+      fi
+      ;;
+  esac
+done
+
+exit 0
