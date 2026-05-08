@@ -38,8 +38,8 @@ uv run tox -e audit
 # Build package
 uv build
 
-# Bump version (patch/minor/major)
-uv run bump2version patch
+# Release a new version (hatch-vcs derives version from git tags)
+git tag vX.Y.Z && git push --tags
 ```
 
 ## Code Style
