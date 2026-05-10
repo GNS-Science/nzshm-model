@@ -40,8 +40,8 @@ Functions:
 """
 
 from . import branch_registry
-from .model import NshmModel
-from .model_version import CURRENT_VERSION, all_model_versions, get_model_version, versions
 
 # Python package version is different than the NSHM MODEL version !!
-__version__ = '0.15.1'
+from ._version import __version__
+from .model import NshmModel
+from .model_version import CURRENT_VERSION, all_model_versions, get_model_version, versions

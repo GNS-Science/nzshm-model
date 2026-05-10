@@ -1,6 +1,15 @@
 # Changelog
 
-## [0.15.1] TBD
+## [0.15.2] 2026-05-08
+### Added
+ - hatch-vcs for dynamic versioning from git tag (v*)
+ - git hook to enforce git version tag has matching CHANGLOG entry
+
+### Removed
+- calculation_mode from ENTRIES_INVARIANT, this allows for other types of calculation such as disaggregation
+- bump2version dev dependency
+
+## [0.15.1] 2026-04-30
 ### Changed
 - Migrated from poetry to uv.
 - Upgraded dependencies.

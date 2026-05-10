@@ -114,9 +114,12 @@ Make sure all your changes are committed (including an entry in CHANGELOG.md).
 Then run:
 
 ```
-$ uv run bump2version patch # possible: major / minor / patch
+$ git tag vX.Y.Z   # e.g. v0.15.2
 $ git push
 $ git push --tags
 ```
+
+The `.githooks/pre-push` hook (activate via `git config core.hooksPath .githooks`) will reject
+the tag push unless `CHANGELOG.md` has a matching `## [X.Y.Z]` section.
 
 GitHub Actions will then deploy to PyPI if tests pass.
