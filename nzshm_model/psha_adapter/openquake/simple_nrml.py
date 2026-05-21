@@ -26,7 +26,9 @@ if TYPE_CHECKING:
     from .hazard_config import OpenquakeConfig
 
 try:
-    from .toshi import API_KEY, API_URL, SourceSolution
+    from nshm_toshi_client import API_URL, get_auth_kwargs
+
+    from .toshi import SourceSolution
 except (ModuleNotFoundError, ImportError):
     print('Running without `toshi` options')
 
@@ -43,8 +45,7 @@ def make_target(target_folder) -> pathlib.Path:
 
 
 def fetch_toshi_source(file_id: str, destination: pathlib.Path) -> pathlib.Path:
-    headers = {"x-api-key": API_KEY}
-    api = SourceSolution(API_URL, None, None, with_schema_validation=False, headers=headers)
+    api = SourceSolution(API_URL, None, None, with_schema_validation=False, **get_auth_kwargs())
     assert destination.exists()
     file_detail = api.get_source(file_id)
     fname = pathlib.Path(destination) / file_detail['file_name']

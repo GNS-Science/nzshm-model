@@ -7,9 +7,6 @@ import os
 import click
 
 import nzshm_model
-
-# from nzshm_model.source_logic_tree import SourceLogicTree
-import nzshm_model.logic_tree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree.version1.slt_config import from_config
 
