@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-05-14T18:55:03.656122531Z"
+exclude-newer = "2026-05-14T22:08:36.190720215Z"
 exclude-newer-span = "P1W"
 
 [options.exclude-newer-package]
@@ -1632,13 +1632,17 @@ wheels = [
 
 [[package]]
 name = "nshm-toshi-client"
-version = "1.2.2"
-source = { git = "https://github.com/GNS-Science/nshm-toshi-client.git#522b90d610a94d9a340457f4a385593faaad6d62" }
+version = "1.2.3"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "boto3" },
     { name = "gql", extra = ["requests"] },
     { name = "graphql-core" },
     { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f9/74/c438005526863d3cc858b582325c51746aaa0229c52491b154b92ad59032/nshm_toshi_client-1.2.3.tar.gz", hash = "sha256:ab04e083926a36b71f7529a4de35d0597649e8105d98a18d6d7a458bb194129a", size = 39871, upload-time = "2026-05-21T22:02:29.009Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/39/c5/4a9258b3331d40a7452d5f02b086ea6451fe97f8031a88bee72f0d78206d/nshm_toshi_client-1.2.3-py3-none-any.whl", hash = "sha256:b75244b89fead9e4ce10510b8009be83850ec0506334c5cb086c77a362cd56d4", size = 34417, upload-time = "2026-05-21T22:02:27.731Z" },
 ]
 
 [[package]]
@@ -1697,8 +1701,8 @@ requires-dist = [
     { name = "click", marker = "extra == 'scripts'" },
     { name = "dacite", specifier = ">=1.6.0" },
     { name = "lxml", specifier = ">=6.0" },
-    { name = "nshm-toshi-client", git = "https://github.com/GNS-Science/nshm-toshi-client.git" },
-    { name = "nshm-toshi-client", marker = "extra == 'toshi'", git = "https://github.com/GNS-Science/nshm-toshi-client.git" },
+    { name = "nshm-toshi-client", specifier = ">=1.2.3" },
+    { name = "nshm-toshi-client", marker = "extra == 'toshi'" },
     { name = "nzshm-common", specifier = ">=0.9.0" },
 ]
 provides-extras = ["scripts", "toshi"]
