@@ -26,7 +26,9 @@ if TYPE_CHECKING:
     from .hazard_config import OpenquakeConfig
 
 try:
-    from .toshi import API_KEY, API_URL, SourceSolution
+    from nshm_toshi_client import API_KEY, API_URL
+
+    from .toshi import SourceSolution
 except (ModuleNotFoundError, ImportError):
     print('Running without `toshi` options')
 
