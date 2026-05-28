@@ -1,6 +1,5 @@
-"""Console script for model users...."""
+"""Console script for model users."""
 
-# noqa
 import logging
 import os
 
@@ -9,32 +8,21 @@ import click
 import nzshm_model
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree.version1.slt_config import from_config
-
-# from nzshm_model.source_logic_tree.slt_config import from_config, resolve_toshi_source_ids  # noqa
 from nzshm_model.psha_adapter.openquake import OpenquakeSourcePshaAdapter
 
-log = logging.getLogger()
-logging.basicConfig(level=logging.INFO)
-logging.getLogger('nshm_toshi_client.toshi_client_base').setLevel(logging.INFO)
-logging.getLogger('urllib3').setLevel(logging.INFO)
-logging.getLogger('botocore').setLevel(logging.INFO)
-logging.getLogger('gql.transport.requests').setLevel(logging.WARN)
 
-formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(name)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-root_handler = log.handlers[0]
-root_handler.setFormatter(formatter)
-
-log.debug('DEBUG message')
-log.info('INFO message')
-
-
-#  _ __ ___   __ _(_)_ __
-# | '_ ` _ \ / _` | | '_ \
-# | | | | | | (_| | | | | |
-# |_| |_| |_|\__,_|_|_| |_|
 @click.group()
 def cli():
     """Nzshm-model helpers for model consumers."""
+    log = logging.getLogger()
+    logging.basicConfig(level=logging.INFO)
+    logging.getLogger('nshm_toshi_client.toshi_client_base').setLevel(logging.INFO)
+    logging.getLogger('urllib3').setLevel(logging.INFO)
+    logging.getLogger('botocore').setLevel(logging.INFO)
+    logging.getLogger('gql.transport.requests').setLevel(logging.WARN)
+    formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(name)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    if log.handlers:
+        log.handlers[0].setFormatter(formatter)
 
 
 @cli.command()

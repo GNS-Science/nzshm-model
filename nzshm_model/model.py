@@ -120,15 +120,17 @@ class NshmModel(Generic[HazardConfigType]):
             the model instance.
         """
 
-        model_args_factory = versions.get(version)
-        if not model_args_factory:
+        spec = versions.get(version)
+        if spec is None:
             raise ValueError(f"{version} is not a valid model version.")
 
-        model_args = model_args_factory()
-        model_args['slt_json'] = SLT_SOURCE_PATH / model_args['slt_json']
-        model_args['gmm_json'] = GMM_JSON_SOURCE_PATH / model_args['gmm_json']
-        model_args['hazard_config_json'] = HAZARD_CONFIG_PATH / model_args['hazard_config_json']
-        return cls.from_files(**model_args)
+        return cls.from_files(
+            version=spec.version,
+            title=spec.title,
+            slt_json=SLT_SOURCE_PATH / spec.slt_json,
+            gmm_json=GMM_JSON_SOURCE_PATH / spec.gmm_json,
+            hazard_config_json=HAZARD_CONFIG_PATH / spec.hazard_config_json,
+        )
 
     def get_source_branch_sets(self, short_names: list[str] | str | None = None) -> Iterator['SourceBranchSet']:
         """

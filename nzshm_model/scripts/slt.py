@@ -9,27 +9,20 @@ import click
 import nzshm_model
 from nzshm_model import all_model_versions, branch_registry, get_model_version
 
-log = logging.getLogger()
-logging.basicConfig(level=logging.WARN)
-logging.getLogger('nshm_toshi_client.toshi_client_base').setLevel(logging.INFO)
-logging.getLogger('urllib3').setLevel(logging.INFO)
-logging.getLogger('botocore').setLevel(logging.INFO)
-logging.getLogger('gql.transport.requests').setLevel(logging.WARN)
-
-formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-screen_handler = logging.StreamHandler(stream=sys.stdout)
-screen_handler.setFormatter(formatter)
-file_handler = logging.FileHandler('slt.log')
-file_handler.setLevel(logging.INFO)
-file_handler.setFormatter(formatter)
-log.addHandler(screen_handler)
-log.addHandler(file_handler)
-
 
 @click.group()
 def slt():
     """Inspect and produce model source_logic_trees."""
-    pass
+    log = logging.getLogger()
+    logging.basicConfig(level=logging.WARN)
+    logging.getLogger('nshm_toshi_client.toshi_client_base').setLevel(logging.INFO)
+    logging.getLogger('urllib3').setLevel(logging.INFO)
+    logging.getLogger('botocore').setLevel(logging.INFO)
+    logging.getLogger('gql.transport.requests').setLevel(logging.WARN)
+    formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    screen_handler = logging.StreamHandler(stream=sys.stdout)
+    screen_handler.setFormatter(formatter)
+    log.addHandler(screen_handler)
 
 
 @slt.command(name='ls')

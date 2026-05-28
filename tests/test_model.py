@@ -28,6 +28,15 @@ class TestLoadModel:
     def test_model_104_title(self, current_model):
         assert current_model.title == "NSHM version 1.0.4, corrected fault geometry"
 
+    def test_invalid_version_raises_value_error(self):
+        with pytest.raises(ValueError, match="bogus"):
+            nm.model.NshmModel.get_model_version("bogus")
+
+    def test_all_registered_versions_load(self):
+        for version in nm.all_model_versions():
+            model = nm.model.NshmModel.get_model_version(version)
+            assert model.version == version
+
 
 class TestGetSourceBranchSets:
     def test_with_list(self, current_model):
