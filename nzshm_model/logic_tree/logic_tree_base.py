@@ -60,16 +60,8 @@ class BranchSet(Generic[BranchType]):
         string += '======BRANCHES======\n'
         return string + '\n'.join([str(branch) for branch in self])
 
-    def __iter__(self: BranchSetType) -> BranchSetType:
-        self.__counter = 0
-        return self
-
-    def __next__(self) -> BranchType:
-        if self.__counter >= len(self.branches):
-            raise StopIteration
-        else:
-            self.__counter += 1
-            return self.branches[self.__counter - 1]
+    def __iter__(self) -> Iterator[BranchType]:
+        yield from self.branches
 
 
 @dataclass
@@ -300,17 +292,8 @@ class LogicTree(PshaAdapterMixin, ABC, Generic[FilteredBranchType]):
             bs.branches.append(fb.to_branch())
         return logic_tree
 
-    def __iter__(self):
-        self.__current_branch = 0
-        self.__branch_list = list(self.__all_branches__())
-        return self
-
-    def __next__(self) -> FilteredBranchType:
-        if self.__current_branch >= len(self.__branch_list):
-            raise StopIteration
-        else:
-            self.__current_branch += 1
-            return self.__branch_list[self.__current_branch - 1]
+    def __iter__(self) -> Iterator[FilteredBranchType]:
+        yield from self.__all_branches__()
 
 @dataclass
 class FilteredBranch(Branch):

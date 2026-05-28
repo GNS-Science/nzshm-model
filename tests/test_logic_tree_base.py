@@ -111,6 +111,40 @@ def test_composite_weights(fixtures: Fixtures):
         assert cg.weight == cg.primary_branch.weight
 
 
+def test_branch_set_supports_nested_iteration(fixtures: Fixtures):
+    """BranchSet.__iter__ must return a fresh iterator each call (stateless).
+
+    Regression: the old __iter__/__next__ stored counter on self, so nested
+    or sequential iteration would corrupt each other.
+    """
+    bs = fixtures.branchsetA  # 4 branches
+    outer_ids = []
+    for branch in bs:
+        outer_ids.append(branch.branch_id)
+        for _ in bs:  # nested — must not corrupt outer counter
+            pass
+    assert outer_ids == [b.branch_id for b in bs.branches]
+
+
+def test_logic_tree_supports_nested_iteration():
+    """LogicTree.__iter__ must return a fresh iterator each call (stateless).
+
+    Regression: the old __iter__/__next__ stored __current_branch on self, so a
+    nested inner loop reset the counter and the outer loop stopped after one pass.
+    Uses the real model (concrete branch types) because __all_branches__ constructs copies.
+    """
+    from nzshm_model import get_model_version
+
+    slt = get_model_version("NSHM_v1.0.4").source_logic_tree
+    all_branches = list(slt)
+    outer_branches = []
+    for outer_fb in slt:
+        outer_branches.append(outer_fb)
+        for _ in slt:  # nested — must not corrupt outer counter
+            pass
+    assert len(outer_branches) == len(all_branches)
+
+
 def test_logic_tree_validation_of_corr(fixtures: Fixtures):
     # should not raise an execption
     correlation1 = Correlation(primary_branch=fixtures.branchA1, associated_branches=[fixtures.branchB1], weight=0.2)
