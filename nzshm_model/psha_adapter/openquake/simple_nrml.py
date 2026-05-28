@@ -396,7 +396,7 @@ class OpenquakeModelPshaAdapter(ModelPshaAdapterInterface):
     def __init__(self, target: 'NshmModel'):
         self.model = target
         self.source_adapter = self.model.source_logic_tree.psha_adapter(OpenquakeSourcePshaAdapter)
-        self.gmcm_adapter = self.model.gmm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
+        self.gmcm_adapter = self.model.gmcm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
         self.config_adapter = self.model.hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
 
     def write_config(

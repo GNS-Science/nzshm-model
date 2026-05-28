@@ -4,6 +4,7 @@ NshmModel class describes a complete National Seismic Hazard Model.
 
 import importlib.resources as resources
 import json
+import warnings
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any, Generic
@@ -49,7 +50,17 @@ class NshmModel(PshaAdapterMixin, Generic[HazardConfigType]):
         self.title = title
         self.hazard_config = hazard_config
         self.source_logic_tree = source_logic_tree
-        self.gmm_logic_tree = gmcm_logic_tree
+        self.gmcm_logic_tree = gmcm_logic_tree
+
+    @property
+    def gmm_logic_tree(self) -> GMCMLogicTree:
+        """Deprecated: use gmcm_logic_tree instead."""
+        warnings.warn(
+            "NshmModel.gmm_logic_tree is deprecated; use gmcm_logic_tree instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.gmcm_logic_tree
 
     @classmethod
     def from_files(

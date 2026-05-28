@@ -45,7 +45,7 @@ def test_gmcm_trts():
 def test_model_trts():
     model = get_model_version('NSHM_v1.0.4')
 
-    glt = model.gmm_logic_tree
+    glt = model.gmcm_logic_tree
     trts = ["Active Shallow Crust", "Subduction Interface", "Subduction Intraslab"]
     for branch_set, trt in zip(glt.branch_sets, trts, strict=False):
         assert branch_set.tectonic_region_type == trt

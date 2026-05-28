@@ -64,6 +64,24 @@ class TestGetSourceBranchSets:
             list(current_model.get_source_branch_sets(['XXX']))
 
 
+class TestGmcmAttribute:
+    def test_gmcm_logic_tree_attribute_exists(self, current_model):
+        """NshmModel must expose gmcm_logic_tree (canonical name matching GMCMLogicTree class)."""
+        from nzshm_model.logic_tree import GMCMLogicTree
+
+        assert isinstance(current_model.gmcm_logic_tree, GMCMLogicTree)
+
+    def test_gmm_logic_tree_deprecated_alias_still_works(self, current_model):
+        """gmm_logic_tree must still work but emit DeprecationWarning."""
+        import warnings
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = current_model.gmm_logic_tree
+            assert any(issubclass(x.category, DeprecationWarning) for x in w)
+        assert result is current_model.gmcm_logic_tree
+
+
 class TestFromFilesWithV1Slt:
     def test_v1_slt_json_loads_correctly(self):
         """from_files must use the v1 migration path when logic_tree_version is absent.

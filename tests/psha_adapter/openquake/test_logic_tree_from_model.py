@@ -16,7 +16,7 @@ FIXTURE_PATH = Path(__file__).parent / "fixtures"
     nzshm_model.psha_adapter.openquake.logic_tree.LogicTree object""")
 def test_gmm_logic_tree_from_nrml():
 
-    gmm_logic_tree = MODEL.gmm_logic_tree_nrml()
+    gmm_logic_tree = MODEL.gmcm_logic_tree_nrml()
 
     assert len(gmm_logic_tree.branch_sets) == 3
 
@@ -38,7 +38,7 @@ def test_gmm_logic_tree_from_nrml():
 
 def test_gmm_logic_tree():
 
-    gmm_logic_tree = MODEL.gmm_logic_tree
+    gmm_logic_tree = MODEL.gmcm_logic_tree
     assert isinstance(gmm_logic_tree, GMCMLogicTree)
 
     # branch set attributes

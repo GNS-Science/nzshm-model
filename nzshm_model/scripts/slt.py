@@ -70,7 +70,7 @@ def cli_model_gmm_hashes(model_id: str, outfile: io.FileIO):
     """Dump the gmm branches with hashes."""
     model = get_model_version(model_id)
     registry = branch_registry.BranchRegistry()
-    for branch_set in model.gmm_logic_tree.branch_sets:
+    for branch_set in model.gmcm_logic_tree.branch_sets:
         # print(dir(branch_set))
         for branch in branch_set.branches:
             entry = branch_registry.BranchRegistryEntry(branch.registry_identity)

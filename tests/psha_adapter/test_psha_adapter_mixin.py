@@ -21,7 +21,7 @@ def test_gmcm_logic_tree_is_psha_adapter_mixin():
     from nzshm_model.psha_adapter import PshaAdapterMixin
 
     model = get_model_version("NSHM_v1.0.4")
-    assert isinstance(model.gmm_logic_tree, PshaAdapterMixin)
+    assert isinstance(model.gmcm_logic_tree, PshaAdapterMixin)
 
 
 def test_hazard_config_is_psha_adapter_mixin():
