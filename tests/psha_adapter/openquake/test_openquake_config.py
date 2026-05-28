@@ -297,6 +297,23 @@ def test_write_site_file_without_locations_raises_value_error(tmp_path):
         adapter.write_site_file(tmp_path / "sites.csv")
 
 
+def test_openquake_config_from_dict_missing_key_raises_value_error():
+    """Regression: from_dict raised KeyError when site_parameters/locations keys missing; must be ValueError."""
+    with pytest.raises(ValueError):
+        OpenquakeConfig.from_dict({})
+
+
+def test_set_iml_round_trip_preserved_after_json_dumps_refactor():
+    """Preservation: set_iml/get_iml round-trip must work correctly after replacing string concatenation."""
+    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    measures = ['PGA', 'SA(0.5)', 'SA(1.0)']
+    levels = [0.01, 0.02, 0.05, 0.1, 0.2]
+    config.set_iml(measures, levels)
+    result_measures, result_levels = config.get_iml()
+    assert result_measures == measures
+    assert result_levels == pytest.approx(levels)
+
+
 @pytest.mark.skip("toml is not fully compatible due to use of quoted strings. Let's check if openquake supports this")
 def test_toml_conversion():
     config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)  # the default config

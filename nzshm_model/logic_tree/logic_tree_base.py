@@ -193,7 +193,10 @@ class LogicTree(PshaAdapterMixin, ABC, Generic[FilteredBranchType]):
         """
 
         config = dacite.Config(strict=True, cast=[tuple])
-        return dacite.from_dict(data_class=cls, data=data, config=config)
+        try:
+            return dacite.from_dict(data_class=cls, data=data, config=config)
+        except dacite.DaciteError as exc:
+            raise ValueError(f"Failed to deserialize {cls.__name__}: {exc}") from exc
 
     def _to_dict(self) -> dict[str, Any]:
         """

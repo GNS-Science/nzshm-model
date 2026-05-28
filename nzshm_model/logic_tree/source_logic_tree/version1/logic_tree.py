@@ -80,11 +80,15 @@ class SourceLogicTree:
         ltv = data.get("logic_tree_version")
         if ltv:
             raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
-        return dacite.from_dict(data_class=SourceLogicTree, data=data, config=dacite.Config(strict=True))
+        try:
+            return dacite.from_dict(data_class=SourceLogicTree, data=data, config=dacite.Config(strict=True))
+        except dacite.DaciteError as exc:
+            raise ValueError(f"Failed to deserialize SourceLogicTree (v1): {exc}") from exc
 
     @staticmethod
     def from_json(json_path: pathlib.Path | str):
-        data = json.load(open(json_path))
+        with pathlib.Path(json_path).open('r') as f:
+            data = json.load(f)
         return SourceLogicTree.from_dict(data)
 
 

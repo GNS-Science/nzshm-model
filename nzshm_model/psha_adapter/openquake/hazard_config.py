@@ -133,9 +133,12 @@ class OpenquakeConfig(HazardConfig):
 
     @classmethod
     def from_dict(cls: type[HazardConfigType], data: dict) -> 'OpenquakeConfig':
-        site_parameters = data.pop('site_parameters')
-        locations = data.pop('locations')
-        hazard_config = cast('OpenquakeConfig', cls(data['config']))
+        try:
+            site_parameters = data.pop('site_parameters')
+            locations = data.pop('locations')
+            hazard_config = cast('OpenquakeConfig', cls(data['config']))
+        except KeyError as exc:
+            raise ValueError(f"Hazard config dict is missing required key: {exc}") from exc
         if site_parameters:
             hazard_config._site_parameters = hazard_config._deserialze_site_params(site_parameters)
         if locations:
@@ -392,11 +395,7 @@ class OpenquakeConfig(HazardConfig):
             The OpenquakeConfig instance.
         """
         self.clear_iml()
-        new_iml = '{'
-        for m in measures:
-            new_iml += f'"{m}": {str(levels)}, '
-        new_iml += '}'
-
+        new_iml = json.dumps({m: levels for m in measures})
         if not self.config.has_section('calculation'):
             self.config.add_section('calculation')
         self.config['calculation']['intensity_measure_types_and_levels'] = new_iml
