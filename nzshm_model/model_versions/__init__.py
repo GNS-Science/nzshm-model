@@ -1,11 +1,30 @@
 from dataclasses import dataclass
 
-from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 
-from .nshm_v1_0_0 import model_args_factory as model_args_nshm_v1_0_0
-from .nshm_v1_0_4 import model_args_factory as model_args_nshm_v1_0_4
+@dataclass(frozen=True)
+class ModelVersionSpec:
+    """Metadata for a single registered NSHM model version."""
 
-versions = {
-    "NSHM_v1.0.0": model_args_nshm_v1_0_0,
-    "NSHM_v1.0.4": model_args_nshm_v1_0_4,
+    version: str
+    title: str
+    slt_json: str
+    gmm_json: str
+    hazard_config_json: str
+
+
+versions: dict[str, ModelVersionSpec] = {
+    "NSHM_v1.0.0": ModelVersionSpec(
+        version="NSHM_v1.0.0",
+        title="Initial version",
+        slt_json="nshm_v1.0.0_v2.json",
+        gmm_json="gmcm_nshm_v1.0.0.json",
+        hazard_config_json="oq_config_nshm_v1.0.0.json",
+    ),
+    "NSHM_v1.0.4": ModelVersionSpec(
+        version="NSHM_v1.0.4",
+        title="NSHM version 1.0.4, corrected fault geometry",
+        slt_json="nshm_v1.0.4_v2.json",
+        gmm_json="gmcm_nshm_v1.0.4.json",
+        hazard_config_json="oq_config_nshm_v1.0.4.json",
+    ),
 }

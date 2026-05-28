@@ -35,14 +35,14 @@ def test_json_gmcm(model_version, json_filename):
     model = get_model_version(model_version)
     json_filepath = Path(__file__).parent / 'fixtures' / 'model_versions' / json_filename
     gmcm_expected = GMCMLogicTree.from_json(json_filepath)
-    gmcm_from_model = model.gmm_logic_tree
+    gmcm_from_model = model.gmcm_logic_tree
     assert gmcm_from_model == gmcm_expected
 
 
 @pytest.mark.parametrize("model_version", all_model_versions())
 def test_brachset_names(model_version, branchset_names):
     model = get_model_version(model_version)
-    gmcm = model.gmm_logic_tree
+    gmcm = model.gmcm_logic_tree
     for branch_set in gmcm.branch_sets:
         assert branch_set.short_name == branchset_names[branch_set.tectonic_region_type]['short_name']
         assert branch_set.long_name == branchset_names[branch_set.tectonic_region_type]['long_name']

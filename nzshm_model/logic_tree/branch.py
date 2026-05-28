@@ -3,7 +3,7 @@ Classes for defining logic tree branches
 """
 
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass, field
 from functools import reduce
 from operator import mul
@@ -59,13 +59,5 @@ class CompositeBranch:
     def __post_init__(self) -> None:
         self.weight = reduce(mul, [branch.weight for branch in self.branches], 1.0)
 
-    def __iter__(self):
-        self.__counter = 0
-        return self
-
-    def __next__(self):
-        if self.__counter >= len(self.branches):
-            raise StopIteration
-        else:
-            self.__counter += 1
-            return self.branches[self.__counter - 1]
+    def __iter__(self) -> Iterator[Branch]:
+        yield from self.branches

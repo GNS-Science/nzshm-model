@@ -17,7 +17,7 @@ from typing import Any, Generic, TypeVar
 import dacite
 
 import nzshm_model.logic_tree.helpers as helpers
-from nzshm_model.psha_adapter import PshaAdapterInterface
+from nzshm_model.psha_adapter import PshaAdapterMixin
 
 from .branch import Branch, BranchType, CompositeBranch
 from .correlation import LogicTreeCorrelations
@@ -60,20 +60,12 @@ class BranchSet(Generic[BranchType]):
         string += '======BRANCHES======\n'
         return string + '\n'.join([str(branch) for branch in self])
 
-    def __iter__(self: BranchSetType) -> BranchSetType:
-        self.__counter = 0
-        return self
-
-    def __next__(self) -> BranchType:
-        if self.__counter >= len(self.branches):
-            raise StopIteration
-        else:
-            self.__counter += 1
-            return self.branches[self.__counter - 1]
+    def __iter__(self) -> Iterator[BranchType]:
+        yield from self.branches
 
 
 @dataclass
-class LogicTree(ABC, Generic[FilteredBranchType]):
+class LogicTree(PshaAdapterMixin, ABC, Generic[FilteredBranchType]):
     """
     Logic tree baseclass. Contains information about branch sets and correlations between branches of the branch sets.
 
@@ -201,7 +193,10 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         """
 
         config = dacite.Config(strict=True, cast=[tuple])
-        return dacite.from_dict(data_class=cls, data=data, config=config)
+        try:
+            return dacite.from_dict(data_class=cls, data=data, config=config)
+        except dacite.DaciteError as exc:
+            raise ValueError(f"Failed to deserialize {cls.__name__}: {exc}") from exc
 
     def _to_dict(self) -> dict[str, Any]:
         """
@@ -290,7 +285,11 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
                 logic_tree = cls(version=fb.logic_tree.version, title=fb.logic_tree.title)
                 version = fb.logic_tree.version
             else:
-                assert version == fb.logic_tree.version
+                if version != fb.logic_tree.version:
+                    raise ValueError(
+                        f"from_branches requires all branches from the same logic tree version; "
+                        f"got '{fb.logic_tree.version}', expected '{version}'"
+                    )
 
             # ensure an branch_set
             bs = match_branch_set(logic_tree, fb)
@@ -300,30 +299,8 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
             bs.branches.append(fb.to_branch())
         return logic_tree
 
-    def __iter__(self):
-        self.__current_branch = 0
-        self.__branch_list = list(self.__all_branches__())
-        return self
-
-    def __next__(self) -> FilteredBranchType:
-        if self.__current_branch >= len(self.__branch_list):
-            raise StopIteration
-        else:
-            self.__current_branch += 1
-            return self.__branch_list[self.__current_branch - 1]
-
-    def psha_adapter(self, provider: type[PshaAdapterInterface], **kwargs: dict | None) -> "PshaAdapterInterface":
-        """get a PSHA adapter for this instance.
-
-        Arguments:
-            provider: the adapter class
-            **kwargs: additional arguments required by the provider class
-
-        Returns:
-            a PSHA Adapter instance
-        """
-        return provider(target=self)
-
+    def __iter__(self) -> Iterator[FilteredBranchType]:
+        yield from self.__all_branches__()
 
 @dataclass
 class FilteredBranch(Branch):

@@ -6,8 +6,17 @@ enrich SLT from TOSHI_API.
 
 import dataclasses
 import json
+import warnings
 
-from nshm_toshi_client import API_URL, ToshiClientBase, get_auth_kwargs
+try:
+    from nshm_toshi_client import API_URL, ToshiClientBase, get_auth_kwargs
+except (ModuleNotFoundError, ImportError):
+    warnings.warn(
+        "nshm-toshi-client is not installed; Toshi API features unavailable. "
+        "Install with: pip install nzshm-model[toshi]",
+        ImportWarning,
+        stacklevel=2,
+    )
 
 
 @dataclasses.dataclass

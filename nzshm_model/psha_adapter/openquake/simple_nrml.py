@@ -46,13 +46,15 @@ def make_target(target_folder) -> pathlib.Path:
 
 def fetch_toshi_source(file_id: str, destination: pathlib.Path) -> pathlib.Path:
     api = SourceSolution(API_URL, None, None, with_schema_validation=False, **get_auth_kwargs())
-    assert destination.exists()
+    if not destination.exists():
+        raise FileNotFoundError(f"destination directory does not exist: {destination}")
     file_detail = api.get_source(file_id)
     fname = pathlib.Path(destination) / file_detail['file_name']
 
     if not fname.exists():
         api.download_file(file_id, destination)
-        assert fname.exists()
+        if not fname.exists():
+            raise FileNotFoundError(f"download did not produce expected file: {fname}")
     else:
         log.info(f'skipping existing: {fname}')
     return fname
@@ -340,7 +342,7 @@ class OpenquakeConfigPshaAdapter(ConfigPshaAdapterInterface):
         site_params = self.hazard_config.site_parameters
 
         if not locations:
-            raise Exception("locations not yet set in configuration")
+            raise ValueError("locations not yet set in configuration")
 
         with site_file.open('w') as fout:
             site_writer = csv.writer(fout, lineterminator='\n')
@@ -394,7 +396,7 @@ class OpenquakeModelPshaAdapter(ModelPshaAdapterInterface):
     def __init__(self, target: 'NshmModel'):
         self.model = target
         self.source_adapter = self.model.source_logic_tree.psha_adapter(OpenquakeSourcePshaAdapter)
-        self.gmcm_adapter = self.model.gmm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
+        self.gmcm_adapter = self.model.gmcm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
         self.config_adapter = self.model.hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
 
     def write_config(

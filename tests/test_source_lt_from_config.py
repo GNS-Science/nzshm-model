@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from nzshm_model.logic_tree import InversionSource, SourceLogicTree
+from nzshm_model.logic_tree.source_logic_tree.version1 import logic_tree as v1_lt
 
 
 @pytest.fixture()
@@ -103,3 +104,11 @@ def test_slt_from_config_errors8(slt_dict):
     with pytest.raises(ValueError) as value_error:
         SourceLogicTree.from_dict(slt_dict)
     print(value_error.value)
+
+
+def test_flattened_v1_slt_bad_weights_raises_value_error():
+    """Regression: FlattenedSourceLogicTree raised bare Exception; must raise ValueError."""
+    branch = v1_lt.Branch(values=[], weight=0.5)
+    composite = v1_lt.CompositeBranch(branches=[branch])
+    with pytest.raises(ValueError):
+        v1_lt.FlattenedSourceLogicTree(version="v1", title="test", branches=[composite])

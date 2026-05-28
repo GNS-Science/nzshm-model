@@ -272,6 +272,47 @@ class TestConfigCompatability:
     def test_class_instance_hash_digest(self, example_config):
         assert example_config.compatible_hash_digest() == "06f026df641e"
 
+    def test_compatible_hash_digest_odd_length_error_contains_value(self, example_config):
+        """Regression: missing f-prefix caused literal '{digest_len}' to appear in error."""
+        with pytest.raises(ValueError) as exc_info:
+            compatible_hash_digest(example_config.config, digest_len=3)
+        assert "3" in str(exc_info.value)
+        assert "{digest_len}" not in str(exc_info.value)
+
+
+def test_deserialize_locations_mixed_resolution_raises_value_error():
+    """Regression: _deserialize_locations raised bare Exception; must raise ValueError."""
+    mixed = ["0.1~0.1", "0.10~0.10"]  # different decimal places → different resolutions
+    with pytest.raises(ValueError):
+        OpenquakeConfig._deserialize_locations(mixed)
+
+
+def test_write_site_file_without_locations_raises_value_error(tmp_path):
+    """Regression: write_site_file raised bare Exception when no locations; must be ValueError."""
+    from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeConfigPshaAdapter
+
+    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    adapter = OpenquakeConfigPshaAdapter(target=config)
+    with pytest.raises(ValueError):
+        adapter.write_site_file(tmp_path / "sites.csv")
+
+
+def test_openquake_config_from_dict_missing_key_raises_value_error():
+    """Regression: from_dict raised KeyError when site_parameters/locations keys missing; must be ValueError."""
+    with pytest.raises(ValueError):
+        OpenquakeConfig.from_dict({})
+
+
+def test_set_iml_round_trip_preserved_after_json_dumps_refactor():
+    """Preservation: set_iml/get_iml round-trip must work correctly after replacing string concatenation."""
+    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    measures = ['PGA', 'SA(0.5)', 'SA(1.0)']
+    levels = [0.01, 0.02, 0.05, 0.1, 0.2]
+    config.set_iml(measures, levels)
+    result_measures, result_levels = config.get_iml()
+    assert result_measures == measures
+    assert result_levels == pytest.approx(levels)
+
 
 @pytest.mark.skip("toml is not fully compatible due to use of quoted strings. Let's check if openquake supports this")
 def test_toml_conversion():

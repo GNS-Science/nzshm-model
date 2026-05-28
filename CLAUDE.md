@@ -44,9 +44,7 @@ git tag vX.Y.Z && git push --tags
 
 ## Code Style
 
-- **Black** formatter: line-length=120, skip-string-normalization
-- **isort**: multi_line_output=3, line_length=120
-- **flake8**: max-line-length=120, max-complexity=18
+- **ruff**: line-length=120, rules E,F,I,B,UP (replaces Black, isort, flake8)
 - **mypy**: ignore_missing_imports=true
 - Target Python: >=3.10
 

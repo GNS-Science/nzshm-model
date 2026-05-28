@@ -4,9 +4,9 @@
 # import itertools
 from pathlib import Path
 
-from nzshm_model.logic_tree import SourceLogicTree
+import pytest
 
-# import pytest
+from nzshm_model.logic_tree import SourceLogicTree
 
 
 def test_v2_source_tree_from_json_no_correlations():
@@ -36,3 +36,9 @@ def test_serialize_source_logic_tree():
     slt_from_dict = SourceLogicTree.from_dict(slt_dict)
 
     assert slt_orig == slt_from_dict
+
+
+def test_from_dict_with_unknown_field_raises_value_error():
+    """dacite.from_dict raises DaciteError on bad input; must be surfaced as ValueError."""
+    with pytest.raises(ValueError):
+        SourceLogicTree.from_dict({"not_a_real_field": "value"})

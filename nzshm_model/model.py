@@ -4,6 +4,7 @@ NshmModel class describes a complete National Seismic Hazard Model.
 
 import importlib.resources as resources
 import json
+import warnings
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any, Generic
@@ -11,7 +12,7 @@ from typing import Any, Generic
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.model_versions import versions
-from nzshm_model.psha_adapter import ModelPshaAdapterInterface
+from nzshm_model.psha_adapter import PshaAdapterMixin
 from nzshm_model.psha_adapter.hazard_config_factory import hazard_config_class_factory
 
 from .psha_adapter.hazard_config import HazardConfig, HazardConfigType
@@ -24,7 +25,7 @@ GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
 HAZARD_CONFIG_PATH = RESOURCES_PATH / "HAZARD_CONFIG_JSON"
 
 
-class NshmModel(Generic[HazardConfigType]):
+class NshmModel(PshaAdapterMixin, Generic[HazardConfigType]):
     """
     An NshmModel instance represents a complete National Seismic Hazard Model version.
     """
@@ -49,7 +50,17 @@ class NshmModel(Generic[HazardConfigType]):
         self.title = title
         self.hazard_config = hazard_config
         self.source_logic_tree = source_logic_tree
-        self.gmm_logic_tree = gmcm_logic_tree
+        self.gmcm_logic_tree = gmcm_logic_tree
+
+    @property
+    def gmm_logic_tree(self) -> GMCMLogicTree:
+        """Deprecated: use gmcm_logic_tree instead."""
+        warnings.warn(
+            "NshmModel.gmm_logic_tree is deprecated; use gmcm_logic_tree instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.gmcm_logic_tree
 
     @classmethod
     def from_files(
@@ -67,13 +78,12 @@ class NshmModel(Generic[HazardConfigType]):
         using static method: `get_model_version`.
         """
 
-        # backwards compatatilbity for v1 SourceLogicTree
-        # v1 is not versioned
+        # backwards compatibility for v1 SourceLogicTree (v1 has no logic_tree_version key)
         data = NshmModel._slt_data_from_file(slt_json)
         if data.get("logic_tree_version") is None:
             source_logic_tree = NshmModel._source_logic_tree_from_v1_json(slt_json)
-
-        source_logic_tree = SourceLogicTree.from_json(slt_json)
+        else:
+            source_logic_tree = SourceLogicTree.from_json(slt_json)
         gmcm_logic_tree = GMCMLogicTree.from_json(gmm_json)
         HazardConfigClass = hazard_config_class_factory.get_hazard_config_class_from_file(hazard_config_json)
         hazard_config = HazardConfigClass.from_json(hazard_config_json)
@@ -121,15 +131,17 @@ class NshmModel(Generic[HazardConfigType]):
             the model instance.
         """
 
-        model_args_factory = versions.get(version)
-        if not model_args_factory:
+        spec = versions.get(version)
+        if spec is None:
             raise ValueError(f"{version} is not a valid model version.")
 
-        model_args = model_args_factory()
-        model_args['slt_json'] = SLT_SOURCE_PATH / model_args['slt_json']
-        model_args['gmm_json'] = GMM_JSON_SOURCE_PATH / model_args['gmm_json']
-        model_args['hazard_config_json'] = HAZARD_CONFIG_PATH / model_args['hazard_config_json']
-        return cls.from_files(**model_args)
+        return cls.from_files(
+            version=spec.version,
+            title=spec.title,
+            slt_json=str(SLT_SOURCE_PATH / spec.slt_json),
+            gmm_json=str(GMM_JSON_SOURCE_PATH / spec.gmm_json),
+            hazard_config_json=str(HAZARD_CONFIG_PATH / spec.hazard_config_json),
+        )
 
     def get_source_branch_sets(self, short_names: list[str] | str | None = None) -> Iterator['SourceBranchSet']:
         """
@@ -160,24 +172,9 @@ class NshmModel(Generic[HazardConfigType]):
         if not list_short_names:  # User passes either an empty list or None
             yield from self.source_logic_tree.branch_sets
         else:
-            # user has passes a list of short_names
-            # check all the names are valid:
+            known = {bs.short_name for bs in self.source_logic_tree.branch_sets}
             for short_name in list_short_names:
-                try:
-                    yield from filter(lambda item: item.short_name == short_name, self.source_logic_tree.branch_sets)
-                except StopIteration:
-                    raise ValueError("The branch " + short_name + " was not found.") from None
+                if short_name not in known:
+                    raise ValueError(f"The branch '{short_name}' was not found.")
+                yield from (bs for bs in self.source_logic_tree.branch_sets if bs.short_name == short_name)
 
-    def psha_adapter(
-        self, provider: type[ModelPshaAdapterInterface], **kwargs: dict | None
-    ) -> "ModelPshaAdapterInterface":
-        """get a PSHA adapter for this instance.
-
-        Arguments:
-            provider: the adapter class
-            **kwargs: additional arguments required by the provider class
-
-        Returns:
-            a PSHA Adapter instance
-        """
-        return provider(target=self)

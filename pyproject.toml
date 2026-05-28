@@ -12,9 +12,9 @@ authors = [
 requires-python = ">=3.10,<4.0"
 
 dependencies = [
+    "click",
     "dacite>=1.6.0",
     "lxml>=6.0",
-    "nshm-toshi-client>=1.2.3",
     "nzshm-common>=0.9.0",
 ]
 
@@ -23,10 +23,9 @@ slt = "nzshm_model.scripts.slt:slt"
 model = "nzshm_model.scripts.cli:cli"
 
 [project.optional-dependencies]
-scripts = ["click"]
 toshi = [
     "boto3",
-    "nshm-toshi-client",
+    "nshm-toshi-client>=1.2.3",
 ]
 
 [dependency-groups]

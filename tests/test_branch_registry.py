@@ -50,6 +50,20 @@ class TestBranchRegistry:
         registry.save(output_file)
         assert output_file.read() == gmm_csv_fixture.read()
 
+    def test_load_duplicate_row_raises_value_error(self):
+        """Regression: duplicate CSV rows triggered assert (stripped under python -O).
+
+        BranchRegistry.load must raise ValueError on duplicate entries at all times.
+        """
+        correct_hash = branch_registry.identity_digest("SomeGMM")
+        duplicate_csv = io.StringIO(
+            "hash_digest,identity,extra\n"
+            f"{correct_hash},SomeGMM,\n"
+            f"{correct_hash},SomeGMM,\n"
+        )
+        with pytest.raises(ValueError):
+            branch_registry.BranchRegistry().load(duplicate_csv)
+
 
 class TestBranchRegistryEntry:
     def test_auto_digest(self):
@@ -61,6 +75,12 @@ class TestBranchRegistryEntry:
         with pytest.raises(ValueError):
             new_entry = branch_registry.BranchRegistryEntry("SomeGMM", hash_digest="ABC")
             assert new_entry
+
+    def test_invalid_hash_digest_error_message_is_well_formed(self):
+        """Regression: error message had a stray double-quote producing 'ABC""'."""
+        with pytest.raises(ValueError) as exc_info:
+            branch_registry.BranchRegistryEntry("SomeGMM", hash_digest="ABC")
+        assert '""' not in str(exc_info.value)
 
     def test_validate_user_digest_good(self):
         new_entry = branch_registry.BranchRegistryEntry(

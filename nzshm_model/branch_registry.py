@@ -79,7 +79,7 @@ class BranchRegistryEntry:
     def __post_init__(self):
         if self.hash_digest:
             if not self.hash_digest == identity_digest(self.identity):
-                raise ValueError(f'Incorrect hash_digest "{self.hash_digest}"" for "{self.identity}"')
+                raise ValueError(f'Incorrect hash_digest "{self.hash_digest}" for "{self.identity}"')
         else:
             self.hash_digest = identity_digest(self.identity)
 
@@ -94,8 +94,10 @@ class BranchRegistry:
 
     def _load_row(self, row):
         entry = BranchRegistryEntry(**row)
-        assert entry.hash_digest not in self._branches_by_hash
-        assert entry.identity not in self._branches_by_identity
+        if entry.hash_digest in self._branches_by_hash:
+            raise ValueError(f'Duplicate hash_digest "{entry.hash_digest}" in registry')
+        if entry.identity in self._branches_by_identity:
+            raise ValueError(f'Duplicate identity "{entry.identity}" in registry')
 
         self._branches_by_hash[entry.hash_digest] = entry
         self._branches_by_identity[entry.identity] = entry
@@ -114,7 +116,8 @@ class BranchRegistry:
         registry_file.seek(0)
         reader = csv.DictReader(registry_file, fieldnames=HEADERS)
         headers = list(next(reader).values())
-        assert HEADERS == headers
+        if HEADERS != headers:
+            raise ValueError(f'Unexpected CSV headers: expected {HEADERS}, got {headers}')
         for row in reader:
             self._load_row(row)
         return self
@@ -137,9 +140,11 @@ class BranchRegistry:
             entry: a BranchRegistryEntry object.
         """
         if entry.hash_digest in self._branches_by_hash:
-            assert entry.identity in self._branches_by_identity
+            if entry.identity not in self._branches_by_identity:
+                raise ValueError(f'Hash "{entry.hash_digest}" already registered with a different identity')
         else:
-            assert entry.identity not in self._branches_by_identity
+            if entry.identity in self._branches_by_identity:
+                raise ValueError(f'Identity "{entry.identity}" already registered with a different hash')
 
         self._branches_by_hash[entry.hash_digest] = entry
         self._branches_by_identity[entry.identity] = entry

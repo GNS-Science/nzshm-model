@@ -1,8 +1,10 @@
 import configparser
+import importlib.resources as resources
 
 import pytest
 
 import nzshm_model as nm
+from nzshm_model.model import NshmModel
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
 
 
@@ -26,6 +28,15 @@ class TestLoadModel:
     def test_model_104_title(self, current_model):
         assert current_model.title == "NSHM version 1.0.4, corrected fault geometry"
 
+    def test_invalid_version_raises_value_error(self):
+        with pytest.raises(ValueError, match="bogus"):
+            nm.model.NshmModel.get_model_version("bogus")
+
+    def test_all_registered_versions_load(self):
+        for version in nm.all_model_versions():
+            model = nm.model.NshmModel.get_model_version(version)
+            assert model.version == version
+
 
 class TestGetSourceBranchSets:
     def test_with_list(self, current_model):
@@ -44,8 +55,53 @@ class TestGetSourceBranchSets:
         assert len(list(current_model.get_source_branch_sets())) == 4
 
     def test_with_invalid_branch(self, current_model):
-        with pytest.raises(StopIteration):
-            next(current_model.get_source_branch_sets(['XXX']))
+        with pytest.raises(ValueError):
+            list(current_model.get_source_branch_sets(['XXX']))
+
+    def test_unknown_short_name_raises_value_error(self, current_model):
+        """get_source_branch_sets must raise ValueError when a short_name is not found."""
+        with pytest.raises(ValueError, match="XXX"):
+            list(current_model.get_source_branch_sets(['XXX']))
+
+
+class TestGmcmAttribute:
+    def test_gmcm_logic_tree_attribute_exists(self, current_model):
+        """NshmModel must expose gmcm_logic_tree (canonical name matching GMCMLogicTree class)."""
+        from nzshm_model.logic_tree import GMCMLogicTree
+
+        assert isinstance(current_model.gmcm_logic_tree, GMCMLogicTree)
+
+    def test_gmm_logic_tree_deprecated_alias_still_works(self, current_model):
+        """gmm_logic_tree must still work but emit DeprecationWarning."""
+        import warnings
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            result = current_model.gmm_logic_tree
+            assert any(issubclass(x.category, DeprecationWarning) for x in w)
+        assert result is current_model.gmcm_logic_tree
+
+
+class TestFromFilesWithV1Slt:
+    def test_v1_slt_json_loads_correctly(self):
+        """from_files must use the v1 migration path when logic_tree_version is absent.
+
+        Regression for: the missing else: caused SourceLogicTree.from_json to be called
+        unconditionally, which fails on v1-format SLT files.
+        """
+        rpath = resources.files('nzshm_model.resources')
+        v1_slt_json = rpath / 'SRM_JSON' / 'nshm_v1.0.4.json'
+        gmm_json = rpath / 'GMM_JSON' / 'gmcm_nshm_v1.0.4.json'
+        haz_json = rpath / 'HAZARD_CONFIG_JSON' / 'oq_config_nshm_v1.0.4.json'
+
+        model = NshmModel.from_files(
+            version='NSHM_v1.0.4',
+            title='test v1 migration',
+            slt_json=str(v1_slt_json),
+            gmm_json=str(gmm_json),
+            hazard_config_json=str(haz_json),
+        )
+        assert len(model.source_logic_tree.branch_sets) == 4
 
 
 class TestConfig:

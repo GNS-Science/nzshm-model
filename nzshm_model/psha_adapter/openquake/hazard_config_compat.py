@@ -92,7 +92,7 @@ def compatible_hash_digest(config: configparser.ConfigParser, digest_len: int = 
     """return a 12 character hexdigest for the config"""
 
     if digest_len % 2 > 0:
-        raise ValueError('len: {digest_len} is not divisible by 2')
+        raise ValueError(f'len: {digest_len} is not divisible by 2')
 
     check_invariants(config)  # raises an error if not sucessful
     compat = compatible_config(config)

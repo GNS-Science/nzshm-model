@@ -22,7 +22,7 @@ def test_source_adapter(tmp_path, current_model, source_map):
 
 def test_gmcm_adapter(tmp_path, current_model):
     target_folder = tmp_path / 'target'
-    gmcm_adapter = current_model.gmm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
+    gmcm_adapter = current_model.gmcm_logic_tree.psha_adapter(OpenquakeGMCMPshaAdapter)
     gmcm_filepath = gmcm_adapter.write_config(target_folder)
     assert gmcm_filepath.exists()
 

@@ -7,7 +7,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-05-14T22:08:36.190720215Z"
+exclude-newer = "2026-05-21T02:42:28.067304565Z"
 exclude-newer-span = "P1W"
 
 [options.exclude-newer-package]
@@ -1658,16 +1658,13 @@ wheels = [
 name = "nzshm-model"
 source = { editable = "." }
 dependencies = [
+    { name = "click" },
     { name = "dacite" },
     { name = "lxml" },
-    { name = "nshm-toshi-client" },
     { name = "nzshm-common" },
 ]
 
 [package.optional-dependencies]
-scripts = [
-    { name = "click" },
-]
 toshi = [
     { name = "boto3" },
     { name = "nshm-toshi-client" },
@@ -1698,14 +1695,13 @@ doc = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", marker = "extra == 'toshi'" },
-    { name = "click", marker = "extra == 'scripts'" },
+    { name = "click" },
     { name = "dacite", specifier = ">=1.6.0" },
     { name = "lxml", specifier = ">=6.0" },
-    { name = "nshm-toshi-client", specifier = ">=1.2.3" },
-    { name = "nshm-toshi-client", marker = "extra == 'toshi'" },
+    { name = "nshm-toshi-client", marker = "extra == 'toshi'", specifier = ">=1.2.3" },
     { name = "nzshm-common", specifier = ">=0.9.0" },
 ]
-provides-extras = ["scripts", "toshi"]
+provides-extras = ["toshi"]
 
 [package.metadata.requires-dev]
 dev = [

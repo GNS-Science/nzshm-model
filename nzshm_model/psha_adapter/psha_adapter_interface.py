@@ -66,7 +66,7 @@ class GMCMPshaAdapterInterface(PshaAdapterInterface):
 
 class ConfigPshaAdapterInterface(PshaAdapterInterface):
     """
-    Defines methods to be provided by a PSHA ground motion model adapter class implementation.
+    Defines methods to be provided by a PSHA calculation configuration adapter class implementation.
     """
 
     @abstractmethod

@@ -80,11 +80,15 @@ class SourceLogicTree:
         ltv = data.get("logic_tree_version")
         if ltv:
             raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
-        return dacite.from_dict(data_class=SourceLogicTree, data=data, config=dacite.Config(strict=True))
+        try:
+            return dacite.from_dict(data_class=SourceLogicTree, data=data, config=dacite.Config(strict=True))
+        except dacite.DaciteError as exc:
+            raise ValueError(f"Failed to deserialize SourceLogicTree (v1): {exc}") from exc
 
     @staticmethod
     def from_json(json_path: pathlib.Path | str):
-        data = json.load(open(json_path))
+        with pathlib.Path(json_path).open('r') as f:
+            data = json.load(f)
         return SourceLogicTree.from_dict(data)
 
 
@@ -110,7 +114,7 @@ class FlattenedSourceLogicTree:
     def __post_init__(self) -> None:
         total_weight = reduce(add, [branch.weight for branch in self.branches])
         if not isclose(total_weight, 1.0):
-            raise Exception(f'logic tree weights do not add to 1.0 (sum is {total_weight})')
+            raise ValueError(f'logic tree weights do not add to 1.0 (sum is {total_weight})')
 
     @classmethod
     def from_source_logic_tree(cls, slt: SourceLogicTree):
