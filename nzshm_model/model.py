@@ -11,7 +11,7 @@ from typing import Any, Generic
 from nzshm_model.logic_tree import GMCMLogicTree, SourceBranchSet, SourceLogicTree
 from nzshm_model.logic_tree.source_logic_tree import SourceLogicTreeV1
 from nzshm_model.model_versions import versions
-from nzshm_model.psha_adapter import ModelPshaAdapterInterface
+from nzshm_model.psha_adapter import PshaAdapterMixin
 from nzshm_model.psha_adapter.hazard_config_factory import hazard_config_class_factory
 
 from .psha_adapter.hazard_config import HazardConfig, HazardConfigType
@@ -24,7 +24,7 @@ GMM_SOURCE_PATH = RESOURCES_PATH / "GMM_LTs"
 HAZARD_CONFIG_PATH = RESOURCES_PATH / "HAZARD_CONFIG_JSON"
 
 
-class NshmModel(Generic[HazardConfigType]):
+class NshmModel(PshaAdapterMixin, Generic[HazardConfigType]):
     """
     An NshmModel instance represents a complete National Seismic Hazard Model version.
     """
@@ -127,9 +127,9 @@ class NshmModel(Generic[HazardConfigType]):
         return cls.from_files(
             version=spec.version,
             title=spec.title,
-            slt_json=SLT_SOURCE_PATH / spec.slt_json,
-            gmm_json=GMM_JSON_SOURCE_PATH / spec.gmm_json,
-            hazard_config_json=HAZARD_CONFIG_PATH / spec.hazard_config_json,
+            slt_json=str(SLT_SOURCE_PATH / spec.slt_json),
+            gmm_json=str(GMM_JSON_SOURCE_PATH / spec.gmm_json),
+            hazard_config_json=str(HAZARD_CONFIG_PATH / spec.hazard_config_json),
         )
 
     def get_source_branch_sets(self, short_names: list[str] | str | None = None) -> Iterator['SourceBranchSet']:
@@ -167,16 +167,3 @@ class NshmModel(Generic[HazardConfigType]):
                     raise ValueError(f"The branch '{short_name}' was not found.")
                 yield from (bs for bs in self.source_logic_tree.branch_sets if bs.short_name == short_name)
 
-    def psha_adapter(
-        self, provider: type[ModelPshaAdapterInterface], **kwargs: dict | None
-    ) -> "ModelPshaAdapterInterface":
-        """get a PSHA adapter for this instance.
-
-        Arguments:
-            provider: the adapter class
-            **kwargs: additional arguments required by the provider class
-
-        Returns:
-            a PSHA Adapter instance
-        """
-        return provider(target=self)

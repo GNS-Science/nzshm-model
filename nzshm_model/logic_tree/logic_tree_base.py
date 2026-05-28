@@ -17,7 +17,7 @@ from typing import Any, Generic, TypeVar
 import dacite
 
 import nzshm_model.logic_tree.helpers as helpers
-from nzshm_model.psha_adapter import PshaAdapterInterface
+from nzshm_model.psha_adapter import PshaAdapterMixin
 
 from .branch import Branch, BranchType, CompositeBranch
 from .correlation import LogicTreeCorrelations
@@ -73,7 +73,7 @@ class BranchSet(Generic[BranchType]):
 
 
 @dataclass
-class LogicTree(ABC, Generic[FilteredBranchType]):
+class LogicTree(PshaAdapterMixin, ABC, Generic[FilteredBranchType]):
     """
     Logic tree baseclass. Contains information about branch sets and correlations between branches of the branch sets.
 
@@ -311,19 +311,6 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         else:
             self.__current_branch += 1
             return self.__branch_list[self.__current_branch - 1]
-
-    def psha_adapter(self, provider: type[PshaAdapterInterface], **kwargs: dict | None) -> "PshaAdapterInterface":
-        """get a PSHA adapter for this instance.
-
-        Arguments:
-            provider: the adapter class
-            **kwargs: additional arguments required by the provider class
-
-        Returns:
-            a PSHA Adapter instance
-        """
-        return provider(target=self)
-
 
 @dataclass
 class FilteredBranch(Branch):

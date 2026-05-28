@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeVar
 
-from nzshm_model.psha_adapter import ConfigPshaAdapterInterface
+from nzshm_model.psha_adapter import PshaAdapterMixin
 
 if TYPE_CHECKING:
     from nzshm_common import CodedLocation
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 HazardConfigType = TypeVar('HazardConfigType', bound='HazardConfig')
 
 
-class HazardConfig(ABC):
+class HazardConfig(PshaAdapterMixin, ABC):
     hazard_type = "abstract"  # every child class should specify its type for use in loading from file
 
     @abstractmethod
@@ -70,16 +70,3 @@ class HazardConfig(ABC):
     def from_json(cls: type[HazardConfigType], file_path: Path | str) -> HazardConfigType:
         pass
 
-    def psha_adapter(
-        self, provider: type[ConfigPshaAdapterInterface], **kwargs: dict | None
-    ) -> "ConfigPshaAdapterInterface":
-        """get a PSHA adapter for this instance.
-
-        Arguments:
-            provider: the adapter class
-            **kwargs: additional arguments required by the provider class
-
-        Returns:
-            a PSHA Adapter instance
-        """
-        return provider(target=self)
