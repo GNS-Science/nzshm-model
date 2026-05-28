@@ -280,6 +280,23 @@ class TestConfigCompatability:
         assert "{digest_len}" not in str(exc_info.value)
 
 
+def test_deserialize_locations_mixed_resolution_raises_value_error():
+    """Regression: _deserialize_locations raised bare Exception; must raise ValueError."""
+    mixed = ["0.1~0.1", "0.10~0.10"]  # different decimal places → different resolutions
+    with pytest.raises(ValueError):
+        OpenquakeConfig._deserialize_locations(mixed)
+
+
+def test_write_site_file_without_locations_raises_value_error(tmp_path):
+    """Regression: write_site_file raised bare Exception when no locations; must be ValueError."""
+    from nzshm_model.psha_adapter.openquake.simple_nrml import OpenquakeConfigPshaAdapter
+
+    config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    adapter = OpenquakeConfigPshaAdapter(target=config)
+    with pytest.raises(ValueError):
+        adapter.write_site_file(tmp_path / "sites.csv")
+
+
 @pytest.mark.skip("toml is not fully compatible due to use of quoted strings. Let's check if openquake supports this")
 def test_toml_conversion():
     config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)  # the default config

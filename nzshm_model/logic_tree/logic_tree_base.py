@@ -282,7 +282,11 @@ class LogicTree(PshaAdapterMixin, ABC, Generic[FilteredBranchType]):
                 logic_tree = cls(version=fb.logic_tree.version, title=fb.logic_tree.title)
                 version = fb.logic_tree.version
             else:
-                assert version == fb.logic_tree.version
+                if version != fb.logic_tree.version:
+                    raise ValueError(
+                        f"from_branches requires all branches from the same logic tree version; "
+                        f"got '{fb.logic_tree.version}', expected '{version}'"
+                    )
 
             # ensure an branch_set
             bs = match_branch_set(logic_tree, fb)

@@ -110,7 +110,7 @@ class FlattenedSourceLogicTree:
     def __post_init__(self) -> None:
         total_weight = reduce(add, [branch.weight for branch in self.branches])
         if not isclose(total_weight, 1.0):
-            raise Exception(f'logic tree weights do not add to 1.0 (sum is {total_weight})')
+            raise ValueError(f'logic tree weights do not add to 1.0 (sum is {total_weight})')
 
     @classmethod
     def from_source_logic_tree(cls, slt: SourceLogicTree):

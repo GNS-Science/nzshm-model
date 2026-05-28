@@ -164,7 +164,7 @@ class OpenquakeConfig(HazardConfig):
 
         all_coords = list(chain.from_iterable([loc.split('~') for loc in locations]))
         if len(set(map(get_resolution, all_coords))) != 1:
-            raise Exception("not all coordinates have the same resolution")
+            raise ValueError("not all coordinates have the same resolution")
 
         resolution = get_resolution(all_coords[0])
         ll_pairs = [[float(ll_str) for ll_str in loc.split('~')] for loc in locations]
