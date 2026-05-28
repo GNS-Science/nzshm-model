@@ -272,6 +272,13 @@ class TestConfigCompatability:
     def test_class_instance_hash_digest(self, example_config):
         assert example_config.compatible_hash_digest() == "06f026df641e"
 
+    def test_compatible_hash_digest_odd_length_error_contains_value(self, example_config):
+        """Regression: missing f-prefix caused literal '{digest_len}' to appear in error."""
+        with pytest.raises(ValueError) as exc_info:
+            compatible_hash_digest(example_config.config, digest_len=3)
+        assert "3" in str(exc_info.value)
+        assert "{digest_len}" not in str(exc_info.value)
+
 
 @pytest.mark.skip("toml is not fully compatible due to use of quoted strings. Let's check if openquake supports this")
 def test_toml_conversion():

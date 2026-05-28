@@ -73,7 +73,7 @@ class LogicTreeBranch:
             uws = list(ltb.findall('nrml:uncertaintyWeight', namespaces=NRML_NS))
             if len(uws) == 1:
                 return float(uws[0])
-            raise ValueError("expecting exactly one uncertaintyWeight child, got {len(uws)}")
+            raise ValueError(f"expecting exactly one uncertaintyWeight child, got {len(uws)}")
 
         for ltb in ltbs.iterchildren():
             _instance = LogicTreeBranch(

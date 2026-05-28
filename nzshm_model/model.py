@@ -67,13 +67,12 @@ class NshmModel(Generic[HazardConfigType]):
         using static method: `get_model_version`.
         """
 
-        # backwards compatatilbity for v1 SourceLogicTree
-        # v1 is not versioned
+        # backwards compatibility for v1 SourceLogicTree (v1 has no logic_tree_version key)
         data = NshmModel._slt_data_from_file(slt_json)
         if data.get("logic_tree_version") is None:
             source_logic_tree = NshmModel._source_logic_tree_from_v1_json(slt_json)
-
-        source_logic_tree = SourceLogicTree.from_json(slt_json)
+        else:
+            source_logic_tree = SourceLogicTree.from_json(slt_json)
         gmcm_logic_tree = GMCMLogicTree.from_json(gmm_json)
         HazardConfigClass = hazard_config_class_factory.get_hazard_config_class_from_file(hazard_config_json)
         hazard_config = HazardConfigClass.from_json(hazard_config_json)
@@ -160,13 +159,11 @@ class NshmModel(Generic[HazardConfigType]):
         if not list_short_names:  # User passes either an empty list or None
             yield from self.source_logic_tree.branch_sets
         else:
-            # user has passes a list of short_names
-            # check all the names are valid:
+            known = {bs.short_name for bs in self.source_logic_tree.branch_sets}
             for short_name in list_short_names:
-                try:
-                    yield from filter(lambda item: item.short_name == short_name, self.source_logic_tree.branch_sets)
-                except StopIteration:
-                    raise ValueError("The branch " + short_name + " was not found.") from None
+                if short_name not in known:
+                    raise ValueError(f"The branch '{short_name}' was not found.")
+                yield from (bs for bs in self.source_logic_tree.branch_sets if bs.short_name == short_name)
 
     def psha_adapter(
         self, provider: type[ModelPshaAdapterInterface], **kwargs: dict | None

@@ -166,3 +166,29 @@ def test_nrml_srm_logic_tree_path(
         _strip_whitespace(branch_id),
         _strip_whitespace(uncertainty_model),
     )
+
+
+def test_duplicate_uncertainty_weight_error_message_contains_count(tmp_path):
+    """Regression: missing f-prefix caused literal '{len(uws)}' in the error instead of the count."""
+    xml_content = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<nrml xmlns="http://openquake.org/xmlns/nrml/0.4">\n'
+        '  <logicTree logicTreeID="lt1">\n'
+        '    <logicTreeBranchSet uncertaintyType="gmpeModel" branchSetID="bs1"\n'
+        '        applyToTectonicRegionType="Active Shallow Crust">\n'
+        '      <logicTreeBranch branchID="br1">\n'
+        '        <uncertaintyModel>[SomeGMPE]</uncertaintyModel>\n'
+        '        <uncertaintyWeight>0.5</uncertaintyWeight>\n'
+        '        <uncertaintyWeight>0.5</uncertaintyWeight>\n'
+        '      </logicTreeBranch>\n'
+        '    </logicTreeBranchSet>\n'
+        '  </logicTree>\n'
+        '</nrml>\n'
+    )
+    xml_file = tmp_path / "bad_weights.xml"
+    xml_file.write_text(xml_content)
+
+    with pytest.raises(ValueError) as exc_info:
+        NrmlDocument.from_xml_file(xml_file)
+    assert "2" in str(exc_info.value)
+    assert "{len(uws)}" not in str(exc_info.value)
