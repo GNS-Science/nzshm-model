@@ -4,19 +4,23 @@ Defines source logic tree structures used in NSHM.
 
 import copy
 import warnings
-from dataclasses import dataclass, field
-from typing import List, Tuple, Union
+from typing import Annotated, List, Literal, Tuple, Union
+
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
 
 from . import BranchAttributeValue
+
+_CONFIG = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
 from .fault_system_branch_set import BranchSetSpec
 from .version1 import SourceLogicTree as SourceLogicTreeV1
 
 
-@dataclass
-class InversionSource:
+class InversionSource(BaseModel):
+    model_config = _CONFIG
+
     """
     A hazard source built from an NSHM Grand Inversion experiment
 
@@ -36,11 +40,12 @@ class InversionSource:
     inversion_id: Union[str, None] = ""
     rupture_set_id: Union[str, None] = ""
     inversion_solution_type: Union[str, None] = ""
-    type: str = "inversion"
+    type: Literal["inversion"] = "inversion"
 
 
-@dataclass
-class DistributedSource:
+class DistributedSource(BaseModel):
+    model_config = _CONFIG
+
     """
     A gridded hazard source built from a background (off-fault) seismic rate model
 
@@ -54,11 +59,12 @@ class DistributedSource:
 
     nrml_id: str
     rupture_rate_scaling: Union[float, None] = None  # TODO: needed at this level??
-    type: str = "distributed"
+    type: Literal["distributed"] = "distributed"
 
 
-@dataclass
 class SourceBranch(Branch):
+    model_config = _CONFIG
+
     """
     A source branch can contain multiple sources.
 
@@ -70,12 +76,15 @@ class SourceBranch(Branch):
         rupture_rate_scaling: the scaling ratio.
     """
 
-    values: List[BranchAttributeValue] = field(default_factory=list)
-    sources: List[Union[DistributedSource, InversionSource]] = field(default_factory=list)
+    values: List[BranchAttributeValue] = Field(default_factory=list)
+    sources: List[Annotated[Union[DistributedSource, InversionSource], Field(union_mode="left_to_right")]] = Field(
+        default_factory=list
+    )
     rupture_rate_scaling: float = 1.0
-    tectonic_region_types: Tuple[str, ...] = field(default_factory=tuple)
+    tectonic_region_types: Tuple[str, ...] = Field(default_factory=tuple)
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def _post(self):
         if not isinstance(self.tectonic_region_types, tuple):
             raise TypeError("tectonic_region_types must be a tuple")
 
@@ -108,17 +117,19 @@ class SourceBranch(Branch):
 
 
 # TODO: protect from users changing tectonic_region_types
-@dataclass
 class SourceBranchSet(BranchSet[SourceBranch]):
+    model_config = _CONFIG
+
     """A list of Source Branches.
 
     Attributes:
         branches: list of branches.
     """
 
-    branches: List[SourceBranch] = field(default_factory=list)
+    branches: List[SourceBranch] = Field(default_factory=list)
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def _post(self):
         trts = {frozenset(branch.tectonic_region_types) for branch in self.branches}
         if len(trts) > 1:
             raise ValueError("all tectonic_region_types in a branch set must be the same")
@@ -128,11 +139,12 @@ class SourceBranchSet(BranchSet[SourceBranch]):
         return self.branches[0].tectonic_region_types if self.branches else ()
 
 
-@dataclass
-class SourceLogicTreeSpec:
+class SourceLogicTreeSpec(BaseModel):
+    model_config = _CONFIG
+
     """Is this used anymore?"""
 
-    branch_sets: List[BranchSetSpec] = field(default_factory=list)
+    branch_sets: List[BranchSetSpec] = Field(default_factory=list)
 
     @property
     def fault_systems(self):
@@ -143,8 +155,9 @@ class SourceLogicTreeSpec:
         return self.branch_sets
 
 
-@dataclass
 class SourceLogicTree(LogicTree['SourceFilteredBranch']):
+    model_config = _CONFIG
+
     """A dataclass representing a source logic tree
 
     Attributes:
@@ -153,10 +166,11 @@ class SourceLogicTree(LogicTree['SourceFilteredBranch']):
 
     """
 
-    branch_sets: List[SourceBranchSet] = field(default_factory=list)  # branch_sets for this logic tree
+    branch_sets: List[SourceBranchSet] = Field(default_factory=list)  # branch_sets for this logic tree
     logic_tree_version: Union[int, None] = 2
 
-    def __post_init__(self) -> None:
+    @model_validator(mode="after")
+    def _post(self):
 
         # check that sources are defined correctly
         self._check_sources()
@@ -258,8 +272,9 @@ class SourceLogicTree(LogicTree['SourceFilteredBranch']):
         return self.branch_sets
 
 
-@dataclass
 class SourceFilteredBranch(FilteredBranch, SourceBranch):
+    model_config = _CONFIG
+
     """A logic tree source branch with additional properties
 
     Used to represent a branch that has been pruned (filtered) from a
@@ -272,8 +287,8 @@ class SourceFilteredBranch(FilteredBranch, SourceBranch):
 
     """
 
-    logic_tree: 'LogicTree' = field(default_factory=SourceLogicTree)
-    branch_set: 'BranchSet' = field(default_factory=SourceBranchSet)
+    logic_tree: 'LogicTree' = Field(default_factory=SourceLogicTree)
+    branch_set: 'BranchSet' = Field(default_factory=SourceBranchSet)
 
     @property
     def fslt(self) -> 'BranchSet':

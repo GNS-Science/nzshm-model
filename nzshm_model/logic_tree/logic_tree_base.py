@@ -6,20 +6,22 @@ This module contains base classes (some of which are abstract) common to both **
 import copy
 import json
 from abc import ABC
-from dataclasses import asdict, dataclass, field, fields
 from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
 from typing import Any, Dict, Generator, Generic, Iterator, List, Optional, Type, TypeVar, Union
 
-import dacite
 
 import nzshm_model.logic_tree.helpers as helpers
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .branch import Branch, BranchType, CompositeBranch
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
+
 from .correlation import LogicTreeCorrelations
+
+_CONFIG = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
 
 # TODO:
 # - move values to the base class?
@@ -35,8 +37,8 @@ BranchSetType = TypeVar("BranchSetType", bound="BranchSet")
 FilteredBranchType = TypeVar("FilteredBranchType", bound="FilteredBranch")
 
 
-@dataclass
-class BranchSet(Generic[BranchType]):
+class BranchSet(BaseModel, Generic[BranchType]):
+    model_config = _CONFIG
     """
     A group of branches that comprise their own sub-logic tree. Also known as a fault system logic
     tree (for source logic trees).
@@ -49,30 +51,34 @@ class BranchSet(Generic[BranchType]):
 
     short_name: str = ''
     long_name: str = ''
-    branches: List[BranchType] = field(default_factory=list)
+    branches: List[BranchType] = Field(default_factory=list)
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def _post(self):
         helpers._validate_branchset_weights(self)
+        return self
 
     def __str__(self) -> str:
         string = f'short_name: {self.short_name}, long_name: {self.long_name}\n'
         string += '======BRANCHES======\n'
         return string + '\n'.join([str(branch) for branch in self])
 
+    _counter: int = PrivateAttr(0)
+
     def __iter__(self: BranchSetType) -> BranchSetType:
-        self.__counter = 0
+        self._counter = 0
         return self
 
     def __next__(self) -> BranchType:
-        if self.__counter >= len(self.branches):
+        if self._counter >= len(self.branches):
             raise StopIteration
         else:
-            self.__counter += 1
-            return self.branches[self.__counter - 1]
+            self._counter += 1
+            return self.branches[self._counter - 1]
 
 
-@dataclass
-class LogicTree(ABC, Generic[FilteredBranchType]):
+class LogicTree(BaseModel, ABC, Generic[FilteredBranchType]):
+    model_config = _CONFIG
     """
     Logic tree baseclass. Contains information about branch sets and correlations between branches of the branch sets.
 
@@ -88,12 +94,13 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
 
     title: str = ''
     version: str = ''
-    branch_sets: List[Any] = field(default_factory=list)
-    correlations: LogicTreeCorrelations = field(default_factory=LogicTreeCorrelations)
+    branch_sets: List[Any] = Field(default_factory=list)
+    correlations: LogicTreeCorrelations = Field(default_factory=LogicTreeCorrelations)
 
-    def __post_init__(self) -> None:
-        # TODO: branch set short_names should be unique (see from_branches())
+    @model_validator(mode="after")
+    def _post(self):
         helpers._validate_correlation_weights(self)
+        return self
 
     def __setattr__(self, __name: str, __value: Any) -> None:
         super().__setattr__(__name, __value)
@@ -199,8 +206,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
             logic_tree
         """
 
-        config = dacite.Config(strict=True, cast=[tuple])
-        return dacite.from_dict(data_class=cls, data=data, config=config)
+        return cls.model_validate(data)
 
     def _to_dict(self) -> Dict[str, Any]:
         """
@@ -210,7 +216,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         Returns:
             dict:
         """
-        return asdict(self)
+        return self.model_dump()
 
     def to_dict(self) -> Dict[str, Any]:
         """Create dictionary representation of logic tree used for serialisation.
@@ -249,9 +255,9 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
 
         def get_fields(obj):
             return {
-                field.name: copy.deepcopy(getattr(obj, field.name))
-                for field in fields(obj)
-                if field.name not in ('branches', 'branch_sets')
+                field: copy.deepcopy(getattr(obj, field))
+                for field in type(obj).model_fields
+                if field not in ('branches', 'branch_sets')
             }
 
         lt_fields = get_fields(self)
@@ -299,17 +305,20 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
             bs.branches.append(fb.to_branch())
         return logic_tree
 
+    _ci: int = PrivateAttr(0)
+    _bl: list = PrivateAttr(default_factory=list)
+
     def __iter__(self):
-        self.__current_branch = 0
-        self.__branch_list = list(self.__all_branches__())
+        self._ci = 0
+        self._bl = list(self.__all_branches__())
         return self
 
     def __next__(self) -> FilteredBranchType:
-        if self.__current_branch >= len(self.__branch_list):
+        if self._ci >= len(self._bl):
             raise StopIteration
         else:
-            self.__current_branch += 1
-            return self.__branch_list[self.__current_branch - 1]
+            self._ci += 1
+            return self._bl[self._ci - 1]
 
     def psha_adapter(self, provider: Type[PshaAdapterInterface], **kwargs: Optional[Dict]) -> "PshaAdapterInterface":
         """get a PSHA adapter for this instance.
@@ -324,15 +333,15 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         return provider(target=self)
 
 
-@dataclass
 class FilteredBranch(Branch):
+    model_config = _CONFIG
     """
     A branch type that points back to it's logic tree and branch set. Should never be serialized, only
     used for filtering
     """
 
-    logic_tree: LogicTree = field(default_factory=LogicTree)
-    branch_set: BranchSet = field(default_factory=BranchSet)
+    logic_tree: LogicTree = Field(default_factory=LogicTree)
+    branch_set: BranchSet = Field(default_factory=BranchSet)
 
     def to_branch(self) -> Branch:
         """
