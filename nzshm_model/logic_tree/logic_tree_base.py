@@ -13,7 +13,7 @@ from operator import mul
 from pathlib import Path
 from typing import Any, Dict, Generator, Generic, Iterator, List, Optional, Type, TypeVar, Union
 
-import dacite
+from pydantic import TypeAdapter
 
 import nzshm_model.logic_tree.helpers as helpers
 from nzshm_model.psha_adapter import PshaAdapterInterface
@@ -199,8 +199,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
             logic_tree
         """
 
-        config = dacite.Config(strict=True, cast=[tuple])
-        return dacite.from_dict(data_class=cls, data=data, config=config)
+        return TypeAdapter(cls).validate_python(data)
 
     def _to_dict(self) -> Dict[str, Any]:
         """

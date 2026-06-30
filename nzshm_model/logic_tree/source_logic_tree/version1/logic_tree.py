@@ -14,7 +14,7 @@ from math import isclose
 from operator import add, mul
 from typing import Dict, Iterable, List, Union
 
-import dacite
+from pydantic import TypeAdapter
 
 from .. import BranchAttributeValue
 from ..fault_system_branch_set import BranchSetBase, BranchSetSpec
@@ -80,7 +80,7 @@ class SourceLogicTree:
         ltv = data.get("logic_tree_version")
         if ltv:
             raise ValueError(f"supplied json `logic_tree_version={ltv}` is not supported.")
-        return dacite.from_dict(data_class=SourceLogicTree, data=data, config=dacite.Config(strict=True))
+        return TypeAdapter(SourceLogicTree).validate_python(data)
 
     @staticmethod
     def from_json(json_path: Union[pathlib.Path, str]):
