@@ -6,20 +6,23 @@ This module contains base classes (some of which are abstract) common to both **
 import copy
 import json
 from abc import ABC
-from dataclasses import asdict, dataclass, field, fields
+from dataclasses import asdict, field, fields
 from functools import reduce
 from itertools import product
 from operator import mul
 from pathlib import Path
 from typing import Any, Dict, Generator, Generic, Iterator, List, Optional, Type, TypeVar, Union
 
-import dacite
+from pydantic import ConfigDict, TypeAdapter
+from pydantic.dataclasses import dataclass
 
 import nzshm_model.logic_tree.helpers as helpers
 from nzshm_model.psha_adapter import PshaAdapterInterface
 
 from .branch import Branch, BranchType, CompositeBranch
 from .correlation import LogicTreeCorrelations
+
+_CONFIG = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
 
 # TODO:
 # - move values to the base class?
@@ -35,7 +38,7 @@ BranchSetType = TypeVar("BranchSetType", bound="BranchSet")
 FilteredBranchType = TypeVar("FilteredBranchType", bound="FilteredBranch")
 
 
-@dataclass
+@dataclass(config=_CONFIG)
 class BranchSet(Generic[BranchType]):
     """
     A group of branches that comprise their own sub-logic tree. Also known as a fault system logic
@@ -71,7 +74,7 @@ class BranchSet(Generic[BranchType]):
             return self.branches[self.__counter - 1]
 
 
-@dataclass
+@dataclass(config=_CONFIG)
 class LogicTree(ABC, Generic[FilteredBranchType]):
     """
     Logic tree baseclass. Contains information about branch sets and correlations between branches of the branch sets.
@@ -199,8 +202,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
             logic_tree
         """
 
-        config = dacite.Config(strict=True, cast=[tuple])
-        return dacite.from_dict(data_class=cls, data=data, config=config)
+        return TypeAdapter(cls).validate_python(data)
 
     def _to_dict(self) -> Dict[str, Any]:
         """
@@ -324,7 +326,7 @@ class LogicTree(ABC, Generic[FilteredBranchType]):
         return provider(target=self)
 
 
-@dataclass
+@dataclass(config=_CONFIG)
 class FilteredBranch(Branch):
     """
     A branch type that points back to it's logic tree and branch set. Should never be serialized, only

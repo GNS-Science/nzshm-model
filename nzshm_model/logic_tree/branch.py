@@ -3,18 +3,23 @@ Classes for defining logic tree branches
 """
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import field
 from functools import reduce
 from operator import mul
 from typing import TYPE_CHECKING, Sequence, TypeVar
+
+from pydantic import ConfigDict
+from pydantic.dataclasses import dataclass
 
 if TYPE_CHECKING:
     from .logic_tree_base import BranchSet, FilteredBranch, LogicTree
 
 BranchType = TypeVar("BranchType", bound="Branch")
 
+_CONFIG = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
 
-@dataclass
+
+@dataclass(config=_CONFIG)
 class Branch(ABC):
     """
     Abstract baseclass for logic tree branches
@@ -42,7 +47,7 @@ class Branch(ABC):
         pass
 
 
-@dataclass
+@dataclass(config=_CONFIG)
 class CompositeBranch:
     """
     A logic tree branch comprised of combinations of branches from one or more branch sets.

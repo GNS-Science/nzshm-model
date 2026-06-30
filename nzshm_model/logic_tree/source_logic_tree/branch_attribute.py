@@ -4,18 +4,23 @@
 Branch structures used in NSHM source logic trees
 """
 
-from dataclasses import dataclass, field
+from dataclasses import field
 from typing import Any, List
 
+from pydantic import ConfigDict
+from pydantic.dataclasses import dataclass
 
-@dataclass
+_CONFIG = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
+
+
+@dataclass(config=_CONFIG)
 class BranchAttributeSpec:
     name: str
     long_name: str
     value_options: List[Any] = field(default_factory=list)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, config=_CONFIG)
 class BranchAttributeValue:
     name: str
     long_name: str

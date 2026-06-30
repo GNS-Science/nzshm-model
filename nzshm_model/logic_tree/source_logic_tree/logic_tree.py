@@ -4,8 +4,11 @@ Defines source logic tree structures used in NSHM.
 
 import copy
 import warnings
-from dataclasses import dataclass, field
-from typing import List, Tuple, Union
+from dataclasses import field
+from typing import Annotated, List, Literal, Tuple, Union
+
+from pydantic import ConfigDict, Field
+from pydantic.dataclasses import dataclass
 
 from nzshm_model.logic_tree.correlation import Correlation, LogicTreeCorrelations
 from nzshm_model.logic_tree.logic_tree_base import Branch, BranchSet, FilteredBranch, LogicTree
@@ -14,8 +17,10 @@ from . import BranchAttributeValue
 from .fault_system_branch_set import BranchSetSpec
 from .version1 import SourceLogicTree as SourceLogicTreeV1
 
+_CONFIG = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
 
-@dataclass
+
+@dataclass(config=_CONFIG)
 class InversionSource:
     """
     A hazard source built from an NSHM Grand Inversion experiment
@@ -36,10 +41,10 @@ class InversionSource:
     inversion_id: Union[str, None] = ""
     rupture_set_id: Union[str, None] = ""
     inversion_solution_type: Union[str, None] = ""
-    type: str = "inversion"
+    type: Literal["inversion"] = "inversion"
 
 
-@dataclass
+@dataclass(config=_CONFIG)
 class DistributedSource:
     """
     A gridded hazard source built from a background (off-fault) seismic rate model
@@ -54,10 +59,10 @@ class DistributedSource:
 
     nrml_id: str
     rupture_rate_scaling: Union[float, None] = None  # TODO: needed at this level??
-    type: str = "distributed"
+    type: Literal["distributed"] = "distributed"
 
 
-@dataclass
+@dataclass(config=_CONFIG)
 class SourceBranch(Branch):
     """
     A source branch can contain multiple sources.
@@ -71,7 +76,12 @@ class SourceBranch(Branch):
     """
 
     values: List[BranchAttributeValue] = field(default_factory=list)
-    sources: List[Union[DistributedSource, InversionSource]] = field(default_factory=list)
+    # left_to_right (not a discriminated union) preserves dacite's positional behaviour:
+    # bare sources without a `type` key fall to DistributedSource (first member), and
+    # extra='forbid' + the Literal tags make inversion sources fall through correctly.
+    sources: List[Annotated[Union[DistributedSource, InversionSource], Field(union_mode="left_to_right")]] = field(
+        default_factory=list
+    )
     rupture_rate_scaling: float = 1.0
     tectonic_region_types: Tuple[str, ...] = field(default_factory=tuple)
 
@@ -108,7 +118,7 @@ class SourceBranch(Branch):
 
 
 # TODO: protect from users changing tectonic_region_types
-@dataclass
+@dataclass(config=_CONFIG)
 class SourceBranchSet(BranchSet[SourceBranch]):
     """A list of Source Branches.
 
@@ -128,7 +138,7 @@ class SourceBranchSet(BranchSet[SourceBranch]):
         return self.branches[0].tectonic_region_types if self.branches else ()
 
 
-@dataclass
+@dataclass(config=_CONFIG)
 class SourceLogicTreeSpec:
     """Is this used anymore?"""
 
@@ -143,7 +153,7 @@ class SourceLogicTreeSpec:
         return self.branch_sets
 
 
-@dataclass
+@dataclass(config=_CONFIG)
 class SourceLogicTree(LogicTree['SourceFilteredBranch']):
     """A dataclass representing a source logic tree
 
@@ -258,7 +268,7 @@ class SourceLogicTree(LogicTree['SourceFilteredBranch']):
         return self.branch_sets
 
 
-@dataclass
+@dataclass(config=_CONFIG)
 class SourceFilteredBranch(FilteredBranch, SourceBranch):
     """A logic tree source branch with additional properties
 
