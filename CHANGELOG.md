@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.15.4] 2026-07-15
 ### Changed
 - deps: patch upgrades (13 pkgs)
 - deps: minor upgrades (27 pkgs)
