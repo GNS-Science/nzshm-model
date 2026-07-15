@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.15.4] 2026-07-15
+### Changed
+- deps: patch upgrades (13 pkgs)
+- deps: minor upgrades (27 pkgs)
+- deps: major upgrades: lxml 6.1.0→6.1.1, cryptography 48.0.0→49.0.0 (transitive), pymdown-extensions 10.21.3→11.0.1 (transitive)
+
 ## [0.15.3] 2026-05-22
 ### Added
 - Use nshm-toshi-client helper function and constants for consistent API authentication behavior
