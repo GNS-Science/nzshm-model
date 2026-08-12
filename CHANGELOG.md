@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.15.5]
+## [0.15.5] 2026-08-13
 ### Fixed
 - duplicate locations are removed when setting sites, as OpenQuake rejects a site model file with repeated coordinates (#167)
 
