@@ -5,7 +5,8 @@
 - duplicate locations are removed when setting sites, as OpenQuake rejects a site model file with repeated coordinates (#167)
 
 ### Changed
-- coincident locations with conflicting site parameters, and locations with mixed resolutions, now raise ValueError in `OpenquakeConfig.set_sites()` and `OpenquakeConfig.from_dict()`
+- coincident locations with conflicting site parameters now raise ValueError in `OpenquakeConfig.set_sites()` and `OpenquakeConfig.from_dict()`
+- locations with mixed `CodedLocation` resolutions are accepted when setting sites (the site file is unaffected by resolution) but raise ValueError from `OpenquakeConfig.to_dict()`/`to_json()`, which cannot round-trip them
 
 ## [0.15.4] 2026-07-15
 ### Changed

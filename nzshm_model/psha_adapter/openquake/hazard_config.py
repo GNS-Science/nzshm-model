@@ -68,6 +68,17 @@ def calculate_z2pt5(vs30: float) -> float:
     return math.exp(c1_glo + math.log(vs30) * c2_glo)
 
 
+def _values_differ(a: Any, b: Any) -> bool:
+    """Compare two site parameter values, treating two NaNs as equal.
+
+    NaN is a common missing-data sentinel in a site parameter column, and `nan != nan` would
+    otherwise report a droppable duplicate as a conflict.
+    """
+    if isinstance(a, float) and isinstance(b, float) and math.isnan(a) and math.isnan(b):
+        return False
+    return bool(a != b)
+
+
 def _validate_sites(
     locations: tuple[CodedLocation, ...], site_parameters: dict[str, tuple]
 ) -> tuple[tuple[CodedLocation, ...], dict[str, tuple]]:
@@ -83,8 +94,8 @@ def _validate_sites(
         site_parameters: Site parameter values, each entry aligned with locations.
 
     Raises:
-        ValueError: If the locations do not all have the same resolution, or if coincident
-            locations have differing site parameter values.
+        ValueError: If a site parameter has a different number of values than there are
+            locations, or if coincident locations have differing site parameter values.
 
     Returns:
         The locations and site parameters with duplicate locations removed.
@@ -92,8 +103,9 @@ def _validate_sites(
     if not locations:
         return locations, site_parameters
 
-    if len({loc.resolution for loc in locations}) > 1:
-        raise ValueError("all locations must have the same resolution")
+    for name, values in site_parameters.items():
+        if len(values) != len(locations):
+            raise ValueError(f"site parameter '{name}' has {len(values)} values for {len(locations)} locations")
 
     first_seen: dict[tuple[float, float], int] = {}
     keep: list[int] = []
@@ -104,7 +116,7 @@ def _validate_sites(
             keep.append(index)
             continue
         for name, values in site_parameters.items():
-            if values[original] != values[index]:
+            if _values_differ(values[original], values[index]):
                 conflicts.append(f"{location.code}: {name} {values[original]} != {values[index]}")
 
     if conflicts:
@@ -177,6 +189,14 @@ class OpenquakeConfig(HazardConfig):
     def _locations_to_strs(self) -> list[str]:
         if not self.locations:
             return []
+        # locations are serialized as CodedLocation.code, which _deserialize_locations reads back at a
+        # single resolution. The site file itself is unaffected by resolution, so this is only enforced
+        # here, where a mixed-resolution list would not survive the round trip.
+        if len({loc.resolution for loc in self.locations}) > 1:
+            raise ValueError(
+                "cannot serialize locations with mixed resolutions; the site file is unaffected, "
+                "but to_dict()/to_json() would not be round-trippable"
+            )
         return [loc.code for loc in self.locations]
 
     def to_dict(self) -> dict[str, Any]:
@@ -341,9 +361,8 @@ class OpenquakeConfig(HazardConfig):
             KeyError: If site specific vs30, z1.0, or z2.5 are given when uniform site conditions
                 are already set.
             TypeError: If a site parameter is not an iterable.
-            ValueError: If a site parameter has a different length than locations, if the locations
-                do not all have the same resolution, or if coincident locations have differing site
-                parameter values.
+            ValueError: If a site parameter has a different length than locations, or if coincident
+                locations have differing site parameter values.
 
         Returns:
             The OpenquakeConfig instance.
@@ -365,9 +384,9 @@ class OpenquakeConfig(HazardConfig):
         self._site_parameters = {}
         locations = tuple(locations)
         for k, v in site_parameters.items():
-            values = tuple(v)
             if not isinstance(v, Iterable):
                 raise TypeError("all keyword arguments must be iterable type")
+            values = tuple(v)
             if not len(values) == len(locations):
                 raise ValueError("all keyword arguments must have the same number of elements as locations")
             self._site_parameters[k] = values

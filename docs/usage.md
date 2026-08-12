@@ -39,7 +39,7 @@ The `OpenquakeConfig` class is used to define the calculation configuration for 
 
 Site parameters vs30, z1.0, and z2.5 can be made uniform (i.e. they apply to all sites) or on a site specific basis. An exception will be raised if you attempt to set site specific properties after setting uniform properties or vice-versa. When setting uniform properties, if z1.0 or z2.5 arguments are omitted, they will be calculated using Chiou & Youngs 2014 California model and Campbell & Bozorgnia 2014 NGA-West2 model, respectively.
 
-OpenQuake does not accept duplicate sites, which are easily produced by combining location lists (e.g. a region grid and a set of named sites). `set_sites()` therefore removes coincident locations, keeping the first occurrence and warning how many were dropped. If coincident locations carry differing site parameter values there is no correct way to choose between them, so a `ValueError` is raised instead. All locations must also share the same `CodedLocation` resolution.
+OpenQuake does not accept duplicate sites, which are easily produced by combining location lists (e.g. a region grid and a set of named sites). `set_sites()` therefore removes coincident locations, keeping the first occurrence and warning how many were dropped. If coincident locations carry differing site parameter values there is no correct way to choose between them, so a `ValueError` is raised instead. Locations may have differing `CodedLocation` resolutions, but such a configuration cannot be serialized with `to_dict()`/`to_json()`, which represent locations by their coded string.
 ```python3
 from nzshm_common.location.location import get_locations
 from nzshm_model.psha_adapter.openquake import DEFAULT_HAZARD_CONFIG, OpenquakeConfig

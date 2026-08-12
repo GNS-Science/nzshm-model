@@ -76,6 +76,26 @@ def test_config_sitefile_deduplicated(tmp_path):
     assert len(set(rows)) == len(rows)
 
 
+def test_config_sitefile_mixed_resolution(tmp_path):
+    """a coarse grid combined with finer named sites has no coincident points and writes cleanly"""
+    site_file = tmp_path / 'sites_mixed.csv'
+    locations = [CodedLocation(-41.3, 174.7, 0.1), CodedLocation(-41.25, 174.85, 0.001)]
+    hazard_config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        hazard_config.set_sites(locations)
+    config_adapter = hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
+    config_adapter.write_site_file(site_file)
+
+    with site_file.open() as fin:
+        reader = csv.reader(fin)
+        assert next(reader) == ['lon', 'lat']
+        rows = [tuple(row) for row in reader]
+
+    assert len(rows) == 2
+    assert len(set(rows)) == len(rows)
+
+
 @pytest.mark.filterwarnings("default")
 def test_write_config_warn(tmp_path, locations):
     target_folder = tmp_path / 'target'
