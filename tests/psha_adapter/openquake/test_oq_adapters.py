@@ -2,6 +2,7 @@ import csv
 import warnings
 
 import pytest
+from nzshm_common import CodedLocation
 
 from nzshm_model.psha_adapter.openquake.hazard_config import OpenquakeConfig
 from nzshm_model.psha_adapter.openquake.hazard_config_compat import DEFAULT_HAZARD_CONFIG
@@ -53,6 +54,26 @@ def test_config_sitefile(tmp_path, locations):
             assert row[0] == str(loc.lon)
             assert row[1] == str(loc.lat)
             assert row[2] == str(vs30)
+
+
+@pytest.mark.filterwarnings("default")
+def test_config_sitefile_deduplicated(tmp_path):
+    site_file = tmp_path / 'sites_dup.csv'
+    coords = [(-41.3, 174.7), (-41.2, 174.8), (-41.3, 174.7)]
+    locations = [CodedLocation(lat, lon, 0.1) for lat, lon in coords]
+    hazard_config = OpenquakeConfig(DEFAULT_HAZARD_CONFIG)
+    with pytest.warns(UserWarning, match="duplicate"):
+        hazard_config.set_sites(locations)
+    config_adapter = hazard_config.psha_adapter(OpenquakeConfigPshaAdapter)
+    config_adapter.write_site_file(site_file)
+
+    with site_file.open() as fin:
+        reader = csv.reader(fin)
+        next(reader)
+        rows = [tuple(row) for row in reader]
+
+    assert len(rows) == 2
+    assert len(set(rows)) == len(rows)
 
 
 @pytest.mark.filterwarnings("default")

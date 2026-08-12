@@ -4,6 +4,7 @@ tests for the OpenquakeConfiguration class
 
 import configparser
 import io
+import warnings
 
 # import tomli
 import pytest
@@ -241,6 +242,94 @@ def test_site_errors(locations):
     config.set_sites(locations, vs30=vs30)
     with pytest.raises(KeyError):
         config.set_uniform_site_params(100)
+
+
+@pytest.fixture
+def duplicated_locations():
+    """four locations, the third of which repeats the first"""
+    coords = [(-41.3, 174.7), (-41.2, 174.8), (-41.3, 174.7), (-41.1, 174.9)]
+    return [CodedLocation(lat, lon, 0.1) for lat, lon in coords]
+
+
+@pytest.mark.filterwarnings("default")
+def test_duplicate_locations_removed(duplicated_locations):
+    config = OpenquakeConfig()
+    with pytest.warns(UserWarning, match="duplicate"):
+        config.set_sites(duplicated_locations)
+
+    assert config.locations == tuple(duplicated_locations[i] for i in (0, 1, 3))
+    assert len({(loc.lon, loc.lat) for loc in config.locations}) == len(config.locations)
+
+
+@pytest.mark.filterwarnings("default")
+def test_duplicate_locations_matching_site_params_removed(duplicated_locations):
+    config = OpenquakeConfig()
+    with pytest.warns(UserWarning, match="duplicate"):
+        config.set_sites(duplicated_locations, vs30=[400.0, 750.0, 400.0, 250.0], backarc=[0, 1, 0, 1])
+
+    assert config.locations == tuple(duplicated_locations[i] for i in (0, 1, 3))
+    assert config.site_parameters['vs30'] == (400.0, 750.0, 250.0)
+    assert config.site_parameters['backarc'] == (0, 1, 1)
+
+
+def test_duplicate_locations_conflicting_vs30_raises(duplicated_locations):
+    config = OpenquakeConfig()
+    with pytest.raises(ValueError, match="vs30"):
+        config.set_sites(duplicated_locations, vs30=[400.0, 750.0, 500.0, 250.0])
+
+
+def test_duplicate_locations_conflicting_backarc_raises(duplicated_locations):
+    config = OpenquakeConfig()
+    with pytest.raises(ValueError, match="backarc"):
+        config.set_sites(duplicated_locations, backarc=[0, 1, 1, 1])
+
+
+def test_mixed_resolution_raises():
+    config = OpenquakeConfig()
+    locations = [CodedLocation(-41.3, 174.7, 0.1), CodedLocation(-41.25, 174.85, 0.01)]
+    with pytest.raises(ValueError, match="resolution"):
+        config.set_sites(locations)
+
+
+def test_unique_locations_do_not_warn(locations):
+    config = OpenquakeConfig()
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        config.set_sites(locations, vs30=[400.0] * len(locations))
+
+    assert len(config.locations) == len(locations)
+
+
+def test_set_sites_empty():
+    config = OpenquakeConfig()
+    config.set_sites([])
+    assert config.locations == ()
+
+
+@pytest.mark.filterwarnings("default")
+def test_from_dict_duplicate_locations_removed():
+    data = {
+        'config': {},
+        'locations': ['-41.3~174.7', '-41.2~174.8', '-41.3~174.7'],
+        'site_parameters': {'vs30': [400.0, 750.0, 400.0]},
+        'hazard_type': 'openquake',
+    }
+    with pytest.warns(UserWarning, match="duplicate"):
+        config = OpenquakeConfig.from_dict(data)
+
+    assert config.locations == (CodedLocation(-41.3, 174.7, 0.1), CodedLocation(-41.2, 174.8, 0.1))
+    assert config.site_parameters['vs30'] == (400.0, 750.0)
+
+
+def test_from_dict_conflicting_site_params_raises():
+    data = {
+        'config': {},
+        'locations': ['-41.3~174.7', '-41.2~174.8', '-41.3~174.7'],
+        'site_parameters': {'vs30': [400.0, 750.0, 500.0]},
+        'hazard_type': 'openquake',
+    }
+    with pytest.raises(ValueError, match="vs30"):
+        OpenquakeConfig.from_dict(data)
 
 
 class TestConfigCompatability:

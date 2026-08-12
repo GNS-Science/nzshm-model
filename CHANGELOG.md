@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.5]
+### Fixed
+- duplicate locations are removed when setting sites, as OpenQuake rejects a site model file with repeated coordinates (#167)
+
+### Changed
+- coincident locations with conflicting site parameters, and locations with mixed resolutions, now raise ValueError in `OpenquakeConfig.set_sites()` and `OpenquakeConfig.from_dict()`
+
 ## [0.15.4] 2026-07-15
 ### Changed
 - deps: patch upgrades (13 pkgs)
