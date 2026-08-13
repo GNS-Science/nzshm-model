@@ -12,6 +12,7 @@ import configparser
 import copy
 import json
 import math
+import warnings
 from collections.abc import Iterable
 from itertools import chain
 from pathlib import Path
@@ -67,6 +68,72 @@ def calculate_z2pt5(vs30: float) -> float:
     return math.exp(c1_glo + math.log(vs30) * c2_glo)
 
 
+def _values_differ(a: Any, b: Any) -> bool:
+    """Compare two site parameter values, treating two NaNs as equal.
+
+    NaN is a common missing-data sentinel in a site parameter column, and `nan != nan` would
+    otherwise report a droppable duplicate as a conflict.
+    """
+    if isinstance(a, float) and isinstance(b, float) and math.isnan(a) and math.isnan(b):
+        return False
+    return bool(a != b)
+
+
+def _validate_sites(
+    locations: tuple[CodedLocation, ...], site_parameters: dict[str, tuple]
+) -> tuple[tuple[CodedLocation, ...], dict[str, tuple]]:
+    """Check the site definitions and remove duplicate locations.
+
+    OpenQuake will not accept a site model file containing repeated coordinates, so coincident
+    locations are collapsed to their first occurrence. Locations are compared on the (lon, lat)
+    pair written to the site file, which is what OpenQuake itself compares. The order of the
+    remaining locations is preserved.
+
+    Arguments:
+        locations: The surface locations of the sites.
+        site_parameters: Site parameter values, each entry aligned with locations.
+
+    Raises:
+        ValueError: If a site parameter has a different number of values than there are
+            locations, or if coincident locations have differing site parameter values.
+
+    Returns:
+        The locations and site parameters with duplicate locations removed.
+    """
+    if not locations:
+        return locations, site_parameters
+
+    for name, values in site_parameters.items():
+        if len(values) != len(locations):
+            raise ValueError(f"site parameter '{name}' has {len(values)} values for {len(locations)} locations")
+
+    first_seen: dict[tuple[float, float], int] = {}
+    keep: list[int] = []
+    conflicts: list[str] = []
+    for index, location in enumerate(locations):
+        original = first_seen.setdefault((location.lon, location.lat), index)
+        if original == index:
+            keep.append(index)
+            continue
+        for name, values in site_parameters.items():
+            if _values_differ(values[original], values[index]):
+                conflicts.append(f"{location.code}: {name} {values[original]} != {values[index]}")
+
+    if conflicts:
+        raise ValueError("duplicated locations have conflicting site parameters: " + "; ".join(conflicts))
+
+    if len(keep) < len(locations):
+        warnings.warn(
+            f"removed {len(locations) - len(keep)} duplicate location(s) from sites; "
+            f"{len(locations)} -> {len(keep)} sites.",
+            stacklevel=3,
+        )
+        locations = tuple(locations[i] for i in keep)
+        site_parameters = {name: tuple(values[i] for i in keep) for name, values in site_parameters.items()}
+
+    return locations, site_parameters
+
+
 class OpenquakeConfig(HazardConfig):
     """Helper class to manage openquake configuration files.
 
@@ -92,7 +159,7 @@ class OpenquakeConfig(HazardConfig):
     def __init__(self, default_config: configparser.ConfigParser | dict | None = None):
 
         self._site_parameters: dict[str, tuple] | None = None
-        self._locations: tuple[CodedLocation] | None = None
+        self._locations: tuple[CodedLocation, ...] | None = None
 
         if isinstance(default_config, configparser.ConfigParser):
             self.config = copy.deepcopy(default_config)
@@ -122,6 +189,14 @@ class OpenquakeConfig(HazardConfig):
     def _locations_to_strs(self) -> list[str]:
         if not self.locations:
             return []
+        # locations are serialized as CodedLocation.code, which _deserialize_locations reads back at a
+        # single resolution. The site file itself is unaffected by resolution, so this is only enforced
+        # here, where a mixed-resolution list would not survive the round trip.
+        if len({loc.resolution for loc in self.locations}) > 1:
+            raise ValueError(
+                "cannot serialize locations with mixed resolutions; the site file is unaffected, "
+                "but to_dict()/to_json() would not be round-trippable"
+            )
         return [loc.code for loc in self.locations]
 
     def to_dict(self) -> dict[str, Any]:
@@ -139,7 +214,12 @@ class OpenquakeConfig(HazardConfig):
         if site_parameters:
             hazard_config._site_parameters = hazard_config._deserialze_site_params(site_parameters)
         if locations:
-            hazard_config._locations = hazard_config._deserialize_locations(locations)
+            deduped_locations, deduped_params = _validate_sites(
+                hazard_config._deserialize_locations(locations), hazard_config._site_parameters or {}
+            )
+            hazard_config._locations = deduped_locations
+            if hazard_config._site_parameters is not None:
+                hazard_config._site_parameters = deduped_params
 
         return hazard_config
 
@@ -164,7 +244,7 @@ class OpenquakeConfig(HazardConfig):
 
         all_coords = list(chain.from_iterable([loc.split('~') for loc in locations]))
         if len(set(map(get_resolution, all_coords))) != 1:
-            raise Exception("not all coordinates have the same resolution")
+            raise ValueError("not all coordinates have the same resolution")
 
         resolution = get_resolution(all_coords[0])
         ll_pairs = [[float(ll_str) for ll_str in loc.split('~')] for loc in locations]
@@ -265,6 +345,10 @@ class OpenquakeConfig(HazardConfig):
 
         If a vs30 values are specified, but a uniform vs30 has already been set a ValueError will be raised.
 
+        OpenQuake does not accept duplicate sites. Coincident locations carrying identical site
+        parameters are therefore removed, keeping the first occurrence and preserving the order of
+        the remaining locations. A warning reports how many were dropped.
+
         Arguments:
             locations: The surface locations of the sites.
             kwargs: Additional site parameters to include in the OpenQuake site file.
@@ -272,6 +356,13 @@ class OpenquakeConfig(HazardConfig):
                     must be a sequence of the same length as locations.  See
                     https://docs.openquake.org/oq-engine/manual/latest/user-guide/inputs/site-model-inputs.html
                     for a list of valid site parameters.
+
+        Raises:
+            KeyError: If site specific vs30, z1.0, or z2.5 are given when uniform site conditions
+                are already set.
+            TypeError: If a site parameter is not an iterable.
+            ValueError: If a site parameter has a different length than locations, or if coincident
+                locations have differing site parameter values.
 
         Returns:
             The OpenquakeConfig instance.
@@ -293,14 +384,14 @@ class OpenquakeConfig(HazardConfig):
         self._site_parameters = {}
         locations = tuple(locations)
         for k, v in site_parameters.items():
-            values = tuple(v)
             if not isinstance(v, Iterable):
                 raise TypeError("all keyword arguments must be iterable type")
+            values = tuple(v)
             if not len(values) == len(locations):
                 raise ValueError("all keyword arguments must have the same number of elements as locations")
             self._site_parameters[k] = values
 
-        self._locations = locations
+        self._locations, self._site_parameters = _validate_sites(locations, self._site_parameters)
         return self
 
     def set_site_filepath(self, site_file: str | Path) -> 'OpenquakeConfig':
@@ -316,7 +407,7 @@ class OpenquakeConfig(HazardConfig):
         return Path(value) if value else None
 
     @property
-    def locations(self) -> tuple[CodedLocation] | None:
+    def locations(self) -> tuple[CodedLocation, ...] | None:
         return self._locations
 
     @property

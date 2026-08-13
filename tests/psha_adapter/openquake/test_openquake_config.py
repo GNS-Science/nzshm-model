@@ -4,6 +4,8 @@ tests for the OpenquakeConfiguration class
 
 import configparser
 import io
+import math
+import warnings
 
 # import tomli
 import pytest
@@ -219,7 +221,7 @@ def test_site_errors(locations):
     n_locs = len(locations)
 
     # vs30 values must be Iterable type
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, match="iterable"):
         config.set_sites(locations, vs30=1)
 
     # vs30 must have same lenth as locations
@@ -241,6 +243,135 @@ def test_site_errors(locations):
     config.set_sites(locations, vs30=vs30)
     with pytest.raises(KeyError):
         config.set_uniform_site_params(100)
+
+
+@pytest.fixture
+def duplicated_locations():
+    """four locations, the third of which repeats the first"""
+    coords = [(-41.3, 174.7), (-41.2, 174.8), (-41.3, 174.7), (-41.1, 174.9)]
+    return [CodedLocation(lat, lon, 0.1) for lat, lon in coords]
+
+
+@pytest.mark.filterwarnings("default")
+def test_duplicate_locations_removed(duplicated_locations):
+    config = OpenquakeConfig()
+    with pytest.warns(UserWarning, match="duplicate"):
+        config.set_sites(duplicated_locations)
+
+    assert config.locations == tuple(duplicated_locations[i] for i in (0, 1, 3))
+    assert len({(loc.lon, loc.lat) for loc in config.locations}) == len(config.locations)
+
+
+@pytest.mark.filterwarnings("default")
+def test_duplicate_locations_matching_site_params_removed(duplicated_locations):
+    config = OpenquakeConfig()
+    with pytest.warns(UserWarning, match="duplicate"):
+        config.set_sites(duplicated_locations, vs30=[400.0, 750.0, 400.0, 250.0], backarc=[0, 1, 0, 1])
+
+    assert config.locations == tuple(duplicated_locations[i] for i in (0, 1, 3))
+    assert config.site_parameters['vs30'] == (400.0, 750.0, 250.0)
+    assert config.site_parameters['backarc'] == (0, 1, 1)
+
+
+def test_duplicate_locations_conflicting_vs30_raises(duplicated_locations):
+    config = OpenquakeConfig()
+    with pytest.raises(ValueError, match="vs30"):
+        config.set_sites(duplicated_locations, vs30=[400.0, 750.0, 500.0, 250.0])
+
+
+def test_duplicate_locations_conflicting_backarc_raises(duplicated_locations):
+    config = OpenquakeConfig()
+    with pytest.raises(ValueError, match="backarc"):
+        config.set_sites(duplicated_locations, backarc=[0, 1, 1, 1])
+
+
+def test_mixed_resolution_accepted():
+    """resolution is never written to the site file, so a mixed list is a valid set of sites"""
+    config = OpenquakeConfig()
+    locations = [CodedLocation(-41.3, 174.7, 0.1), CodedLocation(-41.25, 174.85, 0.01)]
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        config.set_sites(locations)
+
+    assert config.locations == tuple(locations)
+
+
+def test_mixed_resolution_not_serializable():
+    """to_dict() represents locations by their coded string, which cannot round-trip a mixed list"""
+    config = OpenquakeConfig()
+    config.set_sites([CodedLocation(-41.3, 174.7, 0.1), CodedLocation(-41.25, 174.85, 0.01)])
+    with pytest.raises(ValueError, match="resolution"):
+        config.to_dict()
+
+
+def test_duplicate_locations_nan_site_params_removed(duplicated_locations):
+    """NaN is a missing-data sentinel, not a conflict: nan != nan must not fail the comparison"""
+    config = OpenquakeConfig()
+    with pytest.warns(UserWarning, match="duplicate"):
+        config.set_sites(duplicated_locations, vs30=[float('nan'), 750.0, float('nan'), 250.0])
+
+    assert config.locations == tuple(duplicated_locations[i] for i in (0, 1, 3))
+    assert math.isnan(config.site_parameters['vs30'][0])
+    assert config.site_parameters['vs30'][1:] == (750.0, 250.0)
+
+
+def test_duplicate_locations_nan_and_value_raises(duplicated_locations):
+    config = OpenquakeConfig()
+    with pytest.raises(ValueError, match="vs30"):
+        config.set_sites(duplicated_locations, vs30=[float('nan'), 750.0, 400.0, 250.0])
+
+
+def test_unique_locations_do_not_warn(locations):
+    config = OpenquakeConfig()
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        config.set_sites(locations, vs30=[400.0] * len(locations))
+
+    assert len(config.locations) == len(locations)
+
+
+def test_set_sites_empty():
+    config = OpenquakeConfig()
+    config.set_sites([])
+    assert config.locations == ()
+
+
+@pytest.mark.filterwarnings("default")
+def test_from_dict_duplicate_locations_removed():
+    data = {
+        'config': {},
+        'locations': ['-41.3~174.7', '-41.2~174.8', '-41.3~174.7'],
+        'site_parameters': {'vs30': [400.0, 750.0, 400.0]},
+        'hazard_type': 'openquake',
+    }
+    with pytest.warns(UserWarning, match="duplicate"):
+        config = OpenquakeConfig.from_dict(data)
+
+    assert config.locations == (CodedLocation(-41.3, 174.7, 0.1), CodedLocation(-41.2, 174.8, 0.1))
+    assert config.site_parameters['vs30'] == (400.0, 750.0)
+
+
+def test_from_dict_conflicting_site_params_raises():
+    data = {
+        'config': {},
+        'locations': ['-41.3~174.7', '-41.2~174.8', '-41.3~174.7'],
+        'site_parameters': {'vs30': [400.0, 750.0, 500.0]},
+        'hazard_type': 'openquake',
+    }
+    with pytest.raises(ValueError, match="vs30"):
+        OpenquakeConfig.from_dict(data)
+
+
+def test_from_dict_short_site_params_raises():
+    """from_dict bypasses set_sites, so it needs its own length check to avoid an opaque IndexError"""
+    data = {
+        'config': {},
+        'locations': ['-41.3~174.7', '-41.2~174.8', '-41.3~174.7'],
+        'site_parameters': {'vs30': [400.0, 750.0]},
+        'hazard_type': 'openquake',
+    }
+    with pytest.raises(ValueError, match="vs30"):
+        OpenquakeConfig.from_dict(data)
 
 
 class TestConfigCompatability:
