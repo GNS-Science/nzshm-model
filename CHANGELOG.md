@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- deps: major (transitive, all): cryptography 49→50, multidict 6→7, filelock 3.29→3.32, backrefs 7→8, pymdown-extensions 11→12, watchdog 6→7, wcmatch 10→12
+- deps: minor and patch upgrades (incl. ruff 0.15→0.17, uv, virtualenv, urllib3, msgpack)
+
 ## [0.15.5] 2026-08-13
 ### Fixed
 - duplicate locations are removed when setting sites, as OpenQuake rejects a site model file with repeated coordinates (#167)
