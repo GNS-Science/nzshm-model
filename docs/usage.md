@@ -86,6 +86,7 @@ from openquake.hazardlib.site import calculate_z1pt0, calculate_z2pt5
 from nzshm_model import get_model_version
 from nzshm_model.psha_adapter.openquake import OpenquakeConfigPshaAdapter, OpenquakeModelPshaAdapter
 
+
 # we need a mapping from the IDs of the sources to a filepath
 def source_map(model):
     smap = {}
