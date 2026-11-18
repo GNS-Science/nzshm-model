@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- require Python >=3.12,<4.0; test matrix is now 3.12, 3.13, 3.14
+- deps: removed `safety` from dev dependencies (and from the tox audit env)
+- deps: minor upgrades: boto3 1.43→1.44, nshm-toshi-client 1.3→1.4, nzshm-common 0.10→0.11
+- deps: major (transitive): filelock 3→4, cachetools 7→8, pymdown-extensions 12→13
+
 ## [0.15.6] - 2026-11-11
 ### Changed
 - deps: major (transitive, all): cryptography 49→50, multidict 6→7, filelock 3.29→3.32, backrefs 7→8, pymdown-extensions 11→12, watchdog 6→7, wcmatch 10→12
