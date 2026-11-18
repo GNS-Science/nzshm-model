@@ -36,7 +36,6 @@ dev = [
     "pytest-cov",
     "pytest",
     "ruff",
-    "safety>=3.6.2,<4.0.0",
     "tox",
     "tox-uv",
 ]
