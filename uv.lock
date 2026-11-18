@@ -125,30 +125,30 @@ wheels = [
 
 [[package]]
 name = "boto3"
-version = "1.43.123"
+version = "1.44.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fc/8a/64b46f075149f9160da44aa7e1052dd18431b9ad4435beb0cfb02cc48624/boto3-1.43.123.tar.gz", hash = "sha256:055fabb990c5d2f31fce4ca569255bd640cdd11a3ca68c9ecad35f4f8a5b83b5", size = 112638, upload-time = "2026-10-30T19:18:50.085Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/91/02/d46523af0a933c35604e2bbb33e4ca8f69a00f9990af6d6b29ed84db64aa/boto3-1.44.1.tar.gz", hash = "sha256:c81dfdaab894cbcba78aa3773fe3fb27a13b576f49ff5552b91190072fc7dac0", size = 112740, upload-time = "2026-11-11T21:11:18.611Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/b2/a7986c327f80aa6f1544f4cb8f2fa7da4e1fccd472379a21cad0508b8a0e/boto3-1.43.123-py3-none-any.whl", hash = "sha256:d18d66e1e13faa0c25d0b1b8c5ce946e29fb5fc0b6456b655a93a678ff4cc313", size = 140044, upload-time = "2026-10-30T19:18:47.734Z" },
+    { url = "https://files.pythonhosted.org/packages/36/5a/8af6cf092d9212091b8fc9bbf559bd04916094883a3c79a2464e715a1adf/boto3-1.44.1-py3-none-any.whl", hash = "sha256:1342653b8af9dc89f182cb5c0dfd5fa10f430d757c0ebd00326c053a6270d2c4", size = 140152, upload-time = "2026-11-11T21:11:15.904Z" },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.43.123"
+version = "1.44.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e0/de/011fc2a47fb066c47064b122498d2fd21f55bc90ea514acbddc37ca0f8c1/botocore-1.43.123.tar.gz", hash = "sha256:80948cb9b1cdf1a1a25809089a42e3a1bc4af0258d198222db6e97dcc660dd0c", size = 16486269, upload-time = "2026-10-30T19:18:44.609Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/61/07918ec258ab7131dd601cb1aaffcd7fa008fa8bb0143fd195ecc4b4435d/botocore-1.44.1.tar.gz", hash = "sha256:e71f6249be2a7324899ba81c5958ac1809a78498ea2c8f60e00fc0e62262ab83", size = 16596239, upload-time = "2026-11-11T21:11:12.562Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/db/96/4f2dffd304425c07160ab2c12cb13322d852fd956fe9d4386228c93f02ea/botocore-1.43.123-py3-none-any.whl", hash = "sha256:e30580f9c1282c321529238ff8ff75066096a2adbd0a293c8ae592c21d1733a3", size = 16185987, upload-time = "2026-10-30T19:18:39.794Z" },
+    { url = "https://files.pythonhosted.org/packages/4d/45/ea4a91a51d6cafd6a7f7b0b8b88767c6d7054dc588ffcb7d1e11e9402e69/botocore-1.44.1-py3-none-any.whl", hash = "sha256:7a741074a78e28187c88d9f7f91db18731ea91725455873d863ae63ea35e75f3", size = 16295147, upload-time = "2026-11-11T21:11:08.108Z" },
 ]
 
 [[package]]
@@ -1393,25 +1393,25 @@ wheels = [
 
 [[package]]
 name = "nshm-toshi-client"
-version = "1.3.3"
+version = "1.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "boto3" },
     { name = "gql", extra = ["requests"] },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/32/2c/9c926496fd3df68cb87e0e334d8fdc0de3cbe6ccda98cab7d6c1cf382a52/nshm_toshi_client-1.3.3.tar.gz", hash = "sha256:7a3db5773491aac75232e95fe56d1d9c1be68ff7736ecbe64772f105d6e413b9", size = 45258, upload-time = "2026-11-09T22:12:23.938Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/20/5c/b5569c215215145552ae13b7e01b394580fc4d8da01b6d5b217564b3d2e4/nshm_toshi_client-1.4.0.tar.gz", hash = "sha256:81ec557adbb1c6b8b770b7f8c109179cb2e0fdb573509d18fe12b896dfb8bfa0", size = 45145, upload-time = "2026-11-18T22:28:53.325Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e2/ce/f7e16a40794ca46316aa05e43b6fa3a41bf61e6650720f86c34d14d8b399/nshm_toshi_client-1.3.3-py3-none-any.whl", hash = "sha256:395aa0f7f3a88077910943cf4d100c9a4c315663978bd02e7ad70cf3529fa03e", size = 37531, upload-time = "2026-11-09T22:12:22.843Z" },
+    { url = "https://files.pythonhosted.org/packages/76/4f/e5059de705fa7c4475a79d85de09f7c20ab5acd7f1d2ee9cfff47e9d3f50/nshm_toshi_client-1.4.0-py3-none-any.whl", hash = "sha256:1f79dcff495ceb7e07b54ae0c7cca60f3023ed26e929ce19def98aff8ea5d6f9", size = 37518, upload-time = "2026-11-18T22:28:52.157Z" },
 ]
 
 [[package]]
 name = "nzshm-common"
-version = "0.10.1"
+version = "0.11.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a1/92/1c41ce7ae36020ca0cd9271bbad8cf4a4e9c3841140ba09450fa14a3ad30/nzshm_common-0.10.1.tar.gz", hash = "sha256:3b93943adecc052070bff1e94be3b1c49b649c6ae305e79308ae3c9d4f690c80", size = 268193, upload-time = "2026-11-09T01:27:31.624Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4f/c8/564f6c068f1646cd2fc9b31933d31f6d59b62afff350183a9aa2e83d1898/nzshm_common-0.11.0.tar.gz", hash = "sha256:757e28c70cb31dd9f597a93b6d95659c6af01d0d97d65e3bea55c482c271ce82", size = 268196, upload-time = "2026-11-18T01:29:32.202Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e0/a8/9cafbf1e5268f36fdb8166ab11fa3da7947e297ea698945c938a3cb48219/nzshm_common-0.10.1-py3-none-any.whl", hash = "sha256:3b84592a3e2fa49cf7e677397b8b0010fcde9fd1944b33fccfdcb501ea75b4cc", size = 290184, upload-time = "2026-11-09T01:27:30.306Z" },
+    { url = "https://files.pythonhosted.org/packages/b1/28/0ac859101488acd101a4942537b9ad965fa369ce7a5a1b067b36195de946/nzshm_common-0.11.0-py3-none-any.whl", hash = "sha256:aa8506fa7b08fb2de92d18d8bfd644e2f373bd52761aa6318ee137acef980c27", size = 290184, upload-time = "2026-11-18T01:29:31.013Z" },
 ]
 
 [[package]]
