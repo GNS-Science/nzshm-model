@@ -9,7 +9,7 @@ authors = [
     { name = "Chris DiCaprio", email = "c.dicaprio@gns.cri.nz" },
     { name = "NSHM Compute Working Group", email = "nshm@gns.cri.nz" }
 ]
-requires-python = ">=3.10,<4.0"
+requires-python = ">=3.12,<4.0"
 
 dependencies = [
     "dacite>=1.6.0",
@@ -76,6 +76,8 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+# module-level TypeVars are shared across modules; keep Generic[...] style
+ignore = ["UP046"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
