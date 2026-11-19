@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- python: requires >=3.12,<4 (dropped 3.10, 3.11); test matrix 3.12, 3.13, 3.14
+- deps: nzshm-common 0.10→0.11; transitive filelock 3→4, cachetools 7→8, pymdown-extensions 12→13
+
+### Removed
+- deps: safety
+
 ## [0.15.6] - 2026-11-11
 ### Changed
 - deps: major (transitive, all): cryptography 49→50, multidict 6→7, filelock 3.29→3.32, backrefs 7→8, pymdown-extensions 11→12, watchdog 6→7, wcmatch 10→12
