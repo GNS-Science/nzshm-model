@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.16.0] - 2026-11-20
 ### Changed
 - python: requires >=3.12,<4 (dropped 3.10, 3.11); test matrix 3.12, 3.13, 3.14
 - deps: nzshm-common 0.10→0.11; transitive filelock 3→4, cachetools 7→8, pymdown-extensions 12→13
